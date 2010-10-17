@@ -1,6 +1,7 @@
 using System.Linq;
 using FluentNHibernate.Conventions.Instances;
 using FluentNHibernate.Conventions;
+using FluentNHibernate.Diagnostics;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.ConventionFinderTests
@@ -15,7 +16,7 @@ namespace FluentNHibernate.Testing.ConventionFinderTests
         public void CreateConventionFinder()
         {
             var collection = new ConventionsCollection();
-            container = new ConventionContainer(collection);
+            container = new ConventionContainer(collection, new NullDiagnosticsLogger());
             finder = new ConventionFinder(collection);
         }
 

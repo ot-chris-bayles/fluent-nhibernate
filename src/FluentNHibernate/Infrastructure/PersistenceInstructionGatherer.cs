@@ -6,6 +6,7 @@ using FluentNHibernate.Automapping;
 using FluentNHibernate.Automapping.Steps;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions;
+using FluentNHibernate.Diagnostics;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.Utils;
 using NHibernate.Cfg;
@@ -29,6 +30,12 @@ namespace FluentNHibernate.Infrastructure
         Action<Configuration> postConfigure;
         IDatabaseConfiguration databaseConfiguration;
         IExporter exporter;
+        IDiagnosticLogger log = new NullDiagnosticsLogger();
+
+        public void SetLogger(IDiagnosticLogger logger)
+        {
+            log = logger;
+        }
 
         public IPersistenceInstructions GetInstructions()
         {
@@ -39,6 +46,8 @@ namespace FluentNHibernate.Infrastructure
 
             if (extendedModel != null)
                 instructions = new ExtendedPersistenceInstructions(extendedModel.GetInstructions(), instructions);
+
+            log.Flush();
 
             return instructions;
         }
@@ -124,7 +133,9 @@ namespace FluentNHibernate.Infrastructure
             var actionsFromInstances = instances.Select(x => x.GetAction());
             var actionsFromProviders = GetProvidersFromSources().Select(x => x.GetAction());
 
-            // all pre-instantiated providers
+            instances.Each(x => log.FluentMappingDiscovered(x.GetType()));
+
+            // all pre-instantiated providers);)
             foreach (var action in actionsFromInstances)
                 yield return action;
 
@@ -148,7 +159,12 @@ namespace FluentNHibernate.Infrastructure
             return sources
                 .SelectMany(x => x.GetTypes())
                 .Where(x => x.HasInterface<IProvider>())
-                .Select(x => x.InstantiateUsingParameterlessConstructor())
+                .Select(x =>
+                {
+                    log.FluentMappingDiscovered(x);
+
+                    return x.InstantiateUsingParameterlessConstructor();
+                })
                 .Cast<IProvider>();
         }
     }

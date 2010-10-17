@@ -85,7 +85,7 @@ namespace FluentNHibernate.MappingModel
 
         public Type Type
         {
-            get { throw new NotSupportedException(); }
+            get { return null; }
         }
 
         public void AddMappedMember(IMemberMapping mapping)

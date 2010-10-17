@@ -68,13 +68,16 @@ namespace FluentNHibernate.Specs.FluentInterface
     {
         Establish context = () =>
         {
-            classmap = new ClassMap<Target>();
+            model = new FluentNHibernate.PersistenceModel();
+            var classmap = new ClassMap<Target>();
             classmap.Id(x => x.Id);
             classmap.Component(x => x.Component);
+            model.Add(classmap);
+            model.Add(new ComponentMap<Component>());
         };
 
         Because of = () =>
-            mapping = (classmap as IProvider).GetClassMapping()
+            mapping = model.BuildMappingFor<Target>()
                 .Components.First();
 
         It should_create_a_reference_component_mapping = () =>
@@ -83,8 +86,8 @@ namespace FluentNHibernate.Specs.FluentInterface
         It should_store_the_property_in_the_reference_component_mapping = () =>
             (mapping as ReferenceComponentMapping).Member.Name.ShouldBeEqualIgnoringCase("Component");
 
-        private static ClassMap<Target> classmap;
         private static IComponentMapping mapping;
+        static FluentNHibernate.PersistenceModel model;
 
         private class Target
         {

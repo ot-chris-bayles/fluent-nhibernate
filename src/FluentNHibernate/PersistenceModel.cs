@@ -100,6 +100,7 @@ namespace FluentNHibernate
         public void SetLogger(IDiagnosticLogger logger)
         {
             log = logger;
+            gatherer.SetLogger(log);
         }
 
         public AutomappingBuilder AutoMap
@@ -279,7 +280,7 @@ namespace FluentNHibernate
 
         public IConventionContainer Conventions
         {
-            get { return new ConventionContainer(gatherer.Conventions); }
+            get { return new ConventionContainer(gatherer.Conventions, log); }
         }
 
         protected void AddMappingsFromThisAssembly()

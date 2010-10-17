@@ -2,6 +2,7 @@ using FluentNHibernate.Conventions;
 using FluentNHibernate.Conventions.AcceptanceCriteria;
 using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.Conventions.Instances;
+using FluentNHibernate.Diagnostics;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.Visitors;
 using NUnit.Framework;
@@ -20,7 +21,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
         public void CreateVisitor()
         {
             var collection = new ConventionsCollection();
-            container = new ConventionContainer(collection);
+            container = new ConventionContainer(collection, new NullDiagnosticsLogger());
             conventions = new ConventionFinder(collection);
             visitor = new ConventionVisitor(conventions);
         }

@@ -51,21 +51,6 @@ namespace FluentNHibernate.Specs.PersistenceModel
             exception.Message.ShouldEqual("The entity 'Target' doesn't have an Id mapped. Use the Id method to map your identity property. For example: Id(x => x.Id).");
     }
 
-    public class when_the_persistence_model_with_validation_disabled_is_told_to_build_the_mappings_with_a_class_mapping_that_doesnt_have_an_id : PersistenceModelValidationSpec
-    {
-        Establish context = () =>
-        {
-            model = new FluentNHibernate.PersistenceModel();
-            model.Add(new ClassMap<Target>());
-        };
-
-        Because of = () =>
-            exception = Catch.Exception(() => model.BuildMappings());
-
-        It shouldnt_throw_any_validation_exceptions = () =>
-            exception.ShouldBeNull();
-    }
-
     public abstract class PersistenceModelValidationSpec
     {
         protected static FluentNHibernate.PersistenceModel model;

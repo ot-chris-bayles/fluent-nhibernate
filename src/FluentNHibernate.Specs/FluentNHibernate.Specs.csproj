@@ -131,7 +131,6 @@
     <Compile Include="FluentInterface\SubclassMapSpecs\SubclassMapSpecs.HasMany.cs" />
     <Compile Include="FluentInterface\SubclassMapSpecs\SubclassMapSpecs.HasOne.cs" />
     <Compile Include="FluentInterface\SubclassMapSpecs\SubclassMapSpecs.Property.cs" />
-    <Compile Include="PersistenceModel\PersistenceModelSpecs.AddingProviders.cs" />
     <Compile Include="PersistenceModel\PersistenceModelSpecs.Validation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\Fixtures\Target.cs" />

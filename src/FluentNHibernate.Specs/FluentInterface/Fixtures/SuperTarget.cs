@@ -7,6 +7,7 @@ namespace FluentNHibernate.Specs.FluentInterface.Fixtures
 {
     class SuperTarget
     {
+        public int Id { get; set; }
     }
 
     class ChildTarget : SuperTarget

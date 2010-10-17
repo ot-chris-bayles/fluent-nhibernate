@@ -11,11 +11,13 @@ namespace FluentNHibernate.Specs.FluentInterface.Fixtures
         public ISet<EntityCollectionChild> SetOfChildren { get; set; }
 
         public IList<string> BagOfStrings { get; set; }
+        public int Id { get; set; }
     }
 
     class EntityWithFieldCollections
     {
         public IList<EntityCollectionChild> BagOfChildren;
+        public int Id;
     }
 
     class EntityCollectionChild

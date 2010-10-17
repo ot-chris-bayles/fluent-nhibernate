@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using FluentNHibernate.Diagnostics;
 
 namespace FluentNHibernate.Conventions
 {
@@ -73,10 +74,12 @@ namespace FluentNHibernate.Conventions
     public class ConventionContainer : IConventionContainer
     {
         readonly ConventionsCollection collection;
+        readonly IDiagnosticLogger log;
 
-        public ConventionContainer(ConventionsCollection collection)
+        public ConventionContainer(ConventionsCollection collection, IDiagnosticLogger log)
         {
             this.collection = collection;
+            this.log = log;
         }
 
         public void AddSource(ITypeSource source)
@@ -87,6 +90,8 @@ namespace FluentNHibernate.Conventions
 
                 Add(type, MissingConstructor.Ignore);
             }
+
+            log.LoadedConventionsFromSource(source);
         }
 
         /// <summary>
@@ -168,6 +173,7 @@ namespace FluentNHibernate.Conventions
             if (collection.Contains(type) && !AllowMultiplesOf(type)) return;
 
             collection.Add(type, Instantiate(type));
+            log.ConventionDiscovered(type);
         }
 
         bool AllowMultiplesOf(Type type)

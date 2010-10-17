@@ -42,7 +42,8 @@ namespace FluentNHibernate.Specs.PersistenceModel
             cfg = new Configuration();
             SQLiteConfiguration.Standard.InMemory()
                 .ConfigureProperties(cfg);
-            model.Configure(cfg);
+            
+            cfg.ConfigureWith(model);
 
             new SchemaExport(cfg).Create(true, false);
         };

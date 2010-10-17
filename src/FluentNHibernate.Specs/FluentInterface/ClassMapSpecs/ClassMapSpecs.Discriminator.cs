@@ -8,7 +8,11 @@ namespace FluentNHibernate.Specs.FluentInterface.ClassMapSpecs
     public class when_class_map_is_told_to_create_a_discriminator : ProviderSpec
     {
         Because of = () =>
-            class_mapping = map_as_class<SuperTarget>(m => m.DiscriminateSubClassesOnColumn(column_name));
+            class_mapping = map_as_class<SuperTarget>(m =>
+            {
+                m.Id(x => x.Id);
+                m.DiscriminateSubClassesOnColumn(column_name);
+            });
 
         It should_set_the_discriminator_property_on_the_class_mapping = () =>
             class_mapping.Discriminator.ShouldNotBeNull();
@@ -26,7 +30,11 @@ namespace FluentNHibernate.Specs.FluentInterface.ClassMapSpecs
     public class when_class_map_is_told_to_create_a_discriminator_with_a_default_value : ProviderSpec
     {
         Because of = () =>
-            class_mapping = map_as_class<SuperTarget>(m => m.DiscriminateSubClassesOnColumn("col", base_value));
+            class_mapping = map_as_class<SuperTarget>(m =>
+            {
+                m.Id(x => x.Id);
+                m.DiscriminateSubClassesOnColumn("col", base_value);
+            });
 
         It should_set_the_default_discriminator_value_on_the_class_mapping = () =>
             class_mapping.DiscriminatorValue.ShouldEqual(base_value);

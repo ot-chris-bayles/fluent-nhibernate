@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using FluentNHibernate.MappingModel.Collections;
+using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.ClassBased
@@ -44,7 +45,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
 
         public virtual void AssociateExternalMapping(ExternalComponentMapping mapping)
         {
-            mergedComponent = mapping;
+            mergedComponent = mapping.DeepClone();
             mergedComponent.Member = property;
             mergedComponent.Name = property.Name;
             mergedComponent.Class = new TypeReference(componentType);

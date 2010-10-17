@@ -353,7 +353,7 @@ namespace FluentNHibernate.Automapping
         /// </summary>
         public SetupConventionContainer<AutoPersistenceModel> Conventions
         {
-            get { return new SetupConventionContainer<AutoPersistenceModel>(this, new ConventionContainer(conventions)); }
+            get { return new SetupConventionContainer<AutoPersistenceModel>(this, new ConventionContainer(conventions, log)); }
         }
 
         /// <summary>

@@ -14,14 +14,6 @@ namespace FluentNHibernate.Specs
 {
     public static class Extensions
     {
-        public static ClassMapping GetClassMapping(this IProvider provider)
-        {
-            return null;
-        }
-        public static void Configure(this FluentNHibernate.PersistenceModel model, Configuration cfg)
-        {
-            
-        }
         public static HibernateMapping BuildMappings(this FluentNHibernate.PersistenceModel model)
         {
             return model.As<IPersistenceInstructionGatherer>()
@@ -38,11 +30,6 @@ namespace FluentNHibernate.Specs
         public static void Add(this FluentNHibernate.PersistenceModel model, Type type)
         {
             model.AddMappingsFromSource(new StubTypeSource(type));
-        }
-
-        public static bool ContainsMapping(this FluentNHibernate.PersistenceModel model, Type type)
-        {
-            return false;
         }
 
         public static T As<T>(this object instance)
