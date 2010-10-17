@@ -14,11 +14,11 @@ namespace FluentNHibernate.Testing.ConventionsTests
     {
         private string expectedAccess = "backfield";
 
-        private ClassMapping compositeId;
-        private ClassMapping manyToMany;
-        private ClassMapping manyToOne;
-        private ClassMapping oneToOne;
-        private ClassMapping parent;
+        ClassMapping compositeId = null;
+        ClassMapping manyToMany = null;
+        ClassMapping manyToOne = null;
+        ClassMapping oneToOne = null;
+        ClassMapping parent = null;
 
 
         [SetUp]
@@ -33,7 +33,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
             model.Add(new OneToOneModelMapping());
             model.Add(new ParentModelMapping());
 
-            var classMappings = model.BuildMappings().SelectMany(x => x.Classes).ToDictionary(x => x.Type);
+            var classMappings = model.BuildMappings().Classes.ToDictionary(x => x.Type);
             compositeId = classMappings[typeof(CompositeIdModel)];
             manyToMany = classMappings[typeof(ManyToManyModel)];
             manyToOne = classMappings[typeof(ManyToOneModel)];

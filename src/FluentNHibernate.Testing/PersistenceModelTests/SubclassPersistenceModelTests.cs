@@ -18,7 +18,6 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             model.Add(new TablePerSubclass.TPS_ChildMap());
 
             var classMapping = model.BuildMappings()
-                .First()
                 .Classes.First();
 
             classMapping.Subclasses.Count().ShouldEqual(1);
@@ -35,7 +34,6 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             model.Add(new TablePerSubclass.TPS_ChildChildMap());
 
             var classMapping = model.BuildMappings()
-                .First()
                 .Classes.First();
 
             // child
@@ -58,7 +56,6 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             model.Add(new TablePerClassHierarchy.TPCH_ChildChildMap());
 
             var classMapping = model.BuildMappings()
-                .First()
                 .Classes.First();
 
             // child
@@ -80,7 +77,6 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             model.Add(new TablePerClassHierarchy.TPCH_ChildMap());
 
             var classMapping = model.BuildMappings()
-                .First()
                 .Classes.First();
 
             (classMapping.Subclasses.First() is SubclassMapping).ShouldBeTrue();
@@ -95,7 +91,6 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             model.Add(new TablePerSubclass.TPS_ChildMap());
 
             var classMapping = model.BuildMappings()
-                .First()
                 .Classes.First();
 
             classMapping.Subclasses.First().SubclassType.ShouldEqual(SubclassType.JoinedSubclass);
@@ -110,7 +105,6 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             model.Add(typeof(TablePerSubclass.TPS_ChildMap));
 
             model.BuildMappings()
-                .First()
                 .Classes.First()
                 .Subclasses.Count().ShouldBeGreaterThan(0);
         }
@@ -123,8 +117,7 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             model.AddMappingsFromAssembly(typeof(TablePerSubclass.TPS_Parent).Assembly);
 
             var classMapping = model.BuildMappings()
-                .First(x => x.Classes.FirstOrDefault(c => c.Type == typeof(TablePerSubclass.TPS_Parent)) != null)
-                .Classes.First();
+                .Classes.Single(x => x.Type == typeof(TablePerSubclass.TPS_Parent));
 
             classMapping.Subclasses.Count().ShouldBeGreaterThan(0);
         }
@@ -138,7 +131,6 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             model.Add(new Intermediaries.I_BottomMostMap());
 
             model.BuildMappings()
-                .First()
                 .Classes.First()
                 .Subclasses.Count().ShouldEqual(1);
         }
@@ -154,7 +146,7 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             model.Add(new Branching.B_Child_ChildMap());
             model.Add(new Branching.B_Child2_ChildMap());
 
-            var top = model.BuildMappings().First().Classes.First();
+            var top = model.BuildMappings().Classes.First();
 
             top.Subclasses.ShouldContain(x => x.Type == typeof(Branching.B_Child));
             top.Subclasses.ShouldContain(x => x.Type == typeof(Branching.B_Child2));
@@ -179,7 +171,7 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             model.Add(new Interfaces.ITopMap());
             model.Add(new Interfaces.Int_OneMap());
 
-            var top = model.BuildMappings().First().Classes.First();
+            var top = model.BuildMappings().Classes.First();
 
             top.Type.ShouldEqual(typeof(Interfaces.ITop));
             top.Subclasses.ShouldContain(x => x.Type == typeof(Interfaces.Int_One));
@@ -196,7 +188,7 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             model.Add(new Sauces.ReallyHotSauceMap());
             model.Add(new Thoughts.ThoughtMap());
 
-            var colorSource = model.BuildMappings().First().Classes.First();
+            var colorSource = model.BuildMappings().Classes.First();
 
             colorSource.Type.ShouldEqual(typeof(Sauces.Sauce));
             colorSource.Subclasses.ShouldContain(x => x.Type == typeof(Sauces.BrownSauce));

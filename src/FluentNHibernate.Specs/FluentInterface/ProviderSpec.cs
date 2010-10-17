@@ -1,4 +1,5 @@
 using System;
+using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel.ClassBased;
@@ -13,7 +14,9 @@ namespace FluentNHibernate.Specs.FluentInterface
 
             setup(provider);
 
-            return ((IMappingProvider)provider).GetClassMapping();
+            var action = ((IProvider)provider).GetAction();
+
+            return null;
         }
 
         public static SubclassMapping map_as_subclass<T>(Action<SubclassMap<T>> setup)
@@ -22,7 +25,8 @@ namespace FluentNHibernate.Specs.FluentInterface
 
             setup(provider);
 
-            return ((IIndeterminateSubclassMappingProvider)provider).GetSubclassMapping(SubclassType.Subclass);
+            //return ((IIndeterminateSubclassMappingProvider)provider).GetSubclassMapping(SubclassType.Subclass);
+            return null;
         }
     }
 }

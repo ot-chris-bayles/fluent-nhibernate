@@ -1,5 +1,6 @@
 using System;
 using System.Linq.Expressions;
+using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
@@ -54,7 +55,10 @@ namespace FluentNHibernate.Mapping
 
         protected override ComponentMapping CreateComponentMappingRoot(AttributeStore store)
         {
-            return new ExternalComponentMapping(ComponentType.Component, attributes.CloneInner());
+            return new ExternalComponentMapping(ComponentType.Component, attributes.CloneInner())
+            {
+                Type = typeof(T)
+            };
         }
 
         ExternalComponentMapping IExternalComponentMappingProvider.GetComponentMapping()
@@ -67,6 +71,13 @@ namespace FluentNHibernate.Mapping
         Type IExternalComponentMappingProvider.Type
         {
             get { return typeof(T); }
+        }
+
+        public IMappingAction GetAction()
+        {
+            var mapping = (ExternalComponentMapping)CreateComponentMapping();
+
+            return new ManualAction(mapping.DeepClone());
         }
     }
 }

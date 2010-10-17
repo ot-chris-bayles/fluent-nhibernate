@@ -1,3 +1,4 @@
+using FluentNHibernate.Conventions.Helpers;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.DomainModel.Mapping
@@ -9,7 +10,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void Can_specify_default_cascade()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(m => m.HibernateMapping.DefaultAccess.CamelCaseField())
+                .Conventions(c => c.Add(DefaultAccess.CamelCaseField()))
+                .ForMapping(m => m.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "field.camelcase");
         }
 
@@ -17,7 +19,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void Can_specify_auto_import_as_true()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(m => m.HibernateMapping.AutoImport())
+                .Conventions(c => c.Add(AutoImport.Always()))
+                .ForMapping(m => m.Id(x => x.Id))
                 .RootElement.HasAttribute("auto-import", "true");
         }
 
@@ -25,7 +28,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void Can_specify_auto_import_as_false()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(m => m.HibernateMapping.Not.AutoImport())
+                .Conventions(c => c.Add(AutoImport.Never()))
+                .ForMapping(m => m.Id(x => x.Id))
                 .RootElement.HasAttribute("auto-import", "false");
         }
     }

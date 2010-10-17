@@ -1,10 +1,11 @@
 using System;
 using System.Xml;
+using FluentNHibernate.Infrastructure;
 using FluentNHibernate.MappingModel;
 
 namespace FluentNHibernate.Mapping
 {
-    public class ImportPart
+    public class ImportPart : IProvider
     {
         private readonly AttributeStore<ImportMapping> attributes = new AttributeStore<ImportMapping>();
 
@@ -25,6 +26,11 @@ namespace FluentNHibernate.Mapping
         internal ImportMapping GetImportMapping()
         {
             return new ImportMapping(attributes.CloneInner());
+        }
+
+        public IMappingAction GetAction()
+        {
+            return new ManualAction(GetImportMapping());
         }
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
@@ -209,7 +208,7 @@ namespace FluentNHibernate.Visitors
             
         }
 
-        public virtual void Visit(IEnumerable<HibernateMapping> mappings)
+        public virtual void Visit(MappingBucket bucket)
         {
             
         }
@@ -379,6 +378,11 @@ namespace FluentNHibernate.Visitors
         }
 
         public virtual void Visit(TuplizerMapping mapping)
+        {
+            
+        }
+
+        public virtual void Visit(HibernateMapping mapping)
         {
             
         }

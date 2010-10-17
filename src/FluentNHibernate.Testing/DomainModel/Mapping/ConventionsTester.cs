@@ -14,7 +14,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             new MappingTester<Site>()
                 .Conventions(conventions => conventions.Add<MyAttributePropertyConvention>())
-                .ForMapping(m => m.Map(x => x.Name))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.Map(x => x.Name);
+                })
                 .Element("class/property[@name='Name']")
                     .HasAttribute("access", "field");
         }
@@ -24,7 +28,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             new MappingTester<Site>()
                 .Conventions(conventions => conventions.Add<MyAttributeCollectionConvention>())
-                .ForMapping(m => m.HasMany(x => x.Prior))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.HasMany(x => x.Prior);
+                })
                 .Element("class/*[@name='Prior']")
                     .HasAttribute("cascade", "all-delete-orphan");
         }
@@ -34,6 +42,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
 
     public class Site
     {
+        public int Id { get; set; }
         [My]
         public string Name { get; set; }
 

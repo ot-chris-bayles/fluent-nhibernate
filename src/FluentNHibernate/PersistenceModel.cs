@@ -1,69 +1,290 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Xml;
+using FluentNHibernate.Automapping;
+using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions;
 using FluentNHibernate.Diagnostics;
+using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
-using FluentNHibernate.MappingModel.ClassBased;
-using FluentNHibernate.MappingModel.Output;
 using FluentNHibernate.Utils;
-using FluentNHibernate.Visitors;
+using FluentNHibernate.Utils.Reflection;
 using NHibernate.Cfg;
 
 namespace FluentNHibernate
 {
-    public class PersistenceModel
+    public interface IMappingCompiler
     {
-        protected readonly IList<IMappingProvider> classProviders = new List<IMappingProvider>();
-        protected readonly IList<IFilterDefinition> filterDefinitions = new List<IFilterDefinition>();
-        protected readonly IList<IIndeterminateSubclassMappingProvider> subclassProviders = new List<IIndeterminateSubclassMappingProvider>();
-        protected readonly IList<IExternalComponentMappingProvider> componentProviders = new List<IExternalComponentMappingProvider>();
-        private readonly IList<IMappingModelVisitor> visitors = new List<IMappingModelVisitor>();
-        public IConventionFinder Conventions { get; private set; }
-        public bool MergeMappings { get; set; }
-        private IEnumerable<HibernateMapping> compiledMappings;
-        private ValidationVisitor validationVisitor;
-        public PairBiDirectionalManyToManySidesDelegate BiDirectionalManyToManyPairer { get; set; }
+        IEnumerable<ITopMapping> Compile(IMappingAction action);
+    }
 
-        IDiagnosticMessageDespatcher diagnosticDespatcher = new DefaultDiagnosticMessageDespatcher();
-        protected IDiagnosticLogger log = new NullDiagnosticsLogger();
+    public class MappingCompiler : IMappingCompiler
+    {
+        readonly IAutomapper automapper;
+        readonly IPersistenceInstructions instructions;
 
-        public PersistenceModel(IConventionFinder conventionFinder)
+        public MappingCompiler(IAutomapper automapper, IPersistenceInstructions instructions)
         {
-            BiDirectionalManyToManyPairer = (c,o,w) => {};
-            Conventions = conventionFinder;
-
-            visitors.Add(new SeparateSubclassVisitor(subclassProviders));
-            visitors.Add(new ComponentReferenceResolutionVisitor(componentProviders));
-            visitors.Add(new ComponentColumnPrefixVisitor());
-            visitors.Add(new RelationshipPairingVisitor(BiDirectionalManyToManyPairer));
-            visitors.Add(new ManyToManyTableNameVisitor());
-            visitors.Add(new ConventionVisitor(Conventions));
-            visitors.Add(new RelationshipKeyPairingVisitor());
-            visitors.Add((validationVisitor = new ValidationVisitor()));
+            this.automapper = automapper;
+            this.instructions = instructions;
         }
 
-        public PersistenceModel()
-            : this(new DefaultConventionFinder())
-        {}
+        public HibernateMapping BuildMappings()
+        {
+            var actions = instructions.GetActions();
+            var bucket = CompileActions(actions);
+
+            instructions.Visitors
+                .Each(x => x.Visit(bucket));
+
+            var hbm = new HibernateMapping();
+
+            instructions.Visitors
+                .Each(x => x.Visit(hbm));
+
+            bucket.Classes
+                .Each(hbm.AddClass);
+            bucket.Filters
+                .Each(hbm.AddFilter);
+            bucket.Imports
+                .Each(hbm.AddImport);
+
+            return hbm;
+        }
+
+        MappingBucket CompileActions(IEnumerable<IMappingAction> actions)
+        {
+            var mappings = actions.SelectMany(x => Compile(x));
+            var bucket = new MappingBucket();
+
+            mappings.Each(x => x.AddTo(bucket));
+
+            return bucket;
+        }
+
+        public virtual IEnumerable<ITopMapping> AutoMap(AutomapAction action)
+        {
+            var mainInstructions = instructions.AutomappingInstructions;
+            var targets = action.GetMappingTargets(mainInstructions);
+
+            return automapper.Map(targets);
+        }
+
+        public virtual IEnumerable<ITopMapping> ManualMap(ManualAction action)
+        {
+            return new[] { action.GetMapping() };
+        }
+
+        public IEnumerable<ITopMapping> Compile(IMappingAction action)
+        {
+            if (action is ManualAction)
+                return ManualMap((ManualAction)action);
+            if (action is AutomapAction)
+                return AutoMap((AutomapAction)action);
+
+            throw new InvalidOperationException(string.Format("Unrecognised action '{0}'", action.GetType().FullName));
+        }
+    }
+    public interface IPersistenceModel : IPersistenceInstructionGatherer
+    {}
+
+    public class PersistenceModel : IPersistenceModel
+    {
+        readonly PersistenceInstructionGatherer gatherer = new PersistenceInstructionGatherer();
+        protected IDiagnosticLogger log = new NullDiagnosticsLogger();
 
         public void SetLogger(IDiagnosticLogger logger)
         {
             log = logger;
-            Conventions.SetLogger(logger);
+        }
+
+        public AutomappingBuilder AutoMap
+        {
+            get { return new AutomappingBuilder(gatherer.Automapping); }
+        }
+
+        public ImportPart Import<T>()
+        {
+            var import = new ImportPart(typeof(T));
+
+            gatherer.AddProviderInstance(import);
+
+            return import;
+        }
+
+        /// <summary>
+        /// Specify an action that is executed before any changes are made by Fluent NHibernate to
+        /// the NHibernate <see cref="Configuration"/> instance. This method can only be called once,
+        /// multiple calls will result in only the last call being used.
+        /// </summary>
+        /// <example>
+        /// 1:
+        /// <code>
+        /// PreConfigure(cfg =>
+        /// {
+        /// });
+        /// </code>
+        /// 
+        /// 2:
+        /// <code>
+        /// PreConfigure(someMethod);
+        /// 
+        /// private void someMethod(Configuration cfg)
+        /// {
+        /// }
+        /// </code>
+        /// </example>
+        /// <param name="preConfigureAction">Action to execute</param>
+        protected void PreConfigure(Action<Configuration> preConfigureAction)
+        {
+            gatherer.UsePreConfigure(preConfigureAction);
+        }
+
+        /// <summary>
+        /// Specify an action that is executed after all other changes have been made by Fluent
+        /// NHibernate to the NHibernate <see cref="Configuration"/> instance. This method can
+        /// only be called once, multiple calls will result in only the last call being used.
+        /// </summary>
+        /// <example>
+        /// See <see cref="PreConfigure"/> for examples.
+        /// </example>
+        /// <param name="postConfigureAction">Action to execute</param>
+        protected void PostConfigure(Action<Configuration> postConfigureAction)
+        {
+            gatherer.UsePostConfigure(postConfigureAction);
+        }
+
+        /// <summary>
+        /// Base this configuration on another <see cref="IPersistenceModel"/>'s setup.
+        /// Use this method to "inherit" settings, that can be overwritten in your own
+        /// model. This method can only be called once, multiple calls will result in only the last call
+        /// being used.
+        /// </summary>
+        /// <param name="model">PersistenceModel to inherit settings from</param>
+        protected void BaseConfigurationOn(IPersistenceModel model)
+        {
+            BaseConfigurationOn((IPersistenceInstructionGatherer)model);
+        }
+
+        /// <summary>
+        /// Base this configuration on another <see cref="IPersistenceModel"/>'s setup.
+        /// Use this method to "inherit" settings, that can be overwritten in your own
+        /// model. This method can only be called once, multiple calls will result in only the last call
+        /// being used.
+        /// </summary>
+        /// <param name="instrucionGather">PersistenceModel to inherit settings from</param>
+        protected void BaseConfigurationOn(IPersistenceInstructionGatherer instrucionGather)
+        {
+            gatherer.UseBaseModel(instrucionGather);
+        }
+
+        /// <summary>
+        /// Extend ththis configuration with another PersistenceModel's setup.
+        /// Use this method to apply existing settings "on top" of your own settings. Good
+        /// for if you want to pass in a "test" configuration that just alters minor settings but
+        /// keeps everything else intact. This method can only be called once, multiple calls will
+        /// result in only the last call being used.
+        /// </summary>
+        /// <param name="model">PersistenceModel to extend your own with</param>
+        protected void ExtendConfigurationWith(IPersistenceModel model)
+        {
+            ExtendConfigurationWith((IPersistenceInstructionGatherer)model);
+        }
+
+        /// <summary>
+        /// Extend ththis configuration with another PersistenceModel's setup.
+        /// Use this method to apply existing settings "on top" of your own settings. Good
+        /// for if you want to pass in a "test" configuration that just alters minor settings but
+        /// keeps everything else intact. This method can only be called once, multiple calls will
+        /// result in only the last call being used.
+        /// </summary>
+        /// <param name="instructionGatherer">PersistenceModel to extend your own with</param>
+        protected void ExtendConfigurationWith(IPersistenceInstructionGatherer instructionGatherer)
+        {
+            gatherer.UseExtendModel(instructionGatherer);
+        }
+
+        /// <summary>
+        /// Supply settings for the database used in the persistence of your entities.
+        /// This method can only be called once, multiple calls will result in only
+        /// the last call being used.
+        /// </summary>
+        /// <remarks>
+        /// Where the instance comes from that you pass into this method
+        /// is up to you. You can instantiate it yourself, or you could
+        /// inject it into your <see cref="PersistenceModel"/> via a
+        /// container and pass it into this method.
+        /// </remarks>
+        /// <example>
+        /// Inline:
+        /// <code>
+        /// Database(new ProductionDatabaseConfiguration());
+        /// </code>
+        /// 
+        /// Container:
+        /// <code>
+        /// public class MyPersistenceModel : PersistenceModel
+        /// {
+        ///   public MyPersistenceModel(IDatabaseConfiguration dbCfg)
+        ///   {
+        ///     Database(dbCfg);
+        ///   }
+        /// }
+        /// </code>
+        /// </example>
+        /// <param name="dbCfg">Database configuration instance</param>
+        protected void Database(IDatabaseConfiguration dbCfg)
+        {
+            gatherer.UseDatabaseConfiguration(dbCfg);
+        }
+
+        /// <summary>
+        /// Supply settings for the database used in the persistence of your entities.
+        /// This method can only be called once, multiple calls will result in only
+        /// the last call being used.
+        /// </summary>
+        /// <example>
+        /// See <see cref="Database(FluentNHibernate.Cfg.Db.IDatabaseConfiguration)"/> for examples.
+        /// </example>
+        /// <typeparam name="T">Type of database configuration</typeparam>
+        protected void Database<T>()
+            where T : IDatabaseConfiguration, new()
+        {
+            Database(new T());
+        }
+
+        /// <summary>
+        /// Supply settings, in the form of an inline setup, for the database used in the persistence
+        /// of your entities. This method can only be called once, multiple calls will result in only
+        /// the last call being used.
+        /// </summary>
+        /// <remarks>
+        /// The parameter to this method will be wrapped inside a <see cref="IDatabaseConfiguration"/>
+        /// instance. This method is mainly useful for short inline database configuration.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// Database(SQLiteConfiguration.StandardInMemory);
+        /// </code>
+        /// </example>
+        /// <param name="db">Persistence configurer instance</param>
+        protected void Database(IPersistenceConfigurer db)
+        {
+            gatherer.UseDatabaseConfiguration(new PreconfiguredDatabaseConfiguration(db));
+        }
+
+        public IConventionContainer Conventions
+        {
+            get { return new ConventionContainer(gatherer.Conventions); }
         }
 
         protected void AddMappingsFromThisAssembly()
         {
-            var assembly = FindTheCallingAssembly();
+            var assembly = ReflectionHelper.FindTheCallingAssembly();
             AddMappingsFromAssembly(assembly);
         }
 
@@ -72,246 +293,66 @@ namespace FluentNHibernate
             AddMappingsFromSource(new AssemblyTypeSource(assembly));
         }
 
+        public void Add(IProvider provider)
+        {
+            gatherer.AddProviderInstance(provider);
+        }
+
         public void AddMappingsFromSource(ITypeSource source)
         {
-            source.GetTypes()
-                .Where(x => IsMappingOf<IMappingProvider>(x) ||
-                            IsMappingOf<IIndeterminateSubclassMappingProvider>(x) ||
-                            IsMappingOf<IExternalComponentMappingProvider>(x) ||
-                            IsMappingOf<IFilterDefinition>(x))
-                .Each(Add);
+            gatherer.AddSource(source);
 
             log.LoadedFluentMappingsFromSource(source);
         }
 
-        private static Assembly FindTheCallingAssembly()
+        public void AddMappings(params IProvider[] providers)
         {
-            StackTrace trace = new StackTrace(Thread.CurrentThread, false);
+            providers.Each(gatherer.AddProviderInstance);
+        }
 
-            Assembly thisAssembly = Assembly.GetExecutingAssembly();
-            Assembly callingAssembly = null;
-            for (int i = 0; i < trace.FrameCount; i++)
+        IPersistenceInstructions IPersistenceInstructionGatherer.GetInstructions()
+        {
+            return gatherer.GetInstructions();
+        }
+
+        public void WriteMappingsTo(string exportPath)
+        {
+            gatherer.UseExporter(new PathExporter(Path.Combine(exportPath, GetType().Name + ".hbm.xml")));
+        }
+
+        public void WriteMappingsTo(TextWriter textWriter)
+        {
+            gatherer.UseExporter(new TextWriterExporter(textWriter));
+        }
+
+        class TextWriterExporter : IExporter
+        {
+            readonly TextWriter textWriter;
+
+            public TextWriterExporter(TextWriter textWriter)
             {
-                StackFrame frame = trace.GetFrame(i);
-                Assembly assembly = frame.GetMethod().DeclaringType.Assembly;
-                if (assembly != thisAssembly)
-                {
-                    callingAssembly = assembly;
-                    break;
-                }
+                this.textWriter = textWriter;
             }
-            return callingAssembly;
-        }
 
-        public void Add(IMappingProvider provider)
-        {
-            classProviders.Add(provider);
-        }
-
-        public void Add(IIndeterminateSubclassMappingProvider provider)
-        {
-            subclassProviders.Add(provider);
-        }
-
-        public void Add(IFilterDefinition definition)
-        {
-            filterDefinitions.Add(definition);
-        }
-
-        public void Add(IExternalComponentMappingProvider provider)
-        {
-            componentProviders.Add(provider);
-        }
-
-        public void Add(Type type)
-        {
-            var mapping = type.InstantiateUsingParameterlessConstructor();
-
-            if (mapping is IMappingProvider)
+            public void Export(XmlDocument hbm)
             {
-                log.FluentMappingDiscovered(type);
-                Add((IMappingProvider)mapping);
-            }
-            else if (mapping is IIndeterminateSubclassMappingProvider)
-            {
-                log.FluentMappingDiscovered(type);
-                Add((IIndeterminateSubclassMappingProvider)mapping);
-            }
-            else if (mapping is IFilterDefinition)
-                Add((IFilterDefinition)mapping);
-            else if (mapping is IExternalComponentMappingProvider)
-            {
-                log.FluentMappingDiscovered(type);
-                Add((IExternalComponentMappingProvider)mapping);
-            }
-            else
-                throw new InvalidOperationException("Unsupported mapping type '" + type.FullName + "'");
-        }
-
-        private bool IsMappingOf<T>(Type type)
-        {
-            return !type.IsGenericType && typeof(T).IsAssignableFrom(type);
-        }
-
-        public virtual IEnumerable<HibernateMapping> BuildMappings()
-        {
-            var hbms = new List<HibernateMapping>();
-
-            if (MergeMappings)
-                BuildSingleMapping(hbms.Add);
-            else
-                BuildSeparateMappings(hbms.Add);
-
-            ApplyVisitors(hbms);
-
-            log.Flush();
-
-            return hbms;
-        }
-
-        private void BuildSeparateMappings(Action<HibernateMapping> add)
-        {
-            foreach (var classMap in classProviders)
-            {
-                var hbm = classMap.GetHibernateMapping();
-
-                hbm.AddClass(classMap.GetClassMapping());
-
-                add(hbm);
-            }
-            foreach (var filterDefinition in filterDefinitions)
-            {
-                var hbm = filterDefinition.GetHibernateMapping();
-                hbm.AddFilter(filterDefinition.GetFilterMapping());
-                add(hbm);
+                textWriter.Write(hbm.InnerXml);
             }
         }
 
-        private void BuildSingleMapping(Action<HibernateMapping> add)
+        class PathExporter : IExporter
         {
-            var hbm = new HibernateMapping();
+            readonly string exportPath;
 
-            foreach (var classMap in classProviders)
+            public PathExporter(string exportPath)
             {
-                hbm.AddClass(classMap.GetClassMapping());
-            }
-            foreach (var filterDefinition in filterDefinitions)
-            {
-                hbm.AddFilter(filterDefinition.GetFilterMapping());
+                this.exportPath = exportPath;
             }
 
-            if (hbm.Classes.Count() > 0)
-                add(hbm);
-        }
-
-        private void ApplyVisitors(IEnumerable<HibernateMapping> mappings)
-        {
-            foreach (var visitor in visitors)
-                visitor.Visit(mappings);
-        }
-
-        private void EnsureMappingsBuilt()
-        {
-            if (compiledMappings != null) return;
-
-            compiledMappings = BuildMappings();
-        }
-
-        protected virtual string GetMappingFileName()
-        {
-            return "FluentMappings.hbm.xml";
-        }
-
-        private string DetermineMappingFileName(HibernateMapping mapping)
-        {
-            if (MergeMappings)
-                return GetMappingFileName();
-
-            if (mapping.Classes.Count() > 0)
-                return mapping.Classes.First().Type.FullName + ".hbm.xml";
-
-            return "filter-def." + mapping.Filters.First().Name + ".hbm.xml";
-        }
-
-        public void WriteMappingsTo(string folder)
-        {
-            WriteMappingsTo(mapping => new XmlTextWriter(Path.Combine(folder, DetermineMappingFileName(mapping)), Encoding.Default), true);
-        }
-
-        public void WriteMappingsTo(TextWriter writer)
-        {            
-            WriteMappingsTo( _ => new XmlTextWriter(writer), false);
-        }
-
-        private void WriteMappingsTo(Func<HibernateMapping, XmlTextWriter> writerBuilder, bool shouldDispose)
-        {
-            EnsureMappingsBuilt();
-
-            foreach (HibernateMapping mapping in compiledMappings)
+            public void Export(XmlDocument hbm)
             {
-                var serializer = new MappingXmlSerializer();
-                var document = serializer.Serialize(mapping);
-
-                XmlTextWriter xmlWriter = null;
-
-                try
-                {
-                    xmlWriter = writerBuilder(mapping);
-                    xmlWriter.Formatting = Formatting.Indented;
-                    document.WriteTo(xmlWriter);
-                }
-                finally
-                {
-                    if(shouldDispose && xmlWriter != null)
-                        xmlWriter.Close();
-                }
+                File.WriteAllText(exportPath, hbm.InnerXml);
             }
         }
-
-        public virtual void Configure(Configuration cfg)
-        {
-            EnsureMappingsBuilt();
-
-            foreach (var mapping in compiledMappings.Where(m => m.Classes.Count() == 0))
-            {
-                var serializer = new MappingXmlSerializer();
-                XmlDocument document = serializer.Serialize(mapping);
-                cfg.AddDocument(document);
-            }
-
-            foreach (var mapping in compiledMappings.Where(m => m.Classes.Count() > 0))
-            {
-                var serializer = new MappingXmlSerializer();
-                XmlDocument document = serializer.Serialize(mapping);
-
-                if (cfg.GetClassMapping(mapping.Classes.First().Type) == null)
-                    cfg.AddDocument(document);
-            }
-        }
-
-        public bool ContainsMapping(Type type)
-        {
-            return classProviders.Any(x => x.GetType() == type) ||
-                filterDefinitions.Any(x => x.GetType() == type) ||
-                subclassProviders.Any(x => x.GetType() == type) ||
-                componentProviders.Any(x => x.GetType() == type);
-        }
-
-        /// <summary>
-        /// Gets or sets whether validation of mappings is performed. 
-        /// </summary>
-        public bool ValidationEnabled
-        {
-            get { return validationVisitor.Enabled; }
-            set { validationVisitor.Enabled = value; }
-        }
-    }
-
-    public interface IMappingProvider
-    {
-        ClassMapping GetClassMapping();
-        // HACK: In place just to keep compatibility until verdict is made
-        HibernateMapping GetHibernateMapping();
-        IEnumerable<Member> GetIgnoredProperties();
     }
 }

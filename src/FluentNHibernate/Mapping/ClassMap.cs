@@ -1,7 +1,9 @@
-﻿ using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using FluentNHibernate.Automapping;
+using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping.Builders;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
@@ -11,6 +13,19 @@ using NHibernate.Persister.Entity;
 
 namespace FluentNHibernate.Mapping
 {
+    public interface ITopMapping
+    {
+        void AddTo(MappingBucket bucket);
+        IEnumerable<Member> GetUsedMembers();
+        Type Type { get; }
+        void AddMappedMember(IMemberMapping mapping);
+    }
+
+    public interface IMemberMapping
+    {
+        Member Member { get; set; }
+    }
+
     /// <summary>
     /// Defines a mapping for an entity. Derive from this class to create a mapping,
     /// and use the constructor to control how your entity is persisted.
@@ -27,7 +42,7 @@ namespace FluentNHibernate.Mapping
     /// }
     /// </example>
     /// <typeparam name="T">Entity type to map</typeparam>
-    public class ClassMap<T> : ClasslikeMapBase<T>, IMappingProvider
+    public class ClassMap<T> : ClasslikeMapBase<T>, IProvider
     {
         protected readonly AttributeStore<ClassMapping> attributes = new AttributeStore<ClassMapping>();
         protected readonly IList<JoinMapping> joins = new List<JoinMapping>();
@@ -42,11 +57,11 @@ namespace FluentNHibernate.Mapping
         protected IVersionMappingProvider version;
         protected ICompositeIdMappingProvider compositeId;
         protected INaturalIdMappingProvider naturalId;
-        private readonly HibernateMappingPart hibernateMappingPart = new HibernateMappingPart();
         private readonly PolymorphismBuilder<ClassMap<T>> polymorphism;
         private SchemaActionBuilder<ClassMap<T>> schemaAction;
         protected TuplizerMapping tuplizerMapping;
         protected CacheMapping cache;
+        AutomappingEntitySetup automapping;
 
         public ClassMap()
         {
@@ -70,16 +85,10 @@ namespace FluentNHibernate.Mapping
             }
         }
 
-        /// <summary>
-        /// Specify settings for the container/hibernate-mapping for this class.
-        /// Note: Avoid using this, if possible prefer using conventions.
-        /// </summary>
-        /// <example>
-        /// HibernateMapping.Schema("dto");
-        /// </example>
-        public HibernateMappingPart HibernateMapping
+        [Obsolete("Use an IClassConvention or IHibernateMappingConvention")]
+        public object HibernateMapping
         {
-            get { return hibernateMappingPart; }
+            get { return null; }
         }
 
         #region Ids
@@ -379,13 +388,10 @@ namespace FluentNHibernate.Mapping
         /// Imports an existing type for use in the mapping.
         /// </summary>
         /// <typeparam name="TImport">Type to import.</typeparam>
-        public virtual ImportPart ImportType<TImport>()
+        [Obsolete("Use PersistenceModel.Import<T>()", true)]
+        public ImportPart ImportType<TImport>()
         {
-            var part = new ImportPart(typeof(TImport));
-            
-            imports.Add(part);
-
-            return part;
+            return null;
         }
 
         /// <summary>
@@ -626,7 +632,12 @@ namespace FluentNHibernate.Mapping
                 .Mode(mode);
         }
 
-        ClassMapping IMappingProvider.GetClassMapping()
+        private AutomappingEntityBuilder<T> AutoMap
+        {
+            get { return new AutomappingEntityBuilder<T>(automapping ?? (automapping = new AutomappingEntitySetup()));}
+        }
+
+        IMappingAction IProvider.GetAction()
         {
             var mapping = new ClassMapping(attributes.CloneInner());
 
@@ -686,17 +697,10 @@ namespace FluentNHibernate.Mapping
 
             mapping.Tuplizer = tuplizerMapping;
 
-            return mapping;
-        }
+            if (automapping != null)
+                return new PartialAutomapAction(mapping, automapping);
 
-        HibernateMapping IMappingProvider.GetHibernateMapping()
-        {
-            var hibernateMapping = ((IHibernateMappingProvider)hibernateMappingPart).GetHibernateMapping();
-
-            foreach (var import in imports)
-                hibernateMapping.AddImport(import.GetImportMapping());
-
-            return hibernateMapping;
+            return new ManualAction(mapping);
         }
 
         string GetDefaultTableName()
@@ -717,10 +721,62 @@ namespace FluentNHibernate.Mapping
 
             return "`" + tableName + "`";
         }
+    }
 
-        IEnumerable<Member> IMappingProvider.GetIgnoredProperties()
+    public class AutomappingEntitySetup
+    {
+        readonly List<Predicate<Member>> exclusions = new List<Predicate<Member>>();
+
+        public IAutomappingConfiguration Configuration { get; set; }
+        
+        public IEnumerable<Predicate<Member>> Exclusions
         {
-            return new Member[0];
+            get { return exclusions; }
+        }
+
+        public void AddExclusion(Predicate<Member> predicate)
+        {
+            exclusions.Add(predicate);
+        }
+    }
+
+    public class AutomappingEntityBuilder<T>
+    {
+        readonly AutomappingEntitySetup setup;
+
+        public AutomappingEntityBuilder(AutomappingEntitySetup setup)
+        {
+            this.setup = setup;
+        }
+
+        public AutomappingEntityBuilder<T> This()
+        {
+            return this;
+        }
+
+        public AutomappingEntityBuilder<T> UsingConfiguration<TConfig>()
+            where TConfig : IAutomappingConfiguration, new()
+        {
+            return UsingConfiguration(new TConfig());
+        }
+
+        public AutomappingEntityBuilder<T> UsingConfiguration(IAutomappingConfiguration cfg)
+        {
+            setup.Configuration = cfg;
+            return this;
+        }
+
+        public AutomappingEntityBuilder<T> Excluding(Expression<Func<T, object>> property)
+        {
+            var member = property.ToMember();
+
+            return ExcludeMatching(x => x == member);
+        }
+
+        public AutomappingEntityBuilder<T> ExcludeMatching(Predicate<Member> predicate)
+        {
+            setup.AddExclusion(predicate);
+            return this;
         }
     }
 }

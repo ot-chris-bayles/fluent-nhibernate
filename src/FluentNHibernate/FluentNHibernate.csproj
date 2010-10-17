@@ -89,6 +89,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AutomappingBuilder.cs" />
     <Compile Include="Automapping\Alterations\AutoMappingOverrideAlteration.cs" />
     <Compile Include="Automapping\Alterations\IAutoMappingAlteration.cs" />
     <Compile Include="Automapping\Alterations\IAutoMappingOverride.cs" />
@@ -123,7 +124,11 @@
     <Compile Include="Automapping\Steps\HasManyToManyStep.cs" />
     <Compile Include="Automapping\Steps\CollectionStep.cs" />
     <Compile Include="Automapping\Steps\IAutomappingStep.cs" />
+    <Compile Include="Cfg\Db\IDatabaseConfiguration.cs" />
+    <Compile Include="Cfg\Db\PreconfiguredDatabaseConfiguration.cs" />
     <Compile Include="CombinedAssemblyTypeSource.cs" />
+    <Compile Include="Conventions\ConventionContainer.cs" />
+    <Compile Include="Conventions\ConventionFinder.cs" />
     <Compile Include="Conventions\Inspections\IKeyManyToOneInspector.cs" />
     <Compile Include="Conventions\Inspections\IKeyPropertyInspector.cs" />
     <Compile Include="Conventions\Inspections\KeyPropertyInspector.cs" />
@@ -145,6 +150,13 @@
     <Compile Include="Diagnostics\ScanPhase.cs" />
     <Compile Include="Diagnostics\SkippedAutomappingType.cs" />
     <Compile Include="Diagnostics\StringLambdaOutputListener.cs" />
+    <Compile Include="Infrastructure\CombinatorPersistenceInstructions.cs" />
+    <Compile Include="Infrastructure\DerivedPersistenceInstructions.cs" />
+    <Compile Include="Infrastructure\ExtendedPersistenceInstructions.cs" />
+    <Compile Include="Infrastructure\IProvider.cs" />
+    <Compile Include="Infrastructure\MappingActions.cs" />
+    <Compile Include="Infrastructure\PersistenceInstructionGatherer.cs" />
+    <Compile Include="Infrastructure\PersistenceInstructions.cs" />
     <Compile Include="ITypeSource.cs" />
     <Compile Include="Automapping\PrivateAutoPersistenceModel.cs" />
     <Compile Include="Automapping\SubclassStrategy.cs" />
@@ -439,6 +451,7 @@
     <Compile Include="MappingModel\EqualityExtensions.cs" />
     <Compile Include="MappingModel\Identity\ICompositeIdKeyMapping.cs" />
     <Compile Include="MappingModel\IRelationship.cs" />
+    <Compile Include="MappingModel\MappingBucket.cs" />
     <Compile Include="MappingModel\NaturalIdMapping.cs" />
     <Compile Include="MappingModel\Output\XmlCompositeIndexWriter.cs" />
     <Compile Include="MappingModel\Output\XmlNaturalIdWriter.cs" />
@@ -559,7 +572,7 @@
     <Compile Include="Cfg\Db\PersistenceConfiguration.cs" />
     <Compile Include="Cfg\Db\PostgreSQLConfiguration.cs" />
     <Compile Include="Cfg\Db\SQLiteConfiguration.cs" />
-    <Compile Include="Cfg\SetupConventionFinder.cs" />
+    <Compile Include="Cfg\SetupConventionContainer.cs" />
     <Compile Include="Conventions\AcceptanceCriteria\EmptyCriterion.cs" />
     <Compile Include="Conventions\AcceptanceCriteria\EvalExpectation.cs" />
     <Compile Include="Conventions\Instances\IAccessInstance.cs" />
@@ -592,7 +605,6 @@
     <Compile Include="Conventions\Instances\PropertyInstance.cs" />
     <Compile Include="Conventions\AcceptanceCriteria\SetCriterion.cs" />
     <Compile Include="Conventions\ConventionsCollection.cs" />
-    <Compile Include="Conventions\DefaultConventionFinder.cs" />
     <Compile Include="Conventions\ForeignKeyConvention.cs" />
     <Compile Include="Conventions\IJoinedSubclassConvention.cs" />
     <Compile Include="Conventions\ISubclassConvention.cs" />
@@ -672,7 +684,6 @@
     <Compile Include="Mapping\ComponentPartBase.cs" />
     <Compile Include="Mapping\DiscriminatorPart.cs" />
     <Compile Include="Mapping\DiscriminatorValue.cs" />
-    <Compile Include="Mapping\HibernateMappingPart.cs" />
     <Compile Include="MappingModel\ImportMapping.cs" />
     <Compile Include="MappingModel\Output\XmlHibernateMappingWriter.cs">
       <SubType>Code</SubType>
@@ -684,7 +695,6 @@
     <Compile Include="Conventions\IClassConvention.cs" />
     <Compile Include="Conventions\IComponentConvention.cs" />
     <Compile Include="Conventions\IConvention.cs" />
-    <Compile Include="Conventions\IConventionFinder.cs" />
     <Compile Include="Conventions\IDynamicComponentConvention.cs" />
     <Compile Include="Conventions\IHasOneConvention.cs" />
     <Compile Include="Conventions\IIdConvention.cs" />

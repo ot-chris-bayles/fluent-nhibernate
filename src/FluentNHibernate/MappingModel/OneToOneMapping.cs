@@ -1,11 +1,12 @@
 using System;
 using System.Linq.Expressions;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
     [Serializable]
-    public class OneToOneMapping : MappingBase
+    public class OneToOneMapping : MappingBase, IMemberMapping
     {
         private readonly AttributeStore<OneToOneMapping> attributes;
 
@@ -121,5 +122,7 @@ namespace FluentNHibernate.MappingModel
                 return ((attributes != null ? attributes.GetHashCode() : 0) * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
             }
         }
+
+        public Member Member { get; set; }
     }
 }

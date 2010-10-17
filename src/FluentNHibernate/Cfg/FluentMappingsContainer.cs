@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using FluentNHibernate.Conventions;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.Visitors;
 using NHibernate.Cfg;
@@ -31,7 +32,7 @@ namespace FluentNHibernate.Cfg
 
         public FluentMappingsContainer OverrideBiDirectionalManyToManyPairing(PairBiDirectionalManyToManySidesDelegate userControlledPairing)
         {
-            model.BiDirectionalManyToManyPairer = userControlledPairing;
+            //model.BiDirectionalManyToManyPairer = userControlledPairing;
             return this;
         }
 
@@ -105,9 +106,9 @@ namespace FluentNHibernate.Cfg
         /// <summary>
         /// Alter convention discovery
         /// </summary>
-        public SetupConventionFinder<FluentMappingsContainer> Conventions
+        public SetupConventionContainer<FluentMappingsContainer> Conventions
         {
-            get { return new SetupConventionFinder<FluentMappingsContainer>(this, model.Conventions); }
+            get { return new SetupConventionContainer<FluentMappingsContainer>(this, model.Conventions); }
         }
 
         /// <summary>
@@ -128,7 +129,6 @@ namespace FluentNHibernate.Cfg
 
             foreach (var type in types)
             {
-                model.Add(type);
             }
 
             if (!string.IsNullOrEmpty(exportPath))
@@ -137,7 +137,7 @@ namespace FluentNHibernate.Cfg
             if (exportTextWriter != null)
                 model.WriteMappingsTo(exportTextWriter);
 
-            model.Configure(cfg);
+            cfg.ConfigureWith(model);
         }
     }
 }

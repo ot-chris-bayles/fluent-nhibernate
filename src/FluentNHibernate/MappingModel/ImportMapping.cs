@@ -1,11 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
     [Serializable]
-    public class ImportMapping : MappingBase
+    public class ImportMapping : MappingBase, ITopMapping
     {
         private readonly AttributeStore<ImportMapping> attributes = new AttributeStore<ImportMapping>();
 
@@ -68,6 +70,26 @@ namespace FluentNHibernate.MappingModel
         public override int GetHashCode()
         {
             return (attributes != null ? attributes.GetHashCode() : 0);
+        }
+
+        public void AddTo(MappingBucket bucket)
+        {
+            bucket.Imports.Add(this);
+        }
+
+        public IEnumerable<Member> GetUsedMembers()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Type Type
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public void AddMappedMember(IMemberMapping mapping)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -20,9 +20,9 @@ namespace FluentNHibernate.Visitors
             this.userControlledPair = userControlledPair;
         }
 
-        public override void Visit(IEnumerable<HibernateMapping> mappings)
+        public override void Visit(MappingBucket bucket)
         {
-            base.Visit(mappings);
+            base.Visit(bucket);
 
             PairManyToManys(manyToManys);
             PairOneToManys(oneToManys, references);

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.Mapping.Builders;
 using FluentNHibernate.Mapping.Providers;
@@ -25,9 +24,9 @@ namespace FluentNHibernate.Automapping
             DiscriminateSubClassesOnColumn(column);
         }
 
-        IEnumerable<Member> IMappingProvider.GetIgnoredProperties()
+        public ClassMapping GetClassMapping()
         {
-            return mappedMembers;
+            throw new NotImplementedException();
         }
 
         void IAutoClasslike.AlterModel(ClassMappingBase mapping)
@@ -257,14 +256,5 @@ namespace FluentNHibernate.Automapping
 
             joins.Add(((IJoinMappingProvider)join).GetJoinMapping());
         }
-
-#pragma warning disable 809
-        // hide this - imports aren't supported in overrides
-        [Obsolete("Imports aren't supported in overrides.", true)]
-        public override ImportPart ImportType<TImport>()
-        {
-            return null;
-        }
-#pragma warning restore 809
     }
 }

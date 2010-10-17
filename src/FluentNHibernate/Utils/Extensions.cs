@@ -6,6 +6,25 @@ using NHibernate.Util;
 
 namespace FluentNHibernate.Utils
 {
+    public static class AndAndExtention
+    {
+        public static void AndAnd<This>(this This instance, Action<This> evalulate)
+            where This : class
+        {
+            if (instance != null)
+                evalulate(instance);
+        }
+
+        public static Return AndAnd<This, Return>(this This instance, Func<This, Return> evaluate)
+            where This : class
+        {
+            if (instance != null)
+                return evaluate(instance);
+
+            return default(Return);
+        }
+    }
+
     public static class Extensions
     {
         public static bool IsSimpleType(this Type type)
@@ -69,6 +88,11 @@ namespace FluentNHibernate.Utils
         public static bool HasInterface(this Type type, Type interfaceType)
         {
             return type.GetInterfaces().Contains(interfaceType);
+        }
+
+        public static bool HasInterface<TInterface>(this Type type)
+        {
+            return type.HasInterface(typeof(TInterface));
         }
 
         public static T DeepClone<T>(this T obj)

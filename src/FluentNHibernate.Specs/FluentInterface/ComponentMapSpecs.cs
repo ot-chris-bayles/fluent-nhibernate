@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
@@ -73,7 +74,7 @@ namespace FluentNHibernate.Specs.FluentInterface
         };
 
         Because of = () =>
-            mapping = (classmap as IMappingProvider).GetClassMapping()
+            mapping = (classmap as IProvider).GetClassMapping()
                 .Components.First();
 
         It should_create_a_reference_component_mapping = () =>
@@ -116,7 +117,7 @@ namespace FluentNHibernate.Specs.FluentInterface
         Because of = () =>
         {
             mappings = persistence_model.BuildMappings();
-            class_mapping = mappings.SelectMany(x => x.Classes).First();
+            class_mapping = mappings.Classes.First();
         };
 
         It should_add_the_subclass_to_the_class = () =>
@@ -131,7 +132,7 @@ namespace FluentNHibernate.Specs.FluentInterface
         };
 
         private static FluentNHibernate.PersistenceModel persistence_model;
-        private static IEnumerable<HibernateMapping> mappings;
+        private static HibernateMapping mappings;
         private static ClassMapping class_mapping;
 
         private class Target
@@ -191,7 +192,7 @@ namespace FluentNHibernate.Specs.FluentInterface
         Because of = () =>
         {
             mappings = persistence_model.BuildMappings();
-            class_mapping = mappings.SelectMany(x => x.Classes).First();
+            class_mapping = mappings.Classes.First();
         };
 
         It should_merge_the_delegated_component_mapping_with_the_unassociated_component_mapping_from_the_component_map = () =>
@@ -203,7 +204,7 @@ namespace FluentNHibernate.Specs.FluentInterface
         };
 
         private static FluentNHibernate.PersistenceModel persistence_model;
-        private static IEnumerable<HibernateMapping> mappings;
+        private static HibernateMapping mappings;
         private static ClassMapping class_mapping;
 
         private class Target
@@ -240,7 +241,7 @@ namespace FluentNHibernate.Specs.FluentInterface
         Because of = () =>
         {
             mappings = persistence_model.BuildMappings();
-            class_mapping = mappings.SelectMany(x => x.Classes).First();
+            class_mapping = mappings.Classes.First();
         };
 
         It should_merge_the_component_mappings_with_the_mapping_from_the_component_map = () =>
@@ -259,7 +260,7 @@ namespace FluentNHibernate.Specs.FluentInterface
         };
 
         private static FluentNHibernate.PersistenceModel persistence_model;
-        private static IEnumerable<HibernateMapping> mappings;
+        private static HibernateMapping mappings;
         private static ClassMapping class_mapping;
 
         private class Target

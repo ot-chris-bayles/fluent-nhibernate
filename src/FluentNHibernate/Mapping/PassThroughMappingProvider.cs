@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
@@ -7,7 +8,7 @@ using FluentNHibernate.MappingModel.Collections;
 
 namespace FluentNHibernate.Mapping
 {
-    public class PassThroughMappingProvider : IMappingProvider, ICollectionMappingProvider, IManyToOneMappingProvider, ICompositeElementMappingProvider, IPropertyMappingProvider, IFilterMappingProvider
+    public class PassThroughMappingProvider : ICollectionMappingProvider, IManyToOneMappingProvider, ICompositeElementMappingProvider, IPropertyMappingProvider, IFilterMappingProvider, IProvider
     {
         private readonly object mapping;
 
@@ -54,6 +55,11 @@ namespace FluentNHibernate.Mapping
         public FilterMapping GetFilterMapping()
         {
             return (FilterMapping)mapping;
+        }
+
+        public IMappingAction GetAction()
+        {
+            return new ManualAction((ITopMapping)mapping);
         }
     }
 }

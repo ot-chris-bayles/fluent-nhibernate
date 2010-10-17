@@ -1,12 +1,13 @@
 using System;
 using System.Linq.Expressions;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
     [Serializable]
-    public class VersionMapping : ColumnBasedMappingBase
+    public class VersionMapping : ColumnBasedMappingBase, IMemberMapping
     {
         public VersionMapping()
             : this(new AttributeStore())
@@ -78,5 +79,7 @@ namespace FluentNHibernate.MappingModel
                 }
             }
         }
+
+        public Member Member { get; set; }
     }
 }

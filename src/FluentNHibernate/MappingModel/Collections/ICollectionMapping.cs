@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using FluentNHibernate.Mapping;
 
 namespace FluentNHibernate.MappingModel.Collections
 {
-    public interface ICollectionMapping : IMappingBase, IRelationship
+    public interface ICollectionMapping : IMappingBase, IRelationship, IMemberMapping
     {
         CacheMapping Cache { get; set; }
         bool Inverse { get; set; }
@@ -28,7 +29,6 @@ namespace FluentNHibernate.MappingModel.Collections
         bool Generic { get; set; }
         KeyMapping Key { get; set; }
         ICollectionRelationshipMapping Relationship { get; set; }
-        Member Member { get; set;  }
         ElementMapping Element { get; set; }
         CompositeElementMapping CompositeElement { get; set; }
         Type ContainingEntityType { get; set; }

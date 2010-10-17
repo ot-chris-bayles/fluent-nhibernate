@@ -124,5 +124,7 @@ namespace FluentNHibernate.MappingModel.Identity
                 return result;
             }
         }
+
+        public Member Member { get; set; }
     }
 }

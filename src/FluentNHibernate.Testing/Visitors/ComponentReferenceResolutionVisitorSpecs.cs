@@ -1,4 +1,5 @@
 ﻿using FluentNHibernate.Mapping.Providers;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.Testing.Utils;
 using FluentNHibernate.Visitors;
@@ -13,11 +14,13 @@ namespace FluentNHibernate.Testing.Visitors
         public override void establish_context()
         {
             external_component_mapping = new ExternalComponentMapping(ComponentType.Component) { Type = typeof(ComponentTarget) };
-            var external_component = Stub<IExternalComponentMappingProvider>.Create(cfg =>
-                cfg.Stub(x => x.GetComponentMapping()).Return(external_component_mapping));
 
-            visitor = new ComponentReferenceResolutionVisitor(new[] { external_component });
-            reference_component_mapping = new ReferenceComponentMapping(ComponentType.Component, null, null, null, null);
+            visitor = new ComponentReferenceResolutionVisitor();
+            reference_component_mapping = new ReferenceComponentMapping(ComponentType.Component, null, typeof(ComponentTarget), null, null);
+
+            var bucket = new MappingBucket();
+            bucket.Components.Add(external_component_mapping);
+            visitor.Visit(bucket);
         }
 
         public override void because()
@@ -40,7 +43,7 @@ namespace FluentNHibernate.Testing.Visitors
     {
         public override void establish_context()
         {
-            visitor = new ComponentReferenceResolutionVisitor(new IExternalComponentMappingProvider[0]);
+            visitor = new ComponentReferenceResolutionVisitor();
             member_property = new DummyPropertyInfo("Component", typeof(ComponentTarget)).ToMember();
         }
 
@@ -86,19 +89,16 @@ namespace FluentNHibernate.Testing.Visitors
     {
         public override void establish_context()
         {
-            var external_component_one = Stub<IExternalComponentMappingProvider>.Create(cfg =>
-            {
-                cfg.Stub(x => x.GetComponentMapping()).Return(new ExternalComponentMapping(ComponentType.Component) { Type = typeof(ComponentTarget) });
-                cfg.Stub(x => x.Type).Return(typeof(ComponentTarget));
-            });
-            var external_component_two = Stub<IExternalComponentMappingProvider>.Create(cfg =>
-            {
-                cfg.Stub(x => x.GetComponentMapping()).Return(new ExternalComponentMapping(ComponentType.Component) { Type = typeof(ComponentTarget) });
-                cfg.Stub(x => x.Type).Return(typeof(ComponentTarget));
-            });
+            var external_component_one = new ExternalComponentMapping(ComponentType.Component) { Type = typeof(ComponentTarget) };
+            var external_component_two = new ExternalComponentMapping(ComponentType.Component) { Type = typeof(ComponentTarget) };
 
-            visitor = new ComponentReferenceResolutionVisitor(new[] { external_component_one, external_component_two});
+            visitor = new ComponentReferenceResolutionVisitor();
             member_property = new DummyPropertyInfo("Component", typeof(ComponentTarget)).ToMember();
+
+            var bucket = new MappingBucket();
+            bucket.Components.Add(external_component_one);
+            bucket.Components.Add(external_component_two);
+            visitor.Visit(bucket);
         }
 
         public override void because()

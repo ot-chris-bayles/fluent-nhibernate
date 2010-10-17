@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FluentNHibernate.Conventions
 {
@@ -8,6 +9,11 @@ namespace FluentNHibernate.Conventions
     {
         private readonly List<AddedConvention> inner = new List<AddedConvention>();
         private readonly List<Type> types = new List<Type>();
+        
+        public bool IsDirty
+        {
+            get { return types.Any() || inner.Any(); }
+        }
 
         public IEnumerator<Type> GetEnumerator()
         {

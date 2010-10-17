@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using FluentNHibernate.Infrastructure;
+using FluentNHibernate.MappingModel;
+using FluentNHibernate.MappingModel.ClassBased;
+using NHibernate.Cfg;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing
@@ -11,6 +15,48 @@ namespace FluentNHibernate.Testing
 
     public static class SpecificationExtensions
     {
+        public static ClassMapping GetClassMapping(this IProvider provider)
+        {
+            var model = new PersistenceModel();
+            
+            model.Add(provider);
+
+            return model.BuildMappings().Classes.Single();
+        }
+
+        public static SubclassMapping GetSubclassMapping(this IProvider provider, SubclassType type, IProvider classMap)
+        {
+            var model = new PersistenceModel();
+
+            model.Add(classMap);
+            model.Add(provider);
+
+            return model.BuildMappings().Classes.Single().Subclasses.Single();
+        }
+
+        public static void Add(this FluentNHibernate.PersistenceModel model, Type type)
+        {
+            model.AddMappingsFromSource(new StubTypeSource(type));
+        }
+
+        public static bool ContainsMapping(this FluentNHibernate.PersistenceModel model, Type type)
+        {
+            return false;
+        }
+
+        public static HibernateMapping BuildMappings(this PersistenceModel model)
+        {
+            return model.As<IPersistenceInstructionGatherer>()
+                .GetInstructions()
+                .BuildMappings();
+        }
+
+        public static HibernateMapping BuildMappings(this IPersistenceInstructions instructions)
+        {
+            return new MappingCompiler(null, instructions)
+                .BuildMappings();
+        }
+
         public static void ShouldBeFalse(this bool condition)
         {
             Assert.IsFalse(condition);

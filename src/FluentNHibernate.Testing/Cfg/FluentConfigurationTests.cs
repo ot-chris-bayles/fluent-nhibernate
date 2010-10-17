@@ -265,7 +265,7 @@ namespace FluentNHibernate.Testing.Cfg
                 .BuildConfiguration();
 
             Directory.GetFiles(ExportPath)
-                .ShouldContain(HbmFor<Record>);
+                .ShouldContain(Path.Combine(ExportPath, "PersistenceModel.hbm.xml"));
         }
 
         [Test]
@@ -291,14 +291,13 @@ namespace FluentNHibernate.Testing.Cfg
             Fluently.Configure()
                 .Database(SQLiteConfiguration.Standard.InMemory)
                 .Mappings(m =>
-                    m.MergeMappings()
-                     .FluentMappings
+                    m.FluentMappings
                          .AddFromAssemblyOf<Record>()
                          .ExportTo(ExportPath))
                 .BuildConfiguration();
 
             Directory.GetFiles(ExportPath)
-                .ShouldContain(x => Path.GetFileName(x) == "FluentMappings.hbm.xml");
+                .ShouldContain(Path.Combine(ExportPath, "PersistenceModel.hbm.xml"));
         }
 
         [Test]
@@ -313,7 +312,7 @@ namespace FluentNHibernate.Testing.Cfg
                 .BuildSessionFactory();
 
             Directory.GetFiles(ExportPath)
-                .ShouldContain(HbmFor<Person>);
+                .ShouldContain(Path.Combine(ExportPath, "AutoMappings.hbm.xml"));
         }
 
         [Test]
@@ -322,14 +321,13 @@ namespace FluentNHibernate.Testing.Cfg
             Fluently.Configure()
                 .Database(SQLiteConfiguration.Standard.InMemory)
                 .Mappings(m =>
-                    m.MergeMappings()
-                     .AutoMappings.Add(AutoMap.AssemblyOf<Person>()
+                    m.AutoMappings.Add(AutoMap.AssemblyOf<Person>()
                         .Where(type => type.Namespace == "FluentNHibernate.Testing.Fixtures.Basic"))
                      .ExportTo(ExportPath))
                 .BuildSessionFactory();
 
             Directory.GetFiles(ExportPath)
-                .ShouldContain(x => Path.GetFileName(x) == "AutoMappings.hbm.xml");
+                .ShouldContain(Path.Combine(ExportPath, "AutoMappings.hbm.xml"));
         }
 
         [Test]
@@ -351,8 +349,8 @@ namespace FluentNHibernate.Testing.Cfg
 
             var files = Directory.GetFiles(ExportPath);
             
-            files.ShouldContain(HbmFor<Record>);
-            files.ShouldContain(HbmFor<Person>);
+            files.ShouldContain(Path.Combine(ExportPath, "PersistenceModel.hbm.xml"));
+            files.ShouldContain(Path.Combine(ExportPath, "AutoMappings.hbm.xml"));
         }
 
         [Test]
@@ -368,9 +366,9 @@ namespace FluentNHibernate.Testing.Cfg
                 .BuildConfiguration();
         }
 
-        private static bool HbmFor<T>(string path)
+        private string HbmFor<T>()
         {
-            return Path.GetFileName(path) == typeof(T).FullName + ".hbm.xml";
+            return Path.Combine(ExportPath, typeof(T).FullName + ".hbm.xml");
         }
     }
 }

@@ -9,7 +9,6 @@ namespace FluentNHibernate.Cfg
     /// </summary>
     public class MappingConfiguration
     {
-        private bool mergeMappings;
         IDiagnosticLogger logger;
 
         public MappingConfiguration(IDiagnosticLogger logger)
@@ -54,31 +53,15 @@ namespace FluentNHibernate.Cfg
         /// <summary>
         /// Applies any mappings to the NHibernate Configuration
         /// </summary>
-        /// <param name="logger">Diagnostics logger</param>
         /// <param name="cfg">NHibernate Configuration instance</param>
         public void Apply(Configuration cfg)
         {
             foreach (var autoMapping in AutoMappings)
                 autoMapping.SetLogger(logger);
 
-            if (mergeMappings)
-            {
-                foreach (var model in AutoMappings)
-                    model.MergeMappings = true;
-
-                FluentMappings.PersistenceModel.MergeMappings = true;
-            }
-
             HbmMappings.Apply(cfg);
             FluentMappings.Apply(cfg);
             AutoMappings.Apply(cfg);
-        }
-
-        public MappingConfiguration MergeMappings()
-        {
-            mergeMappings = true;
-
-            return this;
         }
     }
 }

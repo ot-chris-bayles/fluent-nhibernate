@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FluentNHibernate.Automapping.Alterations;
 using FluentNHibernate.Automapping.Steps;
 using FluentNHibernate.Conventions;
+using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.Utils;
 
@@ -18,7 +19,7 @@ namespace FluentNHibernate.Automapping
         public virtual bool ShouldMap(Type type)
         {
             return !type.ClosesInterface(typeof(IAutoMappingOverride<>)) &&
-                !type.HasInterface(typeof(IMappingProvider)) &&
+                !type.HasInterface(typeof(IProvider)) &&
                 !type.IsNested &&
                 type.IsClass;
         }

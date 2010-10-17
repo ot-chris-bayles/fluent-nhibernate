@@ -218,7 +218,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
             var className = typeof(FakePropertyAccessor).AssemblyQualifiedName;
 
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HasMany(x => x.References).Access.Using(typeof(FakePropertyAccessor)))
+                .ForMapping(c =>
+                {
+                    c.Id(x => x.Id);
+                    c.HasMany(x => x.References).Access.Using(typeof(FakePropertyAccessor));
+                })
                 .Element("class/bag").HasAttribute("access", className);
         }
 
@@ -228,7 +232,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
             var className = typeof(FakePropertyAccessor).AssemblyQualifiedName;
 
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HasMany(x => x.References).Access.Using<FakePropertyAccessor>())
+                .ForMapping(c =>
+                {
+                    c.Id(x => x.Id);
+                    c.HasMany(x => x.References).Access.Using<FakePropertyAccessor>();
+                })
                 .Element("class/bag").HasAttribute("access", className);
         }
     }

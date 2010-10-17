@@ -25,7 +25,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             model.Conventions.Add<SCKeyConvention>();
 
             var subclass = model.BuildMappings()
-                .SelectMany(x => x.Classes)
+                .Classes
                 .First()
                 .Subclasses.First();
 

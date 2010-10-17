@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using FluentNHibernate.Automapping;
+using FluentNHibernate.Conventions.Helpers;
 using FluentNHibernate.MappingModel;
 using NUnit.Framework;
 
@@ -15,7 +13,7 @@ namespace FluentNHibernate.Testing.AutoMapping.Overrides
         public void CanOverrideDefaultLazy()
         {
             var model = AutoMap.Source(new StubTypeSource(new[] { typeof(Parent) }))
-               .Override<Parent>(o => o.HibernateMapping.Not.DefaultLazy());
+               .Conventions.Add(DefaultLazy.Never());
 
             HibernateMapping hibernateMapping = model.BuildMappings().First();
 

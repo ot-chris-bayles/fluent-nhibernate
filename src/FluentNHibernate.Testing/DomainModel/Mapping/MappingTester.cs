@@ -23,7 +23,6 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public MappingTester(PersistenceModel model)
         {
             this.model = model;
-            this.model.ValidationEnabled = false;
         }
 
         public virtual MappingTester<T> RootElement
@@ -35,7 +34,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
             }
         }
 
-        public virtual MappingTester<T> Conventions(Action<IConventionFinder> conventionFinderAction)
+        public virtual MappingTester<T> Conventions(Action<IConventionContainer> conventionFinderAction)
         {
             conventionFinderAction(model.Conventions);
             return this;
@@ -65,9 +64,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
                 model.Add(classMap);
 
             var mappings = model.BuildMappings();
-            var foundMapping = mappings
-                .Where(x => x.Classes.FirstOrDefault(c => c.Type == typeof(T)) != null)
-                .FirstOrDefault();
+            var foundMapping = mappings;
 
             if (foundMapping == null)
                 throw new InvalidOperationException("Could not find mapping for class '" + typeof(T).Name + "'");

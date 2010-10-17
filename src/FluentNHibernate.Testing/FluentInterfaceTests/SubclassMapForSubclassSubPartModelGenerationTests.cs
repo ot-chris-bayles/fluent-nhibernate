@@ -35,7 +35,6 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             model.Add(subclassMap);
 
             model.BuildMappings()
-                .First()
                 .Classes.First()
                 .Subclasses.First()
                 .Components.Count().ShouldEqual(1);

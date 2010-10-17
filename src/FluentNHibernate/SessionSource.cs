@@ -43,11 +43,10 @@ namespace FluentNHibernate
 
         protected void Initialize(Configuration nhibernateConfig, PersistenceModel model)
         {
-            if( model == null ) throw new ArgumentNullException("model", "Model cannot be null");
+            if (model == null) throw new ArgumentNullException("model", "Model cannot be null");
 
             Configuration = nhibernateConfig;
-
-            model.Configure(Configuration);
+            Configuration.ConfigureWith(model);
 
             SessionFactory = Configuration.BuildSessionFactory();
             dialect = Dialect.GetDialect(Configuration.Properties);

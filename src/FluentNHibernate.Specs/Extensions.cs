@@ -3,13 +3,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using FluentNHibernate.Infrastructure;
+using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
+using FluentNHibernate.Specs.Automapping.Fixtures;
 using Machine.Specifications;
+using NHibernate.Cfg;
 
 namespace FluentNHibernate.Specs
 {
     public static class Extensions
     {
+        public static ClassMapping GetClassMapping(this IProvider provider)
+        {
+            return null;
+        }
+        public static void Configure(this FluentNHibernate.PersistenceModel model, Configuration cfg)
+        {
+            
+        }
+        public static HibernateMapping BuildMappings(this FluentNHibernate.PersistenceModel model)
+        {
+            return model.As<IPersistenceInstructionGatherer>()
+                .GetInstructions()
+                .BuildMappings();
+        }
+
+        public static HibernateMapping BuildMappings(this IPersistenceInstructions instructions)
+        {
+            return new MappingCompiler(null, instructions)
+                .BuildMappings();
+        }
+
+        public static void Add(this FluentNHibernate.PersistenceModel model, Type type)
+        {
+            model.AddMappingsFromSource(new StubTypeSource(type));
+        }
+
+        public static bool ContainsMapping(this FluentNHibernate.PersistenceModel model, Type type)
+        {
+            return false;
+        }
+
         public static T As<T>(this object instance)
         {
             return (T)instance;
@@ -28,7 +63,7 @@ namespace FluentNHibernate.Specs
         public static ClassMapping BuildMappingFor<T>(this FluentNHibernate.PersistenceModel model)
         {
             return model.BuildMappings()
-                .SelectMany(x => x.Classes)
+                .Classes
                 .FirstOrDefault(x => x.Type == typeof(T));
         }
 

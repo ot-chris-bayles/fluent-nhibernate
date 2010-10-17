@@ -55,7 +55,6 @@ namespace FluentNHibernate.Testing.Cfg
         [Test]
         public void AddFromAssemblyAddsAnyClassMapMappingsToCfgWhenMerged()
         {
-            mapping.MergeMappings();
             mapping.FluentMappings.AddFromAssembly(typeof(Record).Assembly);
             mapping.Apply(cfg);
 
@@ -76,7 +75,6 @@ namespace FluentNHibernate.Testing.Cfg
         [Test]
         public void AddAutoMappingAddsAnyAutoMappedMappingsToCfgWhenMerged()
         {
-            mapping.MergeMappings();
             mapping.AutoMappings.Add(AutoMap.Source(new StubTypeSource(typeof(Record))));
             mapping.Apply(cfg);
 
@@ -190,23 +188,6 @@ namespace FluentNHibernate.Testing.Cfg
         {
             mapping.HbmMappings.AddFromAssemblyOf<HbmOne>();
             mapping.WasUsed.ShouldBeTrue();
-        }
-
-        [Test]
-        public void MergeOutputShouldSetFlagOnAutoPersistenceModels()
-        {
-            mapping.AutoMappings.Add(AutoMap.Source(new EmptySource()));
-            mapping.MergeMappings();
-            mapping.Apply(new Configuration());
-            mapping.AutoMappings.First().MergeMappings.ShouldBeTrue();
-        }
-
-        [Test]
-        public void MergeOutputShouldSetFlagOnFluentPersistenceModelsOnApply()
-        {
-            mapping.MergeMappings();
-            mapping.Apply(new Configuration());
-            mapping.FluentMappings.PersistenceModel.MergeMappings.ShouldBeTrue();
         }
     }
 }

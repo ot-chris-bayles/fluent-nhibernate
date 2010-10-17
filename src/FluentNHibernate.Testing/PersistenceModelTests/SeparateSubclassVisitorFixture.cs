@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using FluentNHibernate.Mapping;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel.ClassBased;
-using FluentNHibernate.Visitors;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.PersistenceModelTests
@@ -12,13 +8,12 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
     [TestFixture]
     public class SeparateSubclassVisitorFixture
     {
-        private IList<IIndeterminateSubclassMappingProvider> providers;
-        private ClassMapping fooMapping;
+        PersistenceModel model;
 
         [SetUp]
         public void SetUp()
         {
-            providers = new List<IIndeterminateSubclassMappingProvider>();
+            model = new PersistenceModel();
         }
 
         [Test]
@@ -29,13 +24,14 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
              * GenericFooMap<T> subclass mapping.
              */
 
-            fooMapping = ((IMappingProvider)new FooMap()).GetClassMapping();
+            model.Add(new FooMap());
+            model.Add(new StringFooMap());
 
-            providers.Add(new StringFooMap());
-            var sut = CreateSut();
-            sut.ProcessClass(fooMapping);
-            Assert.AreEqual(1, fooMapping.Subclasses.Count());
-            Assert.AreEqual(1, fooMapping.Subclasses.Where(sub => sub.Type.Equals(typeof(Foo<string>))).Count());
+            var classMapping = model.BuildMappings()
+                .Classes.Single();
+
+            Assert.AreEqual(1, classMapping.Subclasses.Count());
+            Assert.AreEqual(1, classMapping.Subclasses.Where(sub => sub.Type.Equals(typeof(Foo<string>))).Count());
         }
 
         [Test]
@@ -46,13 +42,14 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
              * GenericFooMap<T> subclass mapping.
              */
 
-            fooMapping = ((IMappingProvider)new BaseMap()).GetClassMapping();
+            model.Add(new BaseMap());
+            model.Add(new StringFooMap());
 
-            providers.Add(new StringFooMap());
-            var sut = CreateSut();
-            sut.ProcessClass(fooMapping);
-            Assert.AreEqual(1, fooMapping.Subclasses.Count());
-            Assert.AreEqual(1, fooMapping.Subclasses.Where(sub => sub.Type.Equals(typeof(Foo<string>))).Count());
+            var classMapping = model.BuildMappings()
+                .Classes.Single();
+
+            Assert.AreEqual(1, classMapping.Subclasses.Count());
+            Assert.AreEqual(1, classMapping.Subclasses.Where(sub => sub.Type.Equals(typeof(Foo<string>))).Count());
         }
 
         [Test]
@@ -63,12 +60,13 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
              * since it does not implement the interface.
              */
 
-            fooMapping = ((IMappingProvider)new FooMap()).GetClassMapping();
+            model.Add(new FooMap());
+            model.Add(new StandAloneMap());
 
-            providers.Add(new StandAloneMap());
-            var sut = CreateSut();
-            sut.ProcessClass(fooMapping);
-            Assert.AreEqual(0, fooMapping.Subclasses.Count());
+            var classMapping = model.BuildMappings()
+                .Classes.Single();
+
+            Assert.AreEqual(0, classMapping.Subclasses.Count());
         }
 
         [Test]
@@ -79,12 +77,13 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
              * since it does not implement the interface.
              */
 
-            fooMapping = ((IMappingProvider)new BaseMap()).GetClassMapping();
+            model.Add(new BaseMap());
+            model.Add(new StandAloneMap());
 
-            providers.Add(new StandAloneMap());
-            var sut = CreateSut();
-            sut.ProcessClass(fooMapping);
-            Assert.AreEqual(0, fooMapping.Subclasses.Count());
+            var classMapping = model.BuildMappings()
+                .Classes.Single();
+
+            Assert.AreEqual(0, classMapping.Subclasses.Count());
         }
 
         [Test]
@@ -96,14 +95,15 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
              * the BaseImpl class which already implements FooBase.
              */
 
-            fooMapping = ((IMappingProvider)new FooMap()).GetClassMapping();
+            model.Add(new FooMap());
+            model.Add(new BaseImplMap());
+            model.Add(new StringFooMap());
 
-            providers.Add(new BaseImplMap());
-            providers.Add(new StringFooMap());
-            var sut = CreateSut();
-            sut.ProcessClass(fooMapping);
-            Assert.AreEqual(1, fooMapping.Subclasses.Count());
-            Assert.AreEqual(1, fooMapping.Subclasses.Where(sub => sub.Type.Equals(typeof(BaseImpl))).Count());
+            var classMapping = model.BuildMappings()
+                .Classes.Single();
+
+            Assert.AreEqual(1, classMapping.Subclasses.Count());
+            Assert.AreEqual(1, classMapping.Subclasses.Where(sub => sub.Type.Equals(typeof(BaseImpl))).Count());
         }
 
         [Test]
@@ -115,54 +115,54 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
              * the BaseImpl class which already implements FooBase.
              */
 
-            fooMapping = ((IMappingProvider)new BaseMap()).GetClassMapping();
+            model.Add(new BaseMap());
+            model.Add(new BaseImplMap());
+            model.Add(new StringFooMap());
 
-            providers.Add(new BaseImplMap());
-            providers.Add(new StringFooMap());
-            var sut = CreateSut();
-            sut.ProcessClass(fooMapping);
-            Assert.AreEqual(1, fooMapping.Subclasses.Count());
-            Assert.AreEqual(1, fooMapping.Subclasses.Where(sub => sub.Type.Equals(typeof(BaseImpl))).Count());
+            var classMapping = model.BuildMappings()
+                .Classes.Single();
+
+            Assert.AreEqual(1, classMapping.Subclasses.Count());
+            Assert.AreEqual(1, classMapping.Subclasses.Where(sub => sub.Type.Equals(typeof(BaseImpl))).Count());
         }
 
         [Test]
         public void Should_add_explicit_extend_subclasses_to_their_parent()
         {
-            fooMapping = ((IMappingProvider)new ExtendsParentMap()).GetClassMapping();
+            model.Add(new ExtendsParentMap());
+            model.Add(new ExtendsChildMap());
 
-            providers.Add(new ExtendsChildMap());
-            var sut = CreateSut();
-            sut.ProcessClass(fooMapping);
-            Assert.AreEqual(1, fooMapping.Subclasses.Count());
-            Assert.AreEqual(1, fooMapping.Subclasses.Where(sub => sub.Type.Equals(typeof(ExtendsChild))).Count());
+            var classMapping = model.BuildMappings()
+                .Classes.Single();
+
+            Assert.AreEqual(1, classMapping.Subclasses.Count());
+            Assert.AreEqual(1, classMapping.Subclasses.Where(sub => sub.Type.Equals(typeof(ExtendsChild))).Count());
         }
 
         [Test]
         public void Should_choose_UnionSubclass_when_the_class_mapping_IsUnionSubclass_is_true()
         {
-            fooMapping = ((IMappingProvider)new BaseMap()).GetClassMapping();
-            fooMapping.IsUnionSubclass = true;
+            var map = new BaseMap();
+            map.UseUnionSubclassForInheritanceMapping();
 
-            providers.Add(new StringFooMap());
+            model.Add(map);
+            model.Add(new StringFooMap());
 
-            var sut = CreateSut();
+            var classMapping = model.BuildMappings()
+                .Classes.Single();
 
-            sut.ProcessClass(fooMapping);
-
-            fooMapping.Subclasses.First().SubclassType.ShouldEqual(SubclassType.UnionSubclass);
+            classMapping.Subclasses.First().SubclassType.ShouldEqual(SubclassType.UnionSubclass);
         }
-
-        private SeparateSubclassVisitor CreateSut()
-        {
-            return new SeparateSubclassVisitor(providers);
-        }
-
 
         private interface IFoo
-        { }
+        {
+            int Id { get; set; }
+        }
 
         private class Base : IFoo
-        { }
+        {
+            public int Id { get; set; }
+        }
 
         private abstract class BaseImpl : Base
         { }
@@ -171,10 +171,20 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         { }
 
         private class FooMap : ClassMap<IFoo>
-        { }
+        {
+            public FooMap()
+            {
+                Id(x => x.Id);
+            }
+        }
 
         private class BaseMap : ClassMap<Base>
-        { }
+        {
+            public BaseMap()
+            {
+                Id(x => x.Id);
+            }
+        }
 
         private class BaseImplMap : SubclassMap<BaseImpl>
         { }
@@ -196,13 +206,20 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         { }
 
         class ExtendsParent
-        {}
+        {
+            public int Id { get; set; }
+        }
 
         class ExtendsChild
         {}
 
         class ExtendsParentMap : ClassMap<ExtendsParent>
-        {}
+        {
+            public ExtendsParentMap()
+            {
+                Id(x => x.Id);
+            }
+        }
 
         class ExtendsChildMap : SubclassMap<ExtendsChild>
         {

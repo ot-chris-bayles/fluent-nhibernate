@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
     [Serializable]
-    public class AnyMapping : MappingBase
+    public class AnyMapping : MappingBase, IMemberMapping
     {
         private readonly AttributeStore<AnyMapping> attributes;
         private readonly IDefaultableList<ColumnMapping> typeColumns = new DefaultableList<ColumnMapping>();
@@ -179,5 +180,7 @@ namespace FluentNHibernate.MappingModel
                 return result;
             }
         }
+
+        public Member Member { get; set; }
     }
 }

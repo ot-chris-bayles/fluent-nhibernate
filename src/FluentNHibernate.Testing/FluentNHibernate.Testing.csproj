@@ -122,6 +122,7 @@
     <Compile Include="AutoMapping\Overrides\CompositeIdOverrides.cs" />
     <Compile Include="AutoMapping\Overrides\HibernateMappingOverrides.cs" />
     <Compile Include="AutoMapping\Overrides\ParentOverridesWithSubclasses.cs" />
+    <Compile Include="DomainModel\Mapping\DefaultAccessStrategyClassMapTester.cs" />
     <Compile Include="StubTypeSource.cs" />
     <Compile Include="AutoMapping\TestFixtures.cs" />
     <Compile Include="Cfg\Db\DB2ConfigurationTester.cs" />
@@ -199,7 +200,6 @@
     <Compile Include="ModelTestExtensions.cs" />
     <Compile Include="ConventionsTests\MultipleHelperConventions.cs" />
     <Compile Include="ConventionsTests\OverridingFluentInterface\ArrayConventionTests.cs" />
-    <Compile Include="ConventionsTests\OverridingFluentInterface\HibernateMappingConventionTests.cs" />
     <Compile Include="ConventionsTests\OverridingFluentInterface\JoinConventionTests.cs" />
     <Compile Include="ConventionsTests\OverridingFluentInterface\JoinedSubclassConventionTests.cs" />
     <Compile Include="ConventionsTests\OverridingFluentInterface\SubclassConventionTests.cs" />
@@ -318,7 +318,6 @@
     <Compile Include="DomainModel\Mapping\ManyToManyTester.cs" />
     <Compile Include="DomainModel\Mapping\MappingPartOutputOrderTests.cs" />
     <Compile Include="DomainModel\Mapping\FetchTypeExpressionTester.cs" />
-    <Compile Include="DomainModel\Mapping\DefaultAccessStrategyClassMapTester.cs" />
     <Compile Include="DomainModel\Mapping\IdentityPartTester.cs" />
     <Compile Include="DomainModel\Mapping\JoinedSubClassTester.cs" />
     <Compile Include="DomainModel\Mapping\JoinPartTester.cs" />
@@ -351,7 +350,6 @@
     <Compile Include="FluentInterfaceTests\SubclassMapForJoinedSubclassSubPartModelGenerationTests.cs" />
     <Compile Include="FluentInterfaceTests\SubclassMapForSubclassMutablePropertyModelGenerationTests.cs" />
     <Compile Include="FluentInterfaceTests\SubclassMapForSubclassSubPartModelGenerationTests.cs" />
-    <Compile Include="FluentInterfaceTests\HibernateMappingMutablePropertyModelGenerationTests.cs" />
     <Compile Include="FluentInterfaceTests\JoinMutablePropertyModelGenerationTests.cs" />
     <Compile Include="FluentInterfaceTests\JoinSubPartModelGenerationTests.cs" />
     <Compile Include="FluentInterfaceTests\CustomPersister.cs" />

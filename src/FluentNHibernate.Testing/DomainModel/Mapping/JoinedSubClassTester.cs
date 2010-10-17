@@ -11,23 +11,35 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CreatesJoinedSubClassElement()
         {
             new MappingTester<SuperClass>()
-                .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.Map(x => x.Name)))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.JoinedSubClass<SubClass>("columnName", sm => sm.Map(x => x.Name));
+                })
                 .Element("class/joined-subclass").Exists();
         }
 
         [Test]
         public void NamesJoinedSubClassElementCorrectly()
         {
-          new MappingTester<SuperClass>()
-            .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.Map(x => x.Name)))
-            .Element("class/joined-subclass").HasAttribute("name", typeof(SubClass).AssemblyQualifiedName);
+            new MappingTester<SuperClass>()
+              .ForMapping(m =>
+              {
+                  m.Id(x => x.Id);
+                  m.JoinedSubClass<SubClass>("columnName", sm => sm.Map(x => x.Name));
+              })
+              .Element("class/joined-subclass").HasAttribute("name", typeof(SubClass).AssemblyQualifiedName);
         }
 
         [Test]
         public void CanSpecifyCheckConstraintName()
         {
             new MappingTester<SuperClass>()
-              .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.CheckConstraint("name")))
+              .ForMapping(m =>
+              {
+                  m.Id(x => x.Id);
+                  m.JoinedSubClass<SubClass>("columnName", sm => sm.CheckConstraint("name"));
+              })
               .Element("class/joined-subclass").HasAttribute("check", "name");
         }
 
@@ -35,7 +47,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CanSpecifyProxyByType()
         {
             new MappingTester<SuperClass>()
-              .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.Proxy(typeof(ProxyClass))))
+              .ForMapping(m =>
+              {
+                  m.Id(x => x.Id);
+                  m.JoinedSubClass<SubClass>("columnName", sm => sm.Proxy(typeof(ProxyClass)));
+              })
               .Element("class/joined-subclass").HasAttribute("proxy", typeof(ProxyClass).AssemblyQualifiedName);
         }
 
@@ -43,7 +59,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CanSpecifyProxyByTypeInstance()
         {
             new MappingTester<SuperClass>()
-              .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.Proxy<ProxyClass>()))
+              .ForMapping(m =>
+              {
+                  m.Id(x => x.Id);
+                  m.JoinedSubClass<SubClass>("columnName", sm => sm.Proxy<ProxyClass>());
+              })
               .Element("class/joined-subclass").HasAttribute("proxy", typeof(ProxyClass).AssemblyQualifiedName);
         }
 
@@ -51,7 +71,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CanSpecifyLazy()
         {
             new MappingTester<SuperClass>()
-              .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.LazyLoad()))
+              .ForMapping(m =>
+              {
+                  m.Id(x => x.Id);
+                  m.JoinedSubClass<SubClass>("columnName", sm => sm.LazyLoad());
+              })
               .Element("class/joined-subclass").HasAttribute("lazy", "true");
         }
 
@@ -59,7 +83,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CanSpecifyNotLazy()
         {
             new MappingTester<SuperClass>()
-              .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.Not.LazyLoad()))
+              .ForMapping(m =>
+              {
+                  m.Id(x => x.Id);
+                  m.JoinedSubClass<SubClass>("columnName", sm => sm.Not.LazyLoad());
+              })
               .Element("class/joined-subclass").HasAttribute("lazy", "false");
         }
 
@@ -67,7 +95,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CanSpecifyDynamicUpdate()
         {
             new MappingTester<SuperClass>()
-              .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.DynamicUpdate()))
+              .ForMapping(m =>
+              {
+                  m.Id(x => x.Id);
+                  m.JoinedSubClass<SubClass>("columnName", sm => sm.DynamicUpdate());
+              })
               .Element("class/joined-subclass").HasAttribute("dynamic-update", "true");
         }
 
@@ -75,7 +107,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CanSpecifyDynamicInsert()
         {
             new MappingTester<SuperClass>()
-              .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.DynamicInsert()))
+              .ForMapping(m =>
+              {
+                  m.Id(x => x.Id);
+                  m.JoinedSubClass<SubClass>("columnName", sm => sm.DynamicInsert());
+              })
               .Element("class/joined-subclass").HasAttribute("dynamic-insert", "true");
         }
 
@@ -83,7 +119,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CanSpecifySelectBeforeUpdate()
         {
             new MappingTester<SuperClass>()
-              .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.SelectBeforeUpdate()))
+              .ForMapping(m =>
+              {
+                  m.Id(x => x.Id);
+                  m.JoinedSubClass<SubClass>("columnName", sm => sm.SelectBeforeUpdate());
+              })
               .Element("class/joined-subclass").HasAttribute("select-before-update", "true");
         }
 
@@ -91,7 +131,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CanSpecifyAbstract()
         {
             new MappingTester<SuperClass>()
-              .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.Abstract()))
+              .ForMapping(m =>
+              {
+                  m.Id(x => x.Id);
+                  m.JoinedSubClass<SubClass>("columnName", sm => sm.Abstract());
+              })
               .Element("class/joined-subclass").HasAttribute("abstract", "true");
         }
 
@@ -99,7 +143,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void JoinedSubClassHasKeyElement()
         {
             new MappingTester<SuperClass>()
-                .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.Map(x => x.Name)))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.JoinedSubClass<SubClass>("columnName", sm => sm.Map(x => x.Name));
+                })
                 .Element("class/joined-subclass/key").Exists();
         }
 
@@ -107,7 +155,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void JoinedSubClassKeyElementHasCorrectColumn()
         {
             new MappingTester<SuperClass>()
-                .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.Map(x => x.Name)))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.JoinedSubClass<SubClass>("columnName", sm => sm.Map(x => x.Name));
+                })
                 .Element("class/joined-subclass/key/column").HasAttribute("name", "columnName");
         }
 
@@ -115,7 +167,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void PropertiesGetAddedToJoinedSubClassElement()
         {
             new MappingTester<SuperClass>()
-                .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.Map(x => x.Name)))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.JoinedSubClass<SubClass>("columnName", sm => sm.Map(x => x.Name));
+                })
                 .Element("class/joined-subclass/property")
                     .Exists()
                     .HasAttribute("name", "Name");
@@ -125,7 +181,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CanSpecifyJoinedSubClassTable()
         {
             new MappingTester<SuperClass>()
-               .ForMapping(m => m.JoinedSubClass<SubClass>("columnName", sm => sm.Table("TestTable")))
+               .ForMapping(m =>
+               {
+                   m.Id(x => x.Id);
+                   m.JoinedSubClass<SubClass>("columnName", sm => sm.Table("TestTable"));
+               })
                .Element("class/joined-subclass")
                    .HasAttribute("table", "TestTable");
         }
@@ -150,8 +210,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void SchemaSuported()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map =>
-                    map.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.Schema("test")))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.Schema("test"));
+                })
                 .Element("//joined-subclass").HasAttribute("schema", "test");
         }
 
@@ -159,8 +222,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void MapsComponent()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map =>
-                    map.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.Component(x => x.Component, c => { })))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.Component(x => x.Component, c => { }));
+                })
                 .Element("//joined-subclass/component").Exists();
         }
 
@@ -168,8 +234,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void MapsDynamicComponent()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map =>
-                    map.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.DynamicComponent(x => x.Dictionary, c => { })))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.DynamicComponent(x => x.Dictionary, c => { }));
+                })
                 .Element("//joined-subclass/dynamic-component").Exists();
         }
 
@@ -177,8 +246,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void MapsHasMany()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map =>
-                    map.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.HasMany(x => x.Children)))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.HasMany(x => x.Children));
+                })
                 .Element("//joined-subclass/bag").Exists();
         }
 
@@ -186,8 +258,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void MapsHasManyToMany()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map =>
-                    map.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.HasManyToMany(x => x.Children)))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.HasManyToMany(x => x.Children));
+                })
                 .Element("//joined-subclass/bag").Exists();
         }
 
@@ -195,8 +270,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void MapsHasOne()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map =>
-                    map.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.HasOne(x => x.Parent)))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.HasOne(x => x.Parent));
+                })
                 .Element("//joined-subclass/one-to-one").Exists();
         }
 
@@ -204,8 +282,11 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void MapsReferences()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map =>
-                    map.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.References(x => x.Parent)))
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.JoinedSubClass<MappedObjectSubclass>("id", sc => sc.References(x => x.Parent));
+                })
                 .Element("//joined-subclass/many-to-one").Exists();
         }
 
@@ -213,12 +294,15 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void MapsReferencesAny()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map =>
-                    map.JoinedSubClass<MappedObjectSubclass>("id", sc =>
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.JoinedSubClass<MappedObjectSubclass>("id", sc =>
                         sc.ReferencesAny(x => x.Parent)
                             .IdentityType(x => x.Id)
                             .EntityIdentifierColumn("col")
-                            .EntityTypeColumn("col")))
+                            .EntityTypeColumn("col"));
+                })
                 .Element("//joined-subclass/any").Exists();
         }
 

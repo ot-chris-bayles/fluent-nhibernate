@@ -65,7 +65,6 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             model.Conventions.Add(new IdConvention());
             model.Add(map);
             var @class = model.BuildMappings()
-                .First()
                 .Classes.First();
 
             ((IdMapping)@class.Id).Generator.Class.ShouldEqual("increment");

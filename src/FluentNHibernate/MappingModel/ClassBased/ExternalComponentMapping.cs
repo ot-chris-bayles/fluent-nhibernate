@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using FluentNHibernate.Mapping;
 
 namespace FluentNHibernate.MappingModel.ClassBased
 {
@@ -6,7 +8,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
     /// A component that is declared external to a class mapping.
     /// </summary>
     [Serializable]
-    public class ExternalComponentMapping : ComponentMapping
+    public class ExternalComponentMapping : ComponentMapping, ITopMapping
     {
         public ExternalComponentMapping(ComponentType componentType)
             : this(componentType, new AttributeStore())
@@ -15,5 +17,20 @@ namespace FluentNHibernate.MappingModel.ClassBased
         public ExternalComponentMapping(ComponentType componentType, AttributeStore underlyingStore)
             : base(componentType, underlyingStore)
         {}
+
+        public void AddTo(MappingBucket bucket)
+        {
+            bucket.Components.Add(this);
+        }
+
+        public IEnumerable<Member> GetUsedMembers()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddMappedMember(IMemberMapping mapping)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

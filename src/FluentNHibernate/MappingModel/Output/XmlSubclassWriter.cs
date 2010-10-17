@@ -80,7 +80,14 @@ namespace FluentNHibernate.MappingModel.Output
             }
         }
 
-        public override void Visit(KeyMapping keyMapping)        {            var writer = serviceLocator.GetWriter<KeyMapping>();            var keyXml = writer.Write(keyMapping);            document.ImportAndAppendChild(keyXml);        }
+        public override void Visit(KeyMapping keyMapping)
+        {
+            var writer = serviceLocator.GetWriter<KeyMapping>();
+            var keyXml = writer.Write(keyMapping);
+
+            document.ImportAndAppendChild(keyXml);
+        }
+
         public override void Visit(SubclassMapping subclassMapping)
         {
             var writer = serviceLocator.GetWriter<SubclassMapping>();

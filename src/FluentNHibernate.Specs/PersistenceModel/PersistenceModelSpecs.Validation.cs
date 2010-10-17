@@ -57,7 +57,6 @@ namespace FluentNHibernate.Specs.PersistenceModel
         {
             model = new FluentNHibernate.PersistenceModel();
             model.Add(new ClassMap<Target>());
-            model.ValidationEnabled = false;
         };
 
         Because of = () =>

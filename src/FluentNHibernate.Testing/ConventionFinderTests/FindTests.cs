@@ -1,7 +1,5 @@
 using System.Linq;
-using FluentNHibernate.Conventions.AcceptanceCriteria;
 using FluentNHibernate.Conventions.Instances;
-using FluentNHibernate.Conventions.Inspections;
 using FluentNHibernate.Conventions;
 using NUnit.Framework;
 
@@ -10,12 +8,15 @@ namespace FluentNHibernate.Testing.ConventionFinderTests
     [TestFixture]
     public class FindTests
     {
-        private DefaultConventionFinder finder;
+        ConventionFinder finder;
+        ConventionContainer container;
 
         [SetUp]
         public void CreateConventionFinder()
         {
-            finder = new DefaultConventionFinder();
+            var collection = new ConventionsCollection();
+            container = new ConventionContainer(collection);
+            finder = new ConventionFinder(collection);
         }
 
         [Test]
@@ -28,7 +29,7 @@ namespace FluentNHibernate.Testing.ConventionFinderTests
         [Test]
         public void ShouldFindTypesFromAssembly()
         {
-            finder.AddAssembly(GetType().Assembly);
+            container.AddAssembly(GetType().Assembly);
             finder.Find<IClassConvention>()
                 .ShouldContain(c => c is DummyClassConvention);
         }
@@ -36,7 +37,7 @@ namespace FluentNHibernate.Testing.ConventionFinderTests
         [Test]
         public void ShouldFindTypesThatHaveConstructorNeedingFinder()
         {
-            finder.AddAssembly(GetType().Assembly);
+            container.AddAssembly(GetType().Assembly);
             finder.Find<IClassConvention>()
                 .ShouldContain(c => c is DummyClassAssemblyConvention);
         }
@@ -44,7 +45,7 @@ namespace FluentNHibernate.Testing.ConventionFinderTests
         [Test]
         public void ShouldntFindGenericTypes()
         {
-            finder.AddAssembly(GetType().Assembly);
+            container.AddAssembly(GetType().Assembly);
             finder.Find<IClassConvention>()
                 .ShouldNotContain(c => c.GetType() == typeof(OpenGenericClassConvention<>));
         }
@@ -52,7 +53,7 @@ namespace FluentNHibernate.Testing.ConventionFinderTests
         [Test]
         public void ShouldOnlyFindExplicitAdded()
         {
-            finder.Add<DummyClassConvention>();
+            container.Add<DummyClassConvention>();
             finder.Find<IClassConvention>()
                 .ShouldHaveCount(1)
                 .ShouldContain(c => c is DummyClassConvention);
@@ -61,7 +62,7 @@ namespace FluentNHibernate.Testing.ConventionFinderTests
         [Test]
         public void ShouldOnlyAddInstanceOnceIfHasMultipleInterfaces()
         {
-            finder.Add<MultiPartConvention>();
+            container.Add<MultiPartConvention>();
             var ids = finder.Find<IIdConvention>();
             var properties = finder.Find<IPropertyConvention>();
 
@@ -74,8 +75,8 @@ namespace FluentNHibernate.Testing.ConventionFinderTests
         [Test]
         public void ShouldOnlyAddInstanceOnce()
         {
-            finder.Add<DummyClassConvention>();
-            finder.Add<DummyClassConvention>();
+            container.Add<DummyClassConvention>();
+            container.Add<DummyClassConvention>();
             var conventions = finder.Find<IClassConvention>();
 
             conventions.ShouldHaveCount(1);
@@ -84,8 +85,8 @@ namespace FluentNHibernate.Testing.ConventionFinderTests
         [Test]
         public void ShouldAllowAddingInstanceMultipleTimesIfHasMultipleAttribute()
         {
-            finder.Add<DummyClassWithMultipleAttributeConvention>();
-            finder.Add<DummyClassWithMultipleAttributeConvention>();
+            container.Add<DummyClassWithMultipleAttributeConvention>();
+            container.Add<DummyClassWithMultipleAttributeConvention>();
             var conventions = finder.Find<IClassConvention>();
 
             conventions.ShouldHaveCount(2);
@@ -94,7 +95,7 @@ namespace FluentNHibernate.Testing.ConventionFinderTests
         [Test]
         public void ShouldOnlyAddInstanceOnceIfHasMultipleInterfacesWhenAddedByAssembly()
         {
-            finder.AddAssembly(typeof(MultiPartConvention).Assembly);
+            container.AddAssembly(typeof(MultiPartConvention).Assembly);
             var ids = finder.Find<IIdConvention>().Where(c => c.GetType() == typeof(MultiPartConvention));
             var properties = finder.Find<IPropertyConvention>().Where(c => c.GetType() == typeof(MultiPartConvention));
 

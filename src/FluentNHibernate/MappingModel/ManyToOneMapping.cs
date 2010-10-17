@@ -1,13 +1,12 @@
 using System;
 using System.Linq.Expressions;
-using System.Reflection;
-using FluentNHibernate.Utils;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
     [Serializable]
-    public class ManyToOneMapping : MappingBase, IHasColumnMappings, IRelationship
+    public class ManyToOneMapping : MappingBase, IHasColumnMappings, IRelationship, IMemberMapping
     {
         private readonly AttributeStore<ManyToOneMapping> attributes;
         private readonly IDefaultableList<ColumnMapping> columns = new DefaultableList<ColumnMapping>();

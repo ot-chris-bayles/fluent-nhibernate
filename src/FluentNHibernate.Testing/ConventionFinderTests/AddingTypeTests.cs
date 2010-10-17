@@ -1,9 +1,5 @@
-using System;
 using FluentNHibernate.Conventions;
-using FluentNHibernate.Conventions.AcceptanceCriteria;
 using FluentNHibernate.Conventions.Instances;
-using FluentNHibernate.Conventions.Inspections;
-using FluentNHibernate.Mapping;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.ConventionFinderTests
@@ -11,12 +7,12 @@ namespace FluentNHibernate.Testing.ConventionFinderTests
     [TestFixture]
     public class AddingTypeTests
     {
-        private DefaultConventionFinder finder;
+        private ConventionContainer finder;
 
         [SetUp]
         public void CreateFinder()
         {
-            finder = new DefaultConventionFinder();
+            finder = new ConventionContainer(new ConventionsCollection());
         }
 
         [Test]

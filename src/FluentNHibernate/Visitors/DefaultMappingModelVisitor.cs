@@ -89,9 +89,27 @@ namespace FluentNHibernate.Visitors
 
         #endregion
 
-        public override void Visit(IEnumerable<HibernateMapping> mappings)
+        public override void Visit(MappingBucket bucket)
         {
-            mappings.Each(x => x.AcceptVisitor(this));
+            foreach (var classMapping in bucket.Classes)
+            {
+                classMapping.AcceptVisitor(this);
+            }
+
+            foreach (var subclassMapping in bucket.Subclasses)
+            {
+                subclassMapping.AcceptVisitor(this);
+            }
+
+            foreach (var filterDefinitionMapping in bucket.Filters)
+            {
+                filterDefinitionMapping.AcceptVisitor(this);
+            }
+        }
+
+        public override void Visit(HibernateMapping mapping)
+        {
+            mapping.AcceptVisitor(this);
         }
 
         public override void Visit(AnyMapping mapping)

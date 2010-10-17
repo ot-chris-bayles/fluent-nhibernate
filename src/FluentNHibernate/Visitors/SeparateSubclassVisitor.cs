@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.Utils;
 
@@ -9,41 +8,51 @@ namespace FluentNHibernate.Visitors
 {
     public class SeparateSubclassVisitor : DefaultMappingModelVisitor
     {
-        private readonly IList<IIndeterminateSubclassMappingProvider> subclassProviders;
-
-        public SeparateSubclassVisitor(IList<IIndeterminateSubclassMappingProvider> subclassProviders)
+        public override void Visit(MappingModel.MappingBucket bucket)
         {
-            this.subclassProviders = subclassProviders;
+            base.Visit(bucket);
+
+            foreach (var classMapping in bucket.Classes)
+            {
+                var subclasses = FindClosestSubclasses(classMapping.Type, bucket.Subclasses);
+
+                foreach (var subclass in subclasses)
+                    classMapping.AddSubclass(subclass);
+            }
+
+            foreach (var subclassMapping in bucket.Subclasses)
+            {
+                var subclasses = FindClosestSubclasses(subclassMapping.Type, bucket.Subclasses);
+
+                foreach (var subclass in subclasses)
+                    subclassMapping.AddSubclass(subclass);
+            }
+
+            foreach (var classMapping in bucket.Classes)
+            {
+                var subclassType = GetSubclassType(classMapping);
+
+                SetSubclassType(classMapping.Subclasses, subclassType);
+            }
         }
 
-        public override void ProcessClass(ClassMapping mapping)
+        static void SetSubclassType(IEnumerable<SubclassMapping> subclasses, SubclassType subclassType)
         {
-            var subclasses = FindClosestSubclasses(mapping.Type);
-
-            foreach (var provider in subclasses)
-                mapping.AddSubclass(provider.GetSubclassMapping(GetSubclassType(mapping)));
-
-            base.ProcessClass(mapping);
+            foreach (var subclassMapping in subclasses)
+            {
+                subclassMapping.SubclassType = subclassType;
+                SetSubclassType(subclassMapping.Subclasses, subclassType);
+            }
         }
 
-        public override void ProcessSubclass(SubclassMapping mapping)
+        private IEnumerable<SubclassMapping> FindClosestSubclasses(Type type, IEnumerable<SubclassMapping> subclassMappings)
         {
-            var subclasses = FindClosestSubclasses(mapping.Type);
-
-            foreach (var provider in subclasses)
-                mapping.AddSubclass(provider.GetSubclassMapping(mapping.SubclassType));
-
-            base.ProcessSubclass(mapping);
-        }
-
-        private IEnumerable<IIndeterminateSubclassMappingProvider> FindClosestSubclasses(Type type)
-        {
-            var extendsSubclasses = subclassProviders
+            var extendsSubclasses = subclassMappings
                 .Where(x => x.Extends == type);
-            var subclasses = SortByDistanceFrom(type, subclassProviders.Except(extendsSubclasses));
+            var subclasses = SortByDistanceFrom(type, subclassMappings.Except(extendsSubclasses));
 
             if (subclasses.Keys.Count == 0 && !extendsSubclasses.Any())
-                return new IIndeterminateSubclassMappingProvider[0];
+                return new SubclassMapping[0];
             if (subclasses.Keys.Count == 0)
                 return extendsSubclasses;
 
@@ -65,9 +74,9 @@ namespace FluentNHibernate.Visitors
             return SubclassType.Subclass;
         }
 
-        private bool IsMapped(Type type, IEnumerable<IIndeterminateSubclassMappingProvider> providers)
+        private bool IsMapped(Type type, IEnumerable<SubclassMapping> subclassMappings)
         {
-            return providers.Any(x => x.EntityType == type);
+            return subclassMappings.Any(x => x.Type == type);
         }
 
         /// <summary>
@@ -80,27 +89,27 @@ namespace FluentNHibernate.Visitors
         /// hierarchical interface inheritance.
         /// </summary>
         /// <param name="parentType">Starting point, parent type.</param>
-        /// <param name="subProviders">List of subclasses</param>
+        /// <param name="subclassMappings">List of subclasses</param>
         /// <returns>Dictionary key'd by the distance from the parentType.</returns>
-        private IDictionary<int, IList<IIndeterminateSubclassMappingProvider>> SortByDistanceFrom(Type parentType, IEnumerable<IIndeterminateSubclassMappingProvider> subProviders)
+        private IDictionary<int, IList<SubclassMapping>> SortByDistanceFrom(Type parentType, IEnumerable<SubclassMapping> subclassMappings)
         {
-            var arranged = new Dictionary<int, IList<IIndeterminateSubclassMappingProvider>>();
+            var arranged = new Dictionary<int, IList<SubclassMapping>>();
 
-            foreach (var subclassProvider in subProviders)
+            foreach (var subclass in subclassMappings)
             {
-                var subclassType = subclassProvider.EntityType;
+                var subclassType = subclass.Type;
                 var level = 0;
 
                 bool implOfParent = parentType.IsInterface
-                    ? DistanceFromParentInterface(parentType, subclassType, ref level)
-                    : DistanceFromParentBase(parentType, subclassType.BaseType, ref level);
+                    ? DistanceFromParentInterface(parentType, subclassType, subclassMappings, ref level)
+                    : DistanceFromParentBase(parentType, subclassType.BaseType, subclassMappings, ref level);
 
                 if (!implOfParent) continue;
 
                 if (!arranged.ContainsKey(level))
-                    arranged[level] = new List<IIndeterminateSubclassMappingProvider>();
+                    arranged[level] = new List<SubclassMapping>();
 
-                arranged[level].Add(subclassProvider);
+                arranged[level].Add(subclass);
             }
 
             return arranged;
@@ -114,16 +123,16 @@ namespace FluentNHibernate.Visitors
         /// <param name="evalType"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        private bool DistanceFromParentInterface(Type parentType, Type evalType, ref int level)
+        private bool DistanceFromParentInterface(Type parentType, Type evalType, IEnumerable<SubclassMapping> subclassMappings, ref int level)
         {
             if (!evalType.HasInterface(parentType)) return false;
 
             if (!(evalType == typeof(object)) &&
-                IsMapped(evalType.BaseType, subclassProviders))
+                IsMapped(evalType.BaseType, subclassMappings))
             {
                 //Walk the tree if the subclasses base class is also in the subclassProviders
                 level++;
-                DistanceFromParentInterface(parentType, evalType.BaseType, ref level);
+                DistanceFromParentInterface(parentType, evalType.BaseType, subclassMappings, ref level);
             }
 
             return true;
@@ -138,7 +147,7 @@ namespace FluentNHibernate.Visitors
         /// <param name="evalType"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        private bool DistanceFromParentBase(Type parentType, Type evalType, ref int level)
+        private bool DistanceFromParentBase(Type parentType, Type evalType, IEnumerable<SubclassMapping> subclassMappings, ref int level)
         {
             var evalImplementsParent = false;
             if (evalType == parentType)
@@ -149,9 +158,9 @@ namespace FluentNHibernate.Visitors
                 //If the eval class does not inherit the parent but it is included
                 //in the subclassprovides, then the original subclass can not inherit 
                 //directly from the parent.
-                if (IsMapped(evalType, subclassProviders))
+                if (IsMapped(evalType, subclassMappings))
                     level++;
-                evalImplementsParent = DistanceFromParentBase(parentType, evalType.BaseType, ref level);
+                evalImplementsParent = DistanceFromParentBase(parentType, evalType.BaseType, subclassMappings, ref level);
             }
 
             return evalImplementsParent;

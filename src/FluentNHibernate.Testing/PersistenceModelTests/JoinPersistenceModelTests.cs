@@ -32,8 +32,8 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
             classMap.Join("other", m => m.Map(x => x.Property));
 
             model.Add(classMap);
-            model.Configure(cfg);
-
+            
+            cfg.ConfigureWith(model);
             cfg.ClassMappings.First()
                 .JoinClosureIterator.Count().ShouldEqual(1);
         }

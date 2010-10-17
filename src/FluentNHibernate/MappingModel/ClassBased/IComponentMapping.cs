@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel.Collections;
 
 namespace FluentNHibernate.MappingModel.ClassBased
 {
-    public interface IComponentMapping : IMappingBase
+    public interface IComponentMapping : IMappingBase, IMemberMapping
     {
         bool HasColumnPrefix { get; }
         string ColumnPrefix { get; set; }
@@ -14,7 +15,6 @@ namespace FluentNHibernate.MappingModel.ClassBased
         string Access { get; set; }
         Type ContainingEntityType { get; }
         string Name { get; set; }
-        Member Member { get; }
         Type Type { get; }
         bool OptimisticLock { get; set; }
         bool Unique { get; }

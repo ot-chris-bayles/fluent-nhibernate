@@ -15,7 +15,7 @@ namespace FluentNHibernate.MappingModel.ClassBased
     public class ReferenceComponentMapping : IComponentMapping
     {
         public ComponentType ComponentType { get; set; }
-        private readonly Member property;
+        private Member property;
         private readonly Type componentType;
         private ExternalComponentMapping mergedComponent;
         private Type containingEntityType;
@@ -120,6 +120,13 @@ namespace FluentNHibernate.MappingModel.ClassBased
         public Member Member
         {
             get { return (mergedComponent == null) ? property : mergedComponent.Member; }
+            set
+            {
+                if (mergedComponent == null)
+                    property = value;
+                else
+                    mergedComponent.Member = value;
+            }
         }
 
         public ParentMapping Parent

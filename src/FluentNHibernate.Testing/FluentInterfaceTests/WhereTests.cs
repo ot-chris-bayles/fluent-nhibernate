@@ -118,7 +118,6 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             model.Add(classMap);
 
             return model.BuildMappings()
-                .First()
                 .Classes.First()
                 .Collections.First()
                 .Where;
@@ -136,7 +135,6 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             model.Add(classMap);
 
             return model.BuildMappings()
-                .First()
                 .Classes.First()
                 .Collections.First()
                 .Where;

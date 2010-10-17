@@ -8,8 +8,12 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         [Test]
         public void ShouldAddImportElementsBeforeClass()
         {
-            new MappingTester<MappedObject>()
-                .ForMapping(x => x.ImportType<SecondMappedObject>())
+            var model = new PersistenceModel();
+
+            model.Import<SecondMappedObject>();
+
+            new MappingTester<MappedObject>(model)
+                .ForMapping(m => m.Id(x => x.Id))
                 .Element("import")
                 .Exists()
                 .HasAttribute("class", typeof(SecondMappedObject).AssemblyQualifiedName);
@@ -18,16 +22,24 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         [Test]
         public void ShouldntAddImportElementsInsideClass()
         {
-            new MappingTester<MappedObject>()
-                .ForMapping(x => x.ImportType<SecondMappedObject>())
+            var model = new PersistenceModel();
+
+            model.Import<SecondMappedObject>();
+
+            new MappingTester<MappedObject>(model)
+                .ForMapping(m => m.Id(x => x.Id))
                 .Element("class/import").DoesntExist();
         }
 
         [Test]
         public void ShouldAddRenameAttributeWhenDifferentNameSpecified()
         {
-            new MappingTester<MappedObject>()
-                .ForMapping(x => x.ImportType<SecondMappedObject>().As("MappedObject"))
+            var model = new PersistenceModel();
+
+            model.Import<SecondMappedObject>().As("MappedObject");
+
+            new MappingTester<MappedObject>(model)
+                .ForMapping(m => m.Id(x => x.Id))
                 .Element("import").HasAttribute("rename", "MappedObject");
         }
     }

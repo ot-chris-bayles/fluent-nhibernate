@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Collections;
@@ -52,8 +53,8 @@ namespace FluentNHibernate.Visitors
         /// <summary>
         /// This bad boy is the entry point to the visitor
         /// </summary>
-        /// <param name="mappings"></param>
-        void Visit(IEnumerable<HibernateMapping> mappings);
+        /// <param name="bucket"></param>
+        void Visit(MappingBucket bucket);
 
         void Visit(IdMapping mapping);
         void Visit(NaturalIdMapping naturalIdMapping);
@@ -89,5 +90,6 @@ namespace FluentNHibernate.Visitors
         void Visit(FilterDefinitionMapping mapping);
         void Visit(StoredProcedureMapping mapping);
         void Visit(TuplizerMapping mapping);
+        void Visit(HibernateMapping mapping);
     }
 }

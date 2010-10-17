@@ -16,15 +16,15 @@ namespace FluentNHibernate.Testing.Automapping.Apm
                 AutoMap.Source(new StubTypeSource(new[] { typeof(Parent<>), typeof(IntChild), typeof(GuidChild) }))
                     .IgnoreBase(typeof(Parent<>));
 
-            var mappings = automapper.BuildMappings();
+            //var mappings = automapper.BuildMappings();
 
-            var intChild = mappings.SelectMany(x => x.Classes).First(x => x.Type == typeof(IntChild));
+            //var intChild = mappings.SelectMany(x => x.Classes).First(x => x.Type == typeof(IntChild));
 
-            ((IdMapping)intChild.Id).Generator.Class.ShouldEqual("identity");
+            //((IdMapping)intChild.Id).Generator.Class.ShouldEqual("identity");
 
-            var guidChild = mappings.SelectMany(x => x.Classes).First(x => x.Type == typeof(GuidChild));
+            //var guidChild = mappings.SelectMany(x => x.Classes).First(x => x.Type == typeof(GuidChild));
 
-            ((IdMapping)guidChild.Id).Generator.Class.ShouldEqual("guid.comb");
+            //((IdMapping)guidChild.Id).Generator.Class.ShouldEqual("guid.comb");
         }
     }
 

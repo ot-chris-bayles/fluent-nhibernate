@@ -10,11 +10,14 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             new MappingTester<PropertyTarget>()
                 .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
                     m.Component(x => x.Component, c =>
                     {
                         c.Map(x => x.Name);
                         c.ParentReference(x => x.MyParent);
-                    }))
+                    });
+                })
                 .Element("class/component/parent").ShouldBeInParentAtPosition(0)
                 .HasAttribute("name", "MyParent");
         }
@@ -24,11 +27,14 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             new MappingTester<PropertyTarget>()
                 .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
                     m.Component(x => x.Component, c =>
                     {
                         c.Map(x => x.Name);
                         c.ParentReference(x => x.MyParent);
-                    }))
+                    });
+                })
                 .Element("class/component").DoesntHaveAttribute("unique");
         }
 
@@ -36,13 +42,16 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void ComponentIsGeneratedWithOnlyOnePropertyReference()
         {
             //Regression test for issue 223
-             new MappingTester<PropertyTarget>()
-                .ForMapping(m =>
-                    m.Component(x => x.Component, c =>
-                    {
-                        c.Map(x => x.Name);
-                    }))
-                .Element("//class/component").HasThisManyChildNodes(1);
+            new MappingTester<PropertyTarget>()
+               .ForMapping(m =>
+               {
+                   m.Id(x => x.Id);
+                   m.Component(x => x.Component, c =>
+                   {
+                       c.Map(x => x.Name);
+                   });
+               })
+               .Element("//class/component").HasThisManyChildNodes(1);
         }
 
         [Test]
@@ -50,10 +59,13 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             new MappingTester<PropertyTarget>()
                 .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
                     m.Component(x => x.Component, c =>
                     {
                         c.Component(x => x.MyParent, c2 => { });
-                    }))
+                    });
+                })
                 .Element("class/component/component").Exists();
         }
 
@@ -62,10 +74,13 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             new MappingTester<PropertyTarget>()
                 .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
                     m.Component(x => x.Component, c =>
                     {
                         c.Insert();
-                    }))
+                    });
+                })
                 .Element("//class/component").HasAttribute("insert", "true");
         }
 
@@ -74,10 +89,13 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             new MappingTester<PropertyTarget>()
                 .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
                     m.Component(x => x.Component, c =>
                     {
                         c.Update();
-                    }))
+                    });
+                })
                 .Element("//class/component").HasAttribute("update", "true");
         }
 
@@ -86,7 +104,10 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             new MappingTester<PropertyTarget>()
                 .ForMapping(m =>
-                    m.Component(x => x.Component, c => c.Map(x => x.Name)))
+                {
+                    m.Id(x => x.Id);
+                    m.Component(x => x.Component, c => c.Map(x => x.Name));
+                })
                 .Element("class/component").HasAttribute("class", typeof(ComponentTarget).AssemblyQualifiedName);                
         }        
 

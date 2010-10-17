@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using FluentNHibernate.Automapping.TestFixtures;
+using FluentNHibernate.Data;
+using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.Mapping.Builders;
 using FluentNHibernate.Mapping.Providers;
@@ -30,13 +32,13 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             model.Add(class_map);
             
             return model.BuildMappings()
-                .SelectMany(x => x.Classes)
+                .Classes
                 .FirstOrDefault(x => x.Type == typeof(T));
         }
 
         protected ModelTester<ClassMap<T>, ClassMapping> ClassMap<T>()
         {
-            return new ModelTester<ClassMap<T>, ClassMapping>(() => new ClassMap<T>(), x => ((IMappingProvider)x).GetClassMapping());
+            return new ModelTester<ClassMap<T>, ClassMapping>(() => new ClassMap<T>(), x => x.GetClassMapping());
         }
 
         protected ModelTester<DiscriminatorPart, DiscriminatorMapping> DiscriminatorMap<T>()
@@ -52,9 +54,13 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             return new ModelTester<SubClassPart<T>, SubclassMapping>(() => new SubClassPart<T>(null, null), x => ((ISubclassMappingProvider)x).GetSubclassMapping());
         }
 
-        protected ModelTester<SubclassMap<T>, SubclassMapping> SubclassMapForSubclass<T>()
+        protected ModelTester<SubclassMap<T>, SubclassMapping> SubclassMapForSubclass<T>() where T : FluentNHibernate.Data.Entity
         {
-            return new ModelTester<SubclassMap<T>, SubclassMapping>(() => new SubclassMap<T>(), x => ((IIndeterminateSubclassMappingProvider)x).GetSubclassMapping(SubclassType.Subclass));
+            var parentMap = new ClassMap<Entity>();
+
+            parentMap.Id(x => x.Id);
+
+            return new ModelTester<SubclassMap<T>, SubclassMapping>(() => new SubclassMap<T>(), x => x.GetSubclassMapping(SubclassType.Subclass, parentMap));
         }
 
         protected ModelTester<JoinedSubClassPart<T>, SubclassMapping> JoinedSubclass<T>()
@@ -62,9 +68,13 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             return new ModelTester<JoinedSubClassPart<T>, SubclassMapping>(() => new JoinedSubClassPart<T>(), x => ((ISubclassMappingProvider)x).GetSubclassMapping());
         }
 
-        protected ModelTester<SubclassMap<T>, SubclassMapping> SubclassMapForJoinedSubclass<T>()
+        protected ModelTester<SubclassMap<T>, SubclassMapping> SubclassMapForJoinedSubclass<T>() where T : FluentNHibernate.Data.Entity
         {
-            return new ModelTester<SubclassMap<T>, SubclassMapping>(() => new SubclassMap<T>(), x => ((IIndeterminateSubclassMappingProvider)x).GetSubclassMapping(SubclassType.JoinedSubclass));
+            var parentMap = new ClassMap<Entity>();
+
+            parentMap.Id(x => x.Id);
+
+            return new ModelTester<SubclassMap<T>, SubclassMapping>(() => new SubclassMap<T>(), x => x.GetSubclassMapping(SubclassType.JoinedSubclass, parentMap));
         }
 
         protected ModelTester<ComponentPart<T>, ComponentMapping> Component<T>()
@@ -131,11 +141,6 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             return new ModelTester<JoinPart<T>, JoinMapping>(() => new JoinPart<T>(table), x => ((IJoinMappingProvider)x).GetJoinMapping());
         }
 
-        protected ModelTester<HibernateMappingPart, HibernateMapping> HibernateMapping()
-        {
-            return new ModelTester<HibernateMappingPart, HibernateMapping>(() => new HibernateMappingPart(), x => ((IHibernateMappingProvider)x).GetHibernateMapping());
-        }
-
         protected ModelTester<CompositeElementBuilder<T>, CompositeElementMapping> CompositeElement<T>()
         {
             var mapping = new CompositeElementMapping();
@@ -151,5 +156,10 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         {
             return new ModelTester<NaturalIdPart<T>, NaturalIdMapping>(() => new NaturalIdPart<T>(), x => ((INaturalIdMappingProvider)x).GetNaturalIdMapping());
         }
+    }
+
+    public class Parent
+    {
+        public virtual int Id { get; set; }
     }
 }

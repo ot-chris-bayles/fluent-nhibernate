@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using FluentNHibernate.Conventions;
 using FluentNHibernate.Conventions.Instances;
+using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
@@ -688,27 +689,28 @@ namespace FluentNHibernate.Testing.ConventionsTests
 
         #endregion
 
-        private ClassMapping TestConvention<T>(T convention, Func<IMappingProvider> getMapping) where T : IConvention
+        private ClassMapping TestConvention<T>(T convention, Func<IProvider> getMapping) where T : IConvention
         {
             var model = new PersistenceModel();
 
             model.Conventions.Add(convention);
             model.Add(getMapping());
 
-            return model.BuildMappings()
-                .First()
+            IPersistenceModel pm = model;
+
+            return pm.GetInstructions()
+                .BuildMappings()
                 .Classes.First();
         }
 
-        private HibernateMapping TestConvention(HibernateMappingConvention convention, Func<IMappingProvider> getMapping)
+        private HibernateMapping TestConvention(HibernateMappingConvention convention, Func<IProvider> getMapping)
         {
             var model = new PersistenceModel();
 
             model.Conventions.Add(convention);
             model.Add(getMapping());
 
-            return model.BuildMappings()
-                .First();
+            return model.BuildMappings();
         }
 
         private class Target

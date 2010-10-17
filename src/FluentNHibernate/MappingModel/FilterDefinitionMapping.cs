@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.Visitors;
 using NHibernate.Type;
 
 namespace FluentNHibernate.MappingModel
 {
     [Serializable]
-    public class FilterDefinitionMapping : MappingBase
+    public class FilterDefinitionMapping : MappingBase, ITopMapping
     {
         private readonly AttributeStore<FilterMapping> attributes;
         private readonly IDictionary<string, IType> parameters;
@@ -70,6 +71,26 @@ namespace FluentNHibernate.MappingModel
             {
                 return ((attributes != null ? attributes.GetHashCode() : 0) * 397) ^ (parameters != null ? parameters.GetHashCode() : 0);
             }
+        }
+
+        public void AddTo(MappingBucket bucket)
+        {
+            bucket.Filters.Add(this);
+        }
+
+        public IEnumerable<Member> GetUsedMembers()
+        {
+            yield break;
+        }
+
+        public Type Type
+        {
+            get { throw new NotSupportedException(); }
+        }
+
+        public void AddMappedMember(IMemberMapping mapping)
+        {
+            throw new NotSupportedException();
         }
     }
 }

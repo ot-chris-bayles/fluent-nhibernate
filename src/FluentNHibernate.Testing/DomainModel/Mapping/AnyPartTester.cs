@@ -11,10 +11,14 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CanCreateAnyReference()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map => map.ReferencesAny(x => x.Parent)
-                                      .EntityIdentifierColumn("AnyId")
-                                      .EntityTypeColumn("AnyType")
-                                      .IdentityType(x => x.Id))
+                .ForMapping(map =>
+                {
+                    map.Id(x => x.Id);
+                    map.ReferencesAny(x => x.Parent)
+                        .EntityIdentifierColumn("AnyId")
+                        .EntityTypeColumn("AnyType")
+                        .IdentityType(x => x.Id);
+                })
                 .Element("class/any")
                 .HasAttribute("name", "Parent");
         }
@@ -23,10 +27,14 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void ShouldDefaultToEmptyCascade()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map => map.ReferencesAny(x => x.Parent)
-                                       .EntityIdentifierColumn("AnyId")
-                                       .EntityTypeColumn("AnyType")
-                                       .IdentityType(x => x.Id))
+                .ForMapping(map =>
+                {
+                    map.Id(x => x.Id);
+                    map.ReferencesAny(x => x.Parent)
+                        .EntityIdentifierColumn("AnyId")
+                        .EntityTypeColumn("AnyType")
+                        .IdentityType(x => x.Id);
+                })
                 .Element("class/any")
                 .DoesntHaveAttribute("cascade");
         }
@@ -35,11 +43,15 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CascadeCanBeSet()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map => map.ReferencesAny(x => x.Parent)
-                                       .EntityIdentifierColumn("AnyId")
-                                       .EntityTypeColumn("AnyType")
-                                       .IdentityType(x => x.Id)
-                                       .Cascade.SaveUpdate())
+                .ForMapping(map =>
+                {
+                    map.Id(x => x.Id);
+                    map.ReferencesAny(x => x.Parent)
+                        .EntityIdentifierColumn("AnyId")
+                        .EntityTypeColumn("AnyType")
+                        .IdentityType(x => x.Id)
+                        .Cascade.SaveUpdate();
+                })
                 .Element("class/any")
                 .HasAttribute("cascade", "save-update");
         }
@@ -48,10 +60,14 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void IdTypeCanBeSet()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map => map.ReferencesAny(x => x.Parent)
-                                       .EntityIdentifierColumn("AnyId")
-                                       .EntityTypeColumn("AnyType")
-                                       .IdentityType(x => x.Id))
+                .ForMapping(map =>
+                {
+                    map.Id(x => x.Id);
+                    map.ReferencesAny(x => x.Parent)
+                        .EntityIdentifierColumn("AnyId")
+                        .EntityTypeColumn("AnyType")
+                        .IdentityType(x => x.Id);
+                })
                 .Element("class/any")
                 .HasAttribute("id-type", typeof(Int64).AssemblyQualifiedName);
         }
@@ -60,10 +76,14 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void MetaTypeIsSetByPropertyMap()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map => map.ReferencesAny(x => x.Parent)
-                                       .EntityIdentifierColumn("AnyId")
-                                       .EntityTypeColumn("AnyType")
-                                       .IdentityType(x => x.Id))
+                .ForMapping(map =>
+                {
+                    map.Id(x => x.Id);
+                    map.ReferencesAny(x => x.Parent)
+                        .EntityIdentifierColumn("AnyId")
+                        .EntityTypeColumn("AnyType")
+                        .IdentityType(x => x.Id);
+                })
                 .Element("class/any")
                 .HasAttribute("meta-type", typeof(SecondMappedObject).AssemblyQualifiedName);
         }
@@ -72,11 +92,15 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void MetaTypeIsSetToStringWhenMetaValuesSet()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map => map.ReferencesAny(x => x.Parent)
-                                       .EntityIdentifierColumn("AnyId")
-                                       .EntityTypeColumn("AnyType")
-                                       .IdentityType(x => x.Id)
-                                       .AddMetaValue<SecondMappedObject>("SMO"))
+                .ForMapping(map =>
+                {
+                    map.Id(x => x.Id);
+                    map.ReferencesAny(x => x.Parent)
+                        .EntityIdentifierColumn("AnyId")
+                        .EntityTypeColumn("AnyType")
+                        .IdentityType(x => x.Id)
+                        .AddMetaValue<SecondMappedObject>("SMO");
+                })
                 .Element("class/any")
                 .HasAttribute("meta-type", typeof(string).AssemblyQualifiedName);
         }
@@ -85,11 +109,15 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void MetaValueCanBeSet()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map => map.ReferencesAny(x => x.Parent)
-                                       .EntityIdentifierColumn("AnyId")
-                                       .EntityTypeColumn("AnyType")
-                                       .IdentityType(x => x.Id)
-                                       .AddMetaValue<SecondMappedObject>("SMO"))
+                .ForMapping(map =>
+                {
+                    map.Id(x => x.Id);
+                    map.ReferencesAny(x => x.Parent)
+                        .EntityIdentifierColumn("AnyId")
+                        .EntityTypeColumn("AnyType")
+                        .IdentityType(x => x.Id)
+                        .AddMetaValue<SecondMappedObject>("SMO");
+                })
                 .Element("class/any/meta-value")
                 .Exists();
         }
@@ -99,10 +127,14 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void WriteThrowsIfEntityIdColumnIsNotSet()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map => map.ReferencesAny(x => x.Parent)
-                                       .EntityTypeColumn("AnyType")
-                                       .IdentityType(x => x.Id)
-                                       .AddMetaValue<SecondMappedObject>("SMO"));
+                .ForMapping(map =>
+                {
+                    map.Id(x => x.Id);
+                    map.ReferencesAny(x => x.Parent)
+                        .EntityTypeColumn("AnyType")
+                        .IdentityType(x => x.Id)
+                        .AddMetaValue<SecondMappedObject>("SMO");
+                });
         }
 
         [Test]
@@ -110,10 +142,14 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void WriteThrowsIfEntityTypeColumnIsNotSet()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map => map.ReferencesAny(x => x.Parent)
-                                       .EntityIdentifierColumn("AnyId")
-                                       .IdentityType(x => x.Id)
-                                       .AddMetaValue<SecondMappedObject>("SMO"));
+                .ForMapping(map =>
+                {
+                    map.Id(x => x.Id);
+                    map.ReferencesAny(x => x.Parent)
+                        .EntityIdentifierColumn("AnyId")
+                        .IdentityType(x => x.Id)
+                        .AddMetaValue<SecondMappedObject>("SMO");
+                });
 
         }
 
@@ -121,10 +157,14 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void EntityTypeColumnWritesBeforeEntityIdColumn()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map => map.ReferencesAny(x => x.Parent)
-                                       .EntityIdentifierColumn("AnyId")
-                                       .EntityTypeColumn("AnyType")
-                                       .IdentityType(x => x.Id))
+                .ForMapping(map =>
+                {
+                    map.Id(x => x.Id);
+                    map.ReferencesAny(x => x.Parent)
+                        .EntityIdentifierColumn("AnyId")
+                        .EntityTypeColumn("AnyType")
+                        .IdentityType(x => x.Id);
+                })
                 .Element("class/any/column")
                 .HasAttribute("name", "AnyType")
                 .ShouldBeInParentAtPosition(0);
@@ -134,11 +174,15 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void MetaValueWritesBeforeEntityTypeColumn()
         {
             new MappingTester<MappedObject>()
-                .ForMapping(map => map.ReferencesAny(x => x.Parent)
-                                       .EntityIdentifierColumn("AnyId")
-                                       .EntityTypeColumn("AnyType")
-                                       .IdentityType(x => x.Id)
-                                       .AddMetaValue<SecondMappedObject>("SMO"))
+                .ForMapping(map =>
+                {
+                    map.Id(x => x.Id);
+                    map.ReferencesAny(x => x.Parent)
+                        .EntityIdentifierColumn("AnyId")
+                        .EntityTypeColumn("AnyType")
+                        .IdentityType(x => x.Id)
+                        .AddMetaValue<SecondMappedObject>("SMO");
+                })
                 .Element("class/any/meta-value")
                 .ShouldBeInParentAtPosition(0);
         }
@@ -147,11 +191,15 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void MetaValuesHaveCorrectValueMappedToClass()
         {
             new MappingTester<MappedObject>()
-                 .ForMapping(map => map.ReferencesAny(x => x.Parent)
-                                        .EntityIdentifierColumn("AnyId")
-                                        .EntityTypeColumn("AnyType")
-                                        .IdentityType(x => x.Id)
-                                        .AddMetaValue<SecondMappedObject>("SMO"))
+                 .ForMapping(map =>
+                 {
+                     map.Id(x => x.Id);
+                     map.ReferencesAny(x => x.Parent)
+                         .EntityIdentifierColumn("AnyId")
+                         .EntityTypeColumn("AnyType")
+                         .IdentityType(x => x.Id)
+                         .AddMetaValue<SecondMappedObject>("SMO");
+                 })
                  .Element("class/any/meta-value")
                  .HasAttribute("value", "SMO")
                  .HasAttribute("class", typeof(SecondMappedObject).AssemblyQualifiedName);

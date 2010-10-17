@@ -14,7 +14,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void BatchSizeSetsPropertyToValue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.BatchSize(10))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.BatchSize(10);
+                })
                 .ModelShouldMatch(x => x.BatchSize.ShouldEqual(10));
         }
 
@@ -22,7 +26,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void CheckSetsPropertyToValue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.CheckConstraint("constraint"))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.CheckConstraint("constraint");
+                })
                 .ModelShouldMatch(x => x.Check.ShouldEqual("constraint"));
         }
 
@@ -30,7 +38,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void OptimisticLockSetsPropertyToValue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.OptimisticLock.All())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.OptimisticLock.All();
+                })
                 .ModelShouldMatch(x => x.OptimisticLock.ShouldEqual("all"));
         }
 
@@ -38,7 +50,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void PersisterSetsPropertyToValue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.Persister<CustomPersister>())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.Persister<CustomPersister>();
+                })
                 .ModelShouldMatch(x => x.Persister.ShouldEqual(typeof(CustomPersister).AssemblyQualifiedName));
         }
 
@@ -46,7 +62,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void PolymorphismSetsPropertyToValue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.Polymorphism.Implicit())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.Polymorphism.Implicit();
+                })
                 .ModelShouldMatch(x => x.Polymorphism.ShouldEqual("implicit"));
         }
 
@@ -54,7 +74,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void ProxySetsPropertyToValue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.Proxy<FakeProxy>())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.Proxy<FakeProxy>();
+                })
                 .ModelShouldMatch(x => x.Proxy.ShouldEqual(typeof(FakeProxy).AssemblyQualifiedName));
         }
 
@@ -62,7 +86,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void SelectBeforeUpdateSetsPropertyToValue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.SelectBeforeUpdate())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.SelectBeforeUpdate();
+                })
                 .ModelShouldMatch(x => x.SelectBeforeUpdate.ShouldBeTrue());
         }
 
@@ -70,7 +98,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void LazyLoadSetsModelPropertyToTrue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.LazyLoad())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.LazyLoad();
+                })
                 .ModelShouldMatch(x => x.Lazy.ShouldEqual(true));
         }
 
@@ -78,7 +110,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void NotLazyLoadSetsModelPropertyToFalse()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.Not.LazyLoad())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.Not.LazyLoad();
+                })
                 .ModelShouldMatch(x => x.Lazy.ShouldEqual(false));
         }
 
@@ -86,7 +122,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void WithTableShouldSetModelPropertyToValue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.Table("table"))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.Table("table");
+                })
                 .ModelShouldMatch(x => x.TableName.ShouldEqual("table"));
         }
 
@@ -94,7 +134,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void DynamicInsertShouldSetModelPropertyToTrue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.DynamicInsert())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.DynamicInsert();
+                })
                 .ModelShouldMatch(x => x.DynamicInsert.ShouldBeTrue());
         }
 
@@ -102,7 +146,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void NotDynamicInsertShouldSetModelPropertyToFalse()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.Not.DynamicInsert())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.Not.DynamicInsert();
+                })
                 .ModelShouldMatch(x => x.DynamicInsert.ShouldBeFalse());
         }
 
@@ -110,7 +158,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void DynamicUpdateShouldSetModelPropertyToTrue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.DynamicUpdate())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.DynamicUpdate();
+                })
                 .ModelShouldMatch(x => x.DynamicUpdate.ShouldBeTrue());
         }
 
@@ -118,7 +170,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void NotDynamicUpdateShouldSetModelPropertyToFalse()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.Not.DynamicUpdate())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.Not.DynamicUpdate();
+                })
                 .ModelShouldMatch(x => x.DynamicUpdate.ShouldBeFalse());
         }
 
@@ -126,7 +182,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void ReadOnlyShouldSetModelMutablePropertyToFalse()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.ReadOnly())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.ReadOnly();
+                })
                 .ModelShouldMatch(x => x.Mutable.ShouldBeFalse());
         }
 
@@ -134,7 +194,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void NotReadOnlyShouldSetModelMutablePropertyToTrue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.Not.ReadOnly())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.Not.ReadOnly();
+                })
                 .ModelShouldMatch(x => x.Mutable.ShouldBeTrue());
         }
 
@@ -142,7 +206,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void SchemaIsShouldSetModelPropertyToValue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.Schema("schema"))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.Schema("schema");
+                })
                 .ModelShouldMatch(x => x.Schema.ShouldEqual("schema"));
         }
 
@@ -150,7 +218,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void SubselectShouldSetModelPropertyToValue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.Subselect("sql query"))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.Subselect("sql query");
+                })
                 .ModelShouldMatch(x => x.Subselect.ShouldEqual("sql query"));
         }
 
@@ -158,7 +230,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void SchemaActionShouldSetModelPropertyToValue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.SchemaAction.None())
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.SchemaAction.None();
+                })
                 .ModelShouldMatch(x => x.SchemaAction.ShouldEqual("none"));
         }
 
@@ -166,7 +242,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void EntityNameShouldSetModelPropertyToValue()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(x => x.EntityName("entity1"))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.EntityName("entity1");
+                })
                 .ModelShouldMatch(x => x.EntityName.ShouldEqual("entity1"));
         }
 

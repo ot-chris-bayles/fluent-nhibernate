@@ -1,4 +1,5 @@
-using FluentNHibernate.Mapping;
+using FluentNHibernate.Conventions.Helpers;
+using FluentNHibernate.Conventions.Inspections;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing.DomainModel.Mapping
@@ -10,7 +11,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsProperty_SetsAccessStrategyToProperty()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.Property())
+                .Conventions(c => c.Add(DefaultAccess.Property()))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "property");
         }
 
@@ -18,7 +20,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsField_SetsAccessStrategyToField()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.Field())
+                .Conventions(c => c.Add(DefaultAccess.Field()))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "field");
         }
 
@@ -26,7 +29,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsCamelCaseField_SetsAccessStrategyToField_and_SetsNamingStrategyToCamelCase()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.CamelCaseField())
+                .Conventions(c => c.Add(DefaultAccess.CamelCaseField()))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "field.camelcase");
         }
 
@@ -34,7 +38,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsCamelCaseFieldWithUnderscorePrefix_SetsAccessStrategyToField_and_SetsNamingStrategyToCamelCaseUnderscore()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.CamelCaseField(Prefix.Underscore))
+                .Conventions(c => c.Add(DefaultAccess.CamelCaseField(CamelCasePrefix.Underscore)))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "field.camelcase-underscore");
         }
 
@@ -42,7 +47,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsLowerCaseField_SetsAccessStrategyToField_and_SetsNamingStrategyToLowerCase()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.LowerCaseField())
+                .Conventions(c => c.Add(DefaultAccess.LowerCaseField()))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "field.lowercase");
         }
 
@@ -50,7 +56,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsLowerCaseFieldWithUnderscorePrefix_SetsAccessStrategyToField_and_SetsNamingStrategyToLowerCaseUnderscore()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.LowerCaseField(Prefix.Underscore))
+                .Conventions(c => c.Add(DefaultAccess.LowerCaseField(LowerCasePrefix.Underscore)))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "field.lowercase-underscore");
         }
 
@@ -58,7 +65,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsPascalCaseFieldWithUnderscorePrefix_SetsAccessStrategyToField_and_SetsNamingStrategyToPascalCaseUnderscore()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.PascalCaseField(Prefix.Underscore))
+                .Conventions(c => c.Add(DefaultAccess.PascalCaseField(PascalCasePrefix.Underscore)))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "field.pascalcase-underscore");
         }
 
@@ -66,7 +74,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsPascalCaseFieldWithMPrefix_SetsAccessStrategyToField_and_SetsNamingStrategyToLowerCaseM()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.PascalCaseField(Prefix.m))
+                .Conventions(c => c.Add(DefaultAccess.PascalCaseField(PascalCasePrefix.M)))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "field.pascalcase-m");
         }
 
@@ -74,7 +83,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsPascalCaseFieldWithMUnderscorePrefix_SetsAccessStrategyToField_and_SetsNamingStrategyToLowerCaseMUnderscore()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.PascalCaseField(Prefix.mUnderscore))
+                .Conventions(c => c.Add(DefaultAccess.PascalCaseField(PascalCasePrefix.MUnderscore)))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "field.pascalcase-m-underscore");
         }
 
@@ -82,7 +92,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsReadOnlyPropertyThroughCamelCaseField_SetsAccessStrategyToNoSetter_and_SetsNamingStrategyToCamelCase()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.ReadOnlyPropertyThroughCamelCaseField())
+                .Conventions(c => c.Add(DefaultAccess.ReadOnlyPropertyThroughCamelCaseField()))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "nosetter.camelcase");
         }
 
@@ -90,7 +101,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsReadOnlyPropertyThroughCamelCaseFieldWithUnderscorePrefix_SetsAccessStrategyToNoSetter_and_SetsNamingStrategyToCamelCaseUnderscore()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.ReadOnlyPropertyThroughCamelCaseField(Prefix.Underscore))
+                .Conventions(c => c.Add(DefaultAccess.ReadOnlyPropertyThroughCamelCaseField(CamelCasePrefix.Underscore)))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "nosetter.camelcase-underscore");
         }
 
@@ -98,7 +110,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsReadOnlyPropertyThroughLowerCaseField_SetsAccessStrategyToNoSetter_and_SetsNamingStrategyToLowerCase()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.ReadOnlyPropertyThroughLowerCaseField())
+                .Conventions(c => c.Add(DefaultAccess.ReadOnlyPropertyThroughLowerCaseField()))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "nosetter.lowercase");
         }
 
@@ -106,7 +119,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsReadOnlyPropertyThroughLowerCaseFieldWithUnderscorePrefix_SetsAccessStrategyToNoSetter_and_SetsNamingStrategyToLowerCaseUnderscore()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.ReadOnlyPropertyThroughLowerCaseField(Prefix.Underscore))
+                .Conventions(c => c.Add(DefaultAccess.ReadOnlyPropertyThroughLowerCaseField(LowerCasePrefix.Underscore)))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "nosetter.lowercase-underscore");
         }
 
@@ -114,7 +128,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsReadOnlyPropertyThroughPascalCaseFieldWithUnderscorePrefix_SetsAccessStrategyToNoSetter_and_SetsNamingStrategyToPascalCaseUnderscore()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.ReadOnlyPropertyThroughPascalCaseField(Prefix.Underscore))
+                .Conventions(c => c.Add(DefaultAccess.ReadOnlyPropertyThroughPascalCaseField(PascalCasePrefix.Underscore)))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "nosetter.pascalcase-underscore");
         }
 
@@ -122,7 +137,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsReadOnlyPropertyThroughPascalCaseFieldWithMPrefix_SetsAccessStrategyToNoSetter_and_SetsNamingStrategyToPascalCaseM()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.ReadOnlyPropertyThroughPascalCaseField(Prefix.m))
+                .Conventions(c => c.Add(DefaultAccess.ReadOnlyPropertyThroughPascalCaseField(PascalCasePrefix.M)))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "nosetter.pascalcase-m");
         }
 
@@ -130,7 +146,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsReadOnlyPropertyThroughPascalCaseFieldWithMUnderscorePrefix_SetsAccessStrategyToNoSetter_and_SetsNamingStrategyToPascalCaseMUnderscore()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.ReadOnlyPropertyThroughPascalCaseField(Prefix.mUnderscore))
+                .Conventions(c => c.Add(DefaultAccess.ReadOnlyPropertyThroughPascalCaseField(PascalCasePrefix.MUnderscore)))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", "nosetter.pascalcase-m-underscore");
         }
 
@@ -138,17 +155,19 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void AccessAsReadOnlySetsAccessStrategyToReadOnly()
         {
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.ReadOnly())
-                .RootElement.HasAttribute("default-access", "readonly");
+                .Conventions(c => c.Add(DefaultAccess.ReadOnlyProperty()))
+                .ForMapping(c => c.Id(x => x.Id))
+                .RootElement.HasAttribute("default-access", "nosetter");
         }
 
         [Test]
         public void AccessUsingClassName_SetsAccessAttributeToClassName()
         {
-            string className = typeof(FakePropertyAccessor).AssemblyQualifiedName;
+            var className = typeof(FakePropertyAccessor).AssemblyQualifiedName;
 
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.Using(className))
+                .Conventions(c => c.Add(DefaultAccess.Using(className)))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", className);
         }
 
@@ -158,7 +177,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
             var className = typeof(FakePropertyAccessor).AssemblyQualifiedName;
 
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.Using(typeof(FakePropertyAccessor)))
+                .Conventions(c => c.Add(DefaultAccess.Using(typeof(FakePropertyAccessor))))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", className);
         }
 
@@ -168,7 +188,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
             var className = typeof(FakePropertyAccessor).AssemblyQualifiedName;
 
             new MappingTester<PropertyTarget>()
-                .ForMapping(c => c.HibernateMapping.DefaultAccess.Using<FakePropertyAccessor>())
+                .Conventions(c => c.Add(DefaultAccess.Using<FakePropertyAccessor>()))
+                .ForMapping(c => c.Id(x => x.Id))
                 .RootElement.HasAttribute("default-access", className);
         }
     }

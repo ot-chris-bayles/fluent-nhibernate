@@ -11,12 +11,15 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             new MappingTester<PropertyTarget>()
                 .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
                     m.HasMany(x => x.Components)
                         .Component(c =>
                         {
                             c.Map(x => x.Name);
                             c.ParentReference(x => x.MyParent);
-                        }))
+                        });
+                })
                 .Element("class/bag/composite-element/parent").Exists()
                 .HasAttribute("name", "MyParent");
         }
@@ -25,21 +28,24 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public void CanCreateNestedCompositeElement()
         {
             new MappingTester<TopLevel>()
-                .ForMapping(
-                    a => a.HasMany(x => x.Items)
+                .ForMapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.HasMany(x => x.Items)
                         .AsList()
                         .Component(item =>
                         {
                             item.Component(i => i.Target, n => n.Map(z => z.Name));
                             item.Map(x => x.SomeString);
-                        })                        
-                )                
+                        });
+                })
                 .Element("class/list/composite-element/nested-composite-element").Exists()
                 .HasAttribute("name", "Target");
         }
 
         private class TopLevel
         {
+            public int Id { get; set; }
             public IList<Item> Items { get; set; }
         }
 

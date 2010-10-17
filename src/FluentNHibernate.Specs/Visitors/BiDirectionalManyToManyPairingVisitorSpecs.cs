@@ -251,7 +251,7 @@ namespace FluentNHibernate.Specs.Visitors
         protected static void visit(params ICollectionMapping[] mappings)
         {
             mappings.Each(visitor.Visit);
-            visitor.Visit(new HibernateMapping[0]); // simulate end of visit
+            visitor.Visit(new MappingBucket()); // simulate end of visit
         }
     }
 

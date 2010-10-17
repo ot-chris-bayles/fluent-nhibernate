@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping.Builders;
 using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
@@ -28,8 +29,6 @@ namespace FluentNHibernate.Mapping
     {
         readonly AttributeStore<SubclassMapping> attributes = new AttributeStore<SubclassMapping>();
 
-        // this is a bit weird, but we need a way of delaying the generation of the subclass mappings until we know
-        // what the parent subclass type is...
         readonly IDictionary<Type, IIndeterminateSubclassMappingProvider> indetermineateSubclasses = new Dictionary<Type, IIndeterminateSubclassMappingProvider>();
         bool nextBool = true;
         IList<JoinMapping> joins = new List<JoinMapping>();
@@ -281,11 +280,9 @@ namespace FluentNHibernate.Mapping
             attributes.Set(x => x.Extends, type);
         }
 
-        SubclassMapping IIndeterminateSubclassMappingProvider.GetSubclassMapping(SubclassType type)
+        SubclassMapping IIndeterminateSubclassMappingProvider.GetMapping()
         {
-            var mapping = new SubclassMapping(type);
-
-            GenerateNestedSubclasses(mapping);
+            var mapping = new SubclassMapping(SubclassType.Subclass);
 
             attributes.SetDefault(x => x.Type, typeof(T));
             attributes.SetDefault(x => x.Name, typeof(T).AssemblyQualifiedName);
@@ -300,6 +297,9 @@ namespace FluentNHibernate.Mapping
 
             // TODO: this is nasty, we should find a better way
             mapping.OverrideAttributes(attributes.CloneInner());
+
+            foreach (var subclass in indetermineateSubclasses.Values)
+                mapping.AddSubclass(subclass.GetMapping());
 
             foreach (var join in joins)
                 mapping.AddJoin(join);
@@ -325,19 +325,16 @@ namespace FluentNHibernate.Mapping
             return mapping.DeepClone();
         }
 
+        IMappingAction IProvider.GetAction()
+        {
+            var mapping = ((IIndeterminateSubclassMappingProvider)this).GetMapping();
+
+            return new ManualAction(mapping);
+        }
+
         Type IIndeterminateSubclassMappingProvider.Extends
         {
             get { return attributes.Get(x => x.Extends); }
-        }
-
-        void GenerateNestedSubclasses(SubclassMapping mapping)
-        {
-            foreach (var subclassType in indetermineateSubclasses.Keys)
-            {
-                var subclassMapping = indetermineateSubclasses[subclassType].GetSubclassMapping(mapping.SubclassType);
-
-                mapping.AddSubclass(subclassMapping);
-            }
         }
 
         string GetDefaultTableName()

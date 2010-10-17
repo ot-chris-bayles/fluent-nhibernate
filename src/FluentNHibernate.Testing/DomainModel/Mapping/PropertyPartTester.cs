@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using FluentNHibernate.Data;
 using FluentNHibernate.Mapping;
 using NHibernate.Properties;
 using NHibernate.SqlTypes;
@@ -560,9 +561,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         #endregion
     }
 
-    public class PropertyTarget
+    public class PropertyTarget : Entity
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public PropertyReferenceTarget Reference { get; set; }
         public IList<PropertyReferenceTarget> References { get; set; }

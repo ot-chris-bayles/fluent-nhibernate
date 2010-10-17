@@ -14,7 +14,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void MapShouldAddFilterMappingToClassMapping()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(m => m.ApplyFilter<TestFilter>("Name = :name"))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.ApplyFilter<TestFilter>("Name = :name");
+                })
                 .ModelShouldMatch(CheckFirstFilterWithCondition);
         }
 
@@ -34,7 +38,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void MapShouldAddFilterMappingWithoutConditionToClassMapping()
         {
             ClassMap<PropertyTarget>()
-               .Mapping(m => m.ApplyFilter<TestFilter>())
+               .Mapping(m =>
+               {
+                   m.Id(x => x.Id);
+                   m.ApplyFilter<TestFilter>();
+               })
                .ModelShouldMatch(CheckFirstFilterWithoutCondition);
         }
     }

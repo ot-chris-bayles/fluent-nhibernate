@@ -24,9 +24,9 @@ namespace FluentNHibernate.Testing.ConventionsTests
             classMap.Id(x => x.Id);
             model.Add(classMap);
             model.Conventions.Add(DefaultAccess.Field());
-            model.BuildMappings()
-                .First()
-                .DefaultAccess.ShouldEqual("field");
+            //model.BuildMappings()
+            //    .First()
+            //    .DefaultAccess.ShouldEqual("field");
         }
 
         private class Target

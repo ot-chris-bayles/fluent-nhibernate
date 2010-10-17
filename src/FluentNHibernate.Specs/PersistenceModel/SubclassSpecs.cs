@@ -49,7 +49,7 @@ namespace FluentNHibernate.Specs.PersistenceModel
 
         Because of = () =>
             mappings = model.BuildMappings()
-                .SelectMany(x => x.Classes);
+                .Classes;
 
         It should_only_use_one_column_in_the_target_entity_s_key = () =>
             mappings.Single(x => x.Type == typeof(Product))

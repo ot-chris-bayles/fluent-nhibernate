@@ -1,8 +1,5 @@
 using System.Linq;
-using FluentNHibernate.Mapping;
-using FluentNHibernate.Mapping.Providers;
 using FluentNHibernate.MappingModel;
-using FluentNHibernate.MappingModel.ClassBased;
 using FluentNHibernate.MappingModel.Identity;
 using FluentNHibernate.Testing.DomainModel.Mapping;
 using NUnit.Framework;
@@ -17,7 +14,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void HasManyShouldAddToCollectionsCollectionOnModel()
         {
             ClassMap<OneToManyTarget>()
-                .Mapping(m => m.HasMany(x => x.BagOfChildren))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.HasMany(x => x.BagOfChildren);
+                })
                 .ModelShouldMatch(x => x.Collections.Count().ShouldEqual(1));
         }
 
@@ -25,7 +26,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void HasManyToManyShouldAddToCollectionsCollectionOnModel()
         {
             ClassMap<OneToManyTarget>()
-                .Mapping(m => m.HasManyToMany(x => x.BagOfChildren))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.HasManyToMany(x => x.BagOfChildren);
+                })
                 .ModelShouldMatch(x => x.Collections.Count().ShouldEqual(1));
         }
 
@@ -33,7 +38,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void ReferencesShouldAddToReferencesCollectionOnModel()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(m => m.References(x => x.Reference))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.References(x => x.Reference);
+                })
                 .ModelShouldMatch(x => x.References.Count().ShouldEqual(1));
         }
 
@@ -41,7 +50,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void ReferencesWithExplicitTypeShouldUseSpecifiedType()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(m => m.References<PropertyReferenceTargetProxy>(x => x.Reference))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.References<PropertyReferenceTargetProxy>(x => x.Reference);
+                })
                 .ModelShouldMatch(x => x.References.First().Class.GetUnderlyingSystemType().ShouldEqual(typeof(PropertyReferenceTargetProxy)));
         }
 
@@ -49,10 +62,14 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         public void ReferencesAnyShouldAddToAnyCollectionOnModel()
         {
             ClassMap<PropertyTarget>()
-                .Mapping(m => m.ReferencesAny(x => x.Reference)
-                    .IdentityType<int>()
-                    .EntityIdentifierColumn("col1")
-                    .EntityTypeColumn("col2"))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.ReferencesAny(x => x.Reference)
+                        .IdentityType<int>()
+                        .EntityIdentifierColumn("col1")
+                        .EntityTypeColumn("col2");
+                })
                 .ModelShouldMatch(x => x.Anys.Count().ShouldEqual(1));
         }
 
@@ -93,7 +110,11 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
         {
             Type tuplizerType = typeof(NHibernate.Tuple.Entity.PocoEntityTuplizer);
             ClassMap<PropertyTarget>()
-                .Mapping(m => m.Tuplizer(TuplizerMode.Poco, tuplizerType))
+                .Mapping(m =>
+                {
+                    m.Id(x => x.Id);
+                    m.Tuplizer(TuplizerMode.Poco, tuplizerType);
+                })
                 .ModelShouldMatch(x =>
                 {
                     x.Tuplizer.ShouldNotBeNull();

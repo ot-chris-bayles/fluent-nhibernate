@@ -6,7 +6,7 @@ using FluentNHibernate.MappingModel.ClassBased;
 
 namespace FluentNHibernate.Automapping
 {
-    public interface IAutoClasslike : IMappingProvider
+    public interface IAutoClasslike
     {
         void DiscriminateSubClassesOnColumn(string column);
         IAutoClasslike JoinedSubClass(Type type, string keyColumn);

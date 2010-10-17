@@ -15,7 +15,7 @@ namespace FluentNHibernate.Testing.Visitors
     public class when_the_component_column_prefix_visitor_processes_a_reference_component_with_a_prefix_using_the_property_alias : ComponentColumnPrefixVisitorSpec
     {
         PersistenceModel model;
-        IEnumerable<HibernateMapping> mappings;
+        HibernateMapping mappings;
         ClassMapping target_mapping;
         private const string column_prefix = "{property}_";
 
@@ -39,7 +39,7 @@ namespace FluentNHibernate.Testing.Visitors
         {
             mappings = model.BuildMappings();
             target_mapping = mappings
-                .SelectMany(x => x.Classes)
+                .Classes
                 .FirstOrDefault(x => x.Type == typeof(Target));
         }
 
@@ -56,7 +56,7 @@ namespace FluentNHibernate.Testing.Visitors
     public class when_the_component_column_prefix_visitor_processes_a_reference_component_with_an_inner_reference_component_with_its_own_prefix : ComponentColumnPrefixVisitorSpec
     {
         PersistenceModel model;
-        IEnumerable<HibernateMapping> mappings;
+        HibernateMapping mappings;
         ClassMapping target_mapping;
         private const string first_prefix = "first_";
         private const string second_prefix = "second_";
@@ -88,7 +88,7 @@ namespace FluentNHibernate.Testing.Visitors
         {
             mappings = model.BuildMappings();
             target_mapping = mappings
-                .SelectMany(x => x.Classes)
+                .Classes
                 .FirstOrDefault(x => x.Type == typeof(Target));
         }
 
@@ -143,7 +143,7 @@ namespace FluentNHibernate.Testing.Visitors
     public class when_the_component_column_prefix_visitor_processes_a_reference_component_with_a_prefix : ComponentColumnPrefixVisitorSpec
     {
         PersistenceModel model;
-        IEnumerable<HibernateMapping> mappings;
+        HibernateMapping mappings;
         ClassMapping target_mapping;
         private const string column_prefix = "prefix_";
 
@@ -169,7 +169,7 @@ namespace FluentNHibernate.Testing.Visitors
         {
             mappings = model.BuildMappings();
             target_mapping = mappings
-                .SelectMany(x => x.Classes)
+                .Classes
                 .FirstOrDefault(x => x.Type == typeof(Target));
         }
 

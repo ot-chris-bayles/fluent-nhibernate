@@ -1,10 +1,11 @@
 using System;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel
 {
     [Serializable]
-    public class PropertyMapping : ColumnBasedMappingBase
+    public class PropertyMapping : ColumnBasedMappingBase, IMemberMapping
     {
         public PropertyMapping()
             : this(new AttributeStore())

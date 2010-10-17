@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
+using FluentNHibernate.Mapping;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.ClassBased
 {
     [Serializable]
-    public class SubclassMapping : ClassMappingBase
+    public class SubclassMapping : ClassMappingBase, ITopMapping
     {
-        public SubclassType SubclassType { get; private set; }
+        public SubclassType SubclassType { get; set; }
         private AttributeStore<SubclassMapping> attributes;
 
         public SubclassMapping(SubclassType subclassType)
@@ -53,10 +55,24 @@ namespace FluentNHibernate.MappingModel.ClassBased
             set { attributes.Set(x => x.Name, value); }
         }
 
+        public void AddTo(MappingBucket bucket)
+        {
+            bucket.Subclasses.Add(this);
+        }
+
+        public IEnumerable<Member> GetUsedMembers()
+        {
+            throw new NotImplementedException();
+        }
+
         public override Type Type
         {
             get { return attributes.Get(x => x.Type); }
             set { attributes.Set(x => x.Type, value); }
+        }
+        public void AddMappedMember(IMemberMapping mapping)
+        {
+            throw new NotImplementedException();
         }
 
         public object DiscriminatorValue

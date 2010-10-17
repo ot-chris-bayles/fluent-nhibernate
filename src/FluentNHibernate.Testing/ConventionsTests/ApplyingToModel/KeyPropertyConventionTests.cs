@@ -56,8 +56,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
 
             var generatedModels = model.BuildMappings();
             var modelInstance = generatedModels
-                .First(x => x.Classes.FirstOrDefault(c => c.Type == typeof(ExampleClass)) != null)
-                .Classes.First()
+                .Classes.FirstOrDefault(c => c.Type == typeof(ExampleClass))
                 .Id;
 
             modelVerification((KeyPropertyMapping)((CompositeIdMapping)modelInstance).Keys.First(x => x is KeyPropertyMapping));

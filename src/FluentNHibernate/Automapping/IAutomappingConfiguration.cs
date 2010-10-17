@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FluentNHibernate.Automapping.Steps;
 using FluentNHibernate.Conventions;
+using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping;
 
 namespace FluentNHibernate.Automapping
@@ -12,7 +13,7 @@ namespace FluentNHibernate.Automapping
     /// class, which is pre-configured with the default settings; you can then
     /// just override specific methods that you'd like to alter.
     /// </summary>
-    public interface IAutomappingConfiguration
+    public interface IAutomappingConfiguration : IEntityAutomappingConfiguration
     {
         /// <summary>
         /// Determines whether a type should be auto-mapped.
@@ -28,23 +29,6 @@ namespace FluentNHibernate.Automapping
         /// <param name="type">Type to map</param>
         /// <returns>Should map type</returns>
         bool ShouldMap(Type type);
-
-        /// <summary>
-        /// Determines whether a member of a type should be auto-mapped.
-        /// Override to restrict which members are considered in automapping.
-        /// </summary>
-        /// <remarks>
-        /// You normally want to override this method to restrict which members will be
-        /// used for mapping. This method will be called for every property, field, and method
-        /// on your types.
-        /// </remarks>
-        /// <example>
-        /// // all writable public properties:
-        /// return member.IsProperty &amp;&amp; member.IsPublic &amp;&amp; member.CanWrite;
-        /// </example>
-        /// <param name="member">Member to map</param>
-        /// <returns>Should map member</returns>
-        bool ShouldMap(Member member);
 
         /// <summary>
         /// Determines whether a member is the id of an entity.
