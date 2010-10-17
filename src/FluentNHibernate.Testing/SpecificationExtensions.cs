@@ -6,7 +6,6 @@ using System.Xml;
 using FluentNHibernate.Infrastructure;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.ClassBased;
-using NHibernate.Cfg;
 using NUnit.Framework;
 
 namespace FluentNHibernate.Testing
@@ -54,7 +53,7 @@ namespace FluentNHibernate.Testing
         public static HibernateMapping BuildMappings(this IPersistenceInstructions instructions)
         {
             return new MappingCompiler(null, instructions)
-                .BuildMappings();
+                .Compile();
         }
 
         public static void ShouldBeFalse(this bool condition)

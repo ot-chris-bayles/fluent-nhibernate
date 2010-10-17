@@ -1,101 +1,25 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Xml;
-using FluentNHibernate.Automapping;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions;
 using FluentNHibernate.Diagnostics;
 using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping;
-using FluentNHibernate.MappingModel;
 using FluentNHibernate.Utils;
 using FluentNHibernate.Utils.Reflection;
 using NHibernate.Cfg;
 
 namespace FluentNHibernate
 {
-    public interface IMappingCompiler
-    {
-        IEnumerable<ITopMapping> Compile(IMappingAction action);
-    }
-
-    public class MappingCompiler : IMappingCompiler
-    {
-        readonly IAutomapper automapper;
-        readonly IPersistenceInstructions instructions;
-
-        public MappingCompiler(IAutomapper automapper, IPersistenceInstructions instructions)
-        {
-            this.automapper = automapper;
-            this.instructions = instructions;
-        }
-
-        public HibernateMapping BuildMappings()
-        {
-            var actions = instructions.GetActions();
-            var bucket = CompileActions(actions);
-
-            instructions.Visitors
-                .Each(x => x.Visit(bucket));
-
-            var hbm = new HibernateMapping();
-
-            instructions.Visitors
-                .Each(x => x.Visit(hbm));
-
-            bucket.Classes
-                .Each(hbm.AddClass);
-            bucket.Filters
-                .Each(hbm.AddFilter);
-            bucket.Imports
-                .Each(hbm.AddImport);
-
-            return hbm;
-        }
-
-        MappingBucket CompileActions(IEnumerable<IMappingAction> actions)
-        {
-            var mappings = actions.SelectMany(x => Compile(x));
-            var bucket = new MappingBucket();
-
-            mappings.Each(x => x.AddTo(bucket));
-
-            return bucket;
-        }
-
-        public virtual IEnumerable<ITopMapping> AutoMap(AutomapAction action)
-        {
-            var mainInstructions = instructions.AutomappingInstructions;
-            var targets = action.GetMappingTargets(mainInstructions);
-
-            return automapper.Map(targets);
-        }
-
-        public virtual IEnumerable<ITopMapping> ManualMap(ManualAction action)
-        {
-            return new[] { action.GetMapping() };
-        }
-
-        public IEnumerable<ITopMapping> Compile(IMappingAction action)
-        {
-            if (action is ManualAction)
-                return ManualMap((ManualAction)action);
-            if (action is AutomapAction)
-                return AutoMap((AutomapAction)action);
-
-            throw new InvalidOperationException(string.Format("Unrecognised action '{0}'", action.GetType().FullName));
-        }
-    }
     public interface IPersistenceModel : IPersistenceInstructionGatherer
     {}
 
     public class PersistenceModel : IPersistenceModel
     {
         readonly PersistenceInstructionGatherer gatherer = new PersistenceInstructionGatherer();
-        protected IDiagnosticLogger log = new NullDiagnosticsLogger();
+        IDiagnosticLogger log = new NullDiagnosticsLogger();
 
         public void SetLogger(IDiagnosticLogger logger)
         {
@@ -103,7 +27,7 @@ namespace FluentNHibernate
             gatherer.SetLogger(log);
         }
 
-        public AutomappingBuilder AutoMap
+        private AutomappingBuilder AutoMap
         {
             get { return new AutomappingBuilder(gatherer.Automapping); }
         }
