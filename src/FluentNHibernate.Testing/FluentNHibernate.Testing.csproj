@@ -412,7 +412,6 @@
     <Compile Include="MappingModel\Output\XmlSetWriterTester.cs" />
     <Compile Include="MappingModel\Output\XmlVersionWriterTester.cs" />
     <Compile Include="MappingModel\Output\XmlWriterContainerTester.cs" />
-    <Compile Include="PersistenceModelTests\JoinPersistenceModelTests.cs" />
     <Compile Include="PersistenceModelTests\SeparateSubclassVisitorFixture.cs">
       <SubType>Code</SubType>
     </Compile>
