@@ -75,13 +75,12 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
 
             model.Add(classMap);
 
-            //var generatedModels = model.BuildMappings();
-            //var modelInstance = (ComponentMapping)generatedModels
-            //    .First(x => x.Classes.FirstOrDefault(c => c.Type == typeof(PropertyTarget)) != null)
-            //    .Classes.First()
-            //    .Components.Where(x => x is ComponentMapping).First();
+            var generatedModels = model.BuildMappings();
+            var modelInstance = (ComponentMapping)generatedModels
+                .Classes.FirstOrDefault(c => c.Type == typeof(PropertyTarget))
+                .Components.Where(x => x is ComponentMapping).First();
 
-            //modelVerification(modelInstance);
+            modelVerification(modelInstance);
         }
 
         #endregion

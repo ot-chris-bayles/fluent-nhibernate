@@ -102,13 +102,12 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
 
             model.Add(classMap);
 
-            //var generatedModels = model.BuildMappings();
-            //var modelInstance = generatedModels
-            //    .First(x => x.Classes.FirstOrDefault(c => c.Type == typeof(ExampleClass)) != null)
-            //    .Classes.First()
-            //    .OneToOnes.First();
+            var generatedModels = model.BuildMappings();
+            var modelInstance = generatedModels
+                .Classes.FirstOrDefault(c => c.Type == typeof(ExampleClass))
+                .OneToOnes.First();
 
-            //modelVerification(modelInstance);
+            modelVerification(modelInstance);
         }
 
         #endregion
