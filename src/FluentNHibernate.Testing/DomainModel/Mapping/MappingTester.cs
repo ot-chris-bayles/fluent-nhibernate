@@ -45,7 +45,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
             var map = new SubclassMap<TSubClass>();
             action(map);
 
-            this.model.Add(map);
+            this.model.InjectMapping(map);
 
             return this;
         }
@@ -61,7 +61,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         public virtual MappingTester<T> ForMapping(ClassMap<T> classMap)
         {
             if (classMap  != null)
-                model.Add(classMap);
+                model.InjectMapping(classMap);
 
             var mappings = model.BuildMappings();
             var foundMapping = mappings;

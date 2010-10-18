@@ -23,7 +23,7 @@ namespace FluentNHibernate.Specs.PersistenceModel
             class_map.Id(x => x.Id);
             class_map.Join("other", m => m.Map(x => x.Property));
             
-            model.Add(class_map);
+            model.InjectMapping(class_map);
         };
 
         Because of = () =>

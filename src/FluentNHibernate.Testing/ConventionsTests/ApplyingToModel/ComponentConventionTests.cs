@@ -73,7 +73,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
             classMap.Id(x => x.Id);
             var map = classMap.Component(x => x.Component, m => { });
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
 
             var generatedModels = model.BuildMappings();
             var modelInstance = (ComponentMapping)generatedModels

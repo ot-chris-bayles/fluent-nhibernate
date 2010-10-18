@@ -12,7 +12,7 @@ namespace FluentNHibernate.Specs.Conventions
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new TwoPropertyEntityMap());
+            model.InjectMapping(new TwoPropertyEntityMap());
             model.Conventions.Add(
                 ConventionBuilder.Property.When(
                     z => z.Expect(c => c.Name == "TargetProperty"),

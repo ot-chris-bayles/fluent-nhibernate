@@ -72,8 +72,8 @@ namespace FluentNHibernate.Specs.FluentInterface
             var classmap = new ClassMap<Target>();
             classmap.Id(x => x.Id);
             classmap.Component(x => x.Component);
-            model.Add(classmap);
-            model.Add(new ComponentMap<Component>());
+            model.InjectMapping(classmap);
+            model.InjectMapping(new ComponentMap<Component>());
         };
 
         Because of = () =>
@@ -112,9 +112,9 @@ namespace FluentNHibernate.Specs.FluentInterface
             subclass_map.Component(x => x.Component);
 
             persistence_model = new FluentNHibernate.PersistenceModel();
-            persistence_model.Add(class_map);
-            persistence_model.Add(subclass_map);
-            persistence_model.Add(component_map);
+            persistence_model.InjectMapping(class_map);
+            persistence_model.InjectMapping(subclass_map);
+            persistence_model.InjectMapping(component_map);
         };
 
         Because of = () =>
@@ -188,8 +188,8 @@ namespace FluentNHibernate.Specs.FluentInterface
             class_map.Component(x => x.Component);
 
             persistence_model = new FluentNHibernate.PersistenceModel();
-            persistence_model.Add(class_map);
-            persistence_model.Add(component_map);
+            persistence_model.InjectMapping(class_map);
+            persistence_model.InjectMapping(component_map);
         };
 
         Because of = () =>
@@ -237,8 +237,8 @@ namespace FluentNHibernate.Specs.FluentInterface
                 .ColumnPrefix("B_");
 
             persistence_model = new FluentNHibernate.PersistenceModel();
-            persistence_model.Add(class_map);
-            persistence_model.Add(component_map);
+            persistence_model.InjectMapping(class_map);
+            persistence_model.InjectMapping(component_map);
         };
 
         Because of = () =>

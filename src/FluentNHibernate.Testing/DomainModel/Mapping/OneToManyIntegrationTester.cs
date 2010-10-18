@@ -13,8 +13,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             public void Configure(NHibernate.Cfg.Configuration configuration)
             {
-                Add(new ChildObjectMap());
-                Add(new OneToManyTargetMap());
+                InjectMapping(new ChildObjectMap());
+                InjectMapping(new OneToManyTargetMap());
             }
 
             private class ChildObjectMap : ClassMap<ChildObject>

@@ -694,7 +694,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
             var model = new PersistenceModel();
 
             model.Conventions.Add(convention);
-            model.Add(getMapping());
+            model.InjectMapping(getMapping());
 
             IPersistenceModel pm = model;
 
@@ -708,7 +708,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
             var model = new PersistenceModel();
 
             model.Conventions.Add(convention);
-            model.Add(getMapping());
+            model.InjectMapping(getMapping());
 
             return model.BuildMappings();
         }

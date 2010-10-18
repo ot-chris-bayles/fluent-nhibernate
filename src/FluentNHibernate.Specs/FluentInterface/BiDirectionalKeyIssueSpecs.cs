@@ -10,10 +10,10 @@ namespace FluentNHibernate.Specs.FluentInterface
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new ContactMap());
-            model.Add(new ContactEmailMap());
-            model.Add(new ContactPhoneMap());
-            model.Add(new CaseMap());
+            model.InjectMapping(new ContactMap());
+            model.InjectMapping(new ContactEmailMap());
+            model.InjectMapping(new ContactPhoneMap());
+            model.InjectMapping(new CaseMap());
         };
 
         Because of = () =>

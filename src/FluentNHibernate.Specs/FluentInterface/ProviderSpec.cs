@@ -46,7 +46,7 @@ namespace FluentNHibernate.Specs.FluentInterface
 
             setup(provider);
 
-            model.Add(provider);
+            model.InjectMapping(provider);
         }
 
         public static void map_subclass<T>(this FluentNHibernate.PersistenceModel model, Action<SubclassMap<T>> setup)
@@ -55,14 +55,14 @@ namespace FluentNHibernate.Specs.FluentInterface
 
             setup(provider);
 
-            model.Add(provider);
+            model.InjectMapping(provider);
         }
 
         public static void map_component<T>(this FluentNHibernate.PersistenceModel model)
         {
             var provider = new ComponentMap<T>();
 
-            model.Add(provider);
+            model.InjectMapping(provider);
         }
     }
 }

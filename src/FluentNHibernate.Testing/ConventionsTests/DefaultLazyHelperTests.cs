@@ -22,7 +22,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
         {
             var classMap = new ClassMap<Target>();
             classMap.Id(x => x.Id);
-            model.Add(classMap);
+            model.InjectMapping(classMap);
             model.Conventions.Add(DefaultLazy.Always());
             //model.BuildMappings()
             //    .First()
@@ -34,7 +34,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
         {
             var classMap = new ClassMap<Target>();
             classMap.Id(x => x.Id);
-            model.Add(classMap);
+            model.InjectMapping(classMap);
             model.Conventions.Add(DefaultLazy.Never());
             //model.BuildMappings()
             //    .First()

@@ -115,7 +115,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
 
             var model = new PersistenceModel();
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
 
             return model.BuildMappings()
                 .Classes.First()
@@ -132,7 +132,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
 
             var model = new PersistenceModel();
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
 
             return model.BuildMappings()
                 .Classes.First()

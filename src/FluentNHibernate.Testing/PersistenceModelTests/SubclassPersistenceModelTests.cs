@@ -14,8 +14,8 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         {
             var model = new PersistenceModel();
 
-            model.Add(new TablePerSubclass.TPS_ParentMap());
-            model.Add(new TablePerSubclass.TPS_ChildMap());
+            model.InjectMapping(new TablePerSubclass.TPS_ParentMap());
+            model.InjectMapping(new TablePerSubclass.TPS_ChildMap());
 
             var classMapping = model.BuildMappings()
                 .Classes.First();
@@ -29,9 +29,9 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         {
             var model = new PersistenceModel();
 
-            model.Add(new TablePerSubclass.TPS_ParentMap());
-            model.Add(new TablePerSubclass.TPS_ChildMap());
-            model.Add(new TablePerSubclass.TPS_ChildChildMap());
+            model.InjectMapping(new TablePerSubclass.TPS_ParentMap());
+            model.InjectMapping(new TablePerSubclass.TPS_ChildMap());
+            model.InjectMapping(new TablePerSubclass.TPS_ChildChildMap());
 
             var classMapping = model.BuildMappings()
                 .Classes.First();
@@ -51,9 +51,9 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         {
             var model = new PersistenceModel();
 
-            model.Add(new TablePerClassHierarchy.TPCH_ParentMap());
-            model.Add(new TablePerClassHierarchy.TPCH_ChildMap());
-            model.Add(new TablePerClassHierarchy.TPCH_ChildChildMap());
+            model.InjectMapping(new TablePerClassHierarchy.TPCH_ParentMap());
+            model.InjectMapping(new TablePerClassHierarchy.TPCH_ChildMap());
+            model.InjectMapping(new TablePerClassHierarchy.TPCH_ChildChildMap());
 
             var classMapping = model.BuildMappings()
                 .Classes.First();
@@ -73,8 +73,8 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         {
             var model = new PersistenceModel();
 
-            model.Add(new TablePerClassHierarchy.TPCH_ParentMap());
-            model.Add(new TablePerClassHierarchy.TPCH_ChildMap());
+            model.InjectMapping(new TablePerClassHierarchy.TPCH_ParentMap());
+            model.InjectMapping(new TablePerClassHierarchy.TPCH_ChildMap());
 
             var classMapping = model.BuildMappings()
                 .Classes.First();
@@ -87,8 +87,8 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         {
             var model = new PersistenceModel();
 
-            model.Add(new TablePerSubclass.TPS_ParentMap());
-            model.Add(new TablePerSubclass.TPS_ChildMap());
+            model.InjectMapping(new TablePerSubclass.TPS_ParentMap());
+            model.InjectMapping(new TablePerSubclass.TPS_ChildMap());
 
             var classMapping = model.BuildMappings()
                 .Classes.First();
@@ -101,7 +101,7 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         {
             var model = new PersistenceModel();
 
-            model.Add(new TablePerSubclass.TPS_ParentMap());
+            model.InjectMapping(new TablePerSubclass.TPS_ParentMap());
             model.Add(typeof(TablePerSubclass.TPS_ChildMap));
 
             model.BuildMappings()
@@ -114,7 +114,9 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         {
             var model = new PersistenceModel();
 
-            model.AddMappingsFromAssembly(typeof(TablePerSubclass.TPS_Parent).Assembly);
+            model.Scan
+                .AssemblyContaining<TablePerSubclass.TPS_Parent>()
+                .ForMappings();
 
             var classMapping = model.BuildMappings()
                 .Classes.Single(x => x.Type == typeof(TablePerSubclass.TPS_Parent));
@@ -127,8 +129,8 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         {
             var model = new PersistenceModel();
 
-            model.Add(new Intermediaries.I_TopMap());
-            model.Add(new Intermediaries.I_BottomMostMap());
+            model.InjectMapping(new Intermediaries.I_TopMap());
+            model.InjectMapping(new Intermediaries.I_BottomMostMap());
 
             model.BuildMappings()
                 .Classes.First()
@@ -140,11 +142,11 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         {
             var model = new PersistenceModel();
 
-            model.Add(new Branching.B_TopMap());
-            model.Add(new Branching.B_ChildMap());
-            model.Add(new Branching.B_Child2Map());
-            model.Add(new Branching.B_Child_ChildMap());
-            model.Add(new Branching.B_Child2_ChildMap());
+            model.InjectMapping(new Branching.B_TopMap());
+            model.InjectMapping(new Branching.B_ChildMap());
+            model.InjectMapping(new Branching.B_Child2Map());
+            model.InjectMapping(new Branching.B_Child_ChildMap());
+            model.InjectMapping(new Branching.B_Child2_ChildMap());
 
             var top = model.BuildMappings().Classes.First();
 
@@ -168,8 +170,8 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         {
             var model = new PersistenceModel();
 
-            model.Add(new Interfaces.ITopMap());
-            model.Add(new Interfaces.Int_OneMap());
+            model.InjectMapping(new Interfaces.ITopMap());
+            model.InjectMapping(new Interfaces.Int_OneMap());
 
             var top = model.BuildMappings().Classes.First();
 
@@ -183,10 +185,10 @@ namespace FluentNHibernate.Testing.PersistenceModelTests
         {
             var model = new PersistenceModel();
 
-            model.Add(new Sauces.SauceMap());
-            model.Add(new Sauces.BrownSauceMap());
-            model.Add(new Sauces.ReallyHotSauceMap());
-            model.Add(new Thoughts.ThoughtMap());
+            model.InjectMapping(new Sauces.SauceMap());
+            model.InjectMapping(new Sauces.BrownSauceMap());
+            model.InjectMapping(new Sauces.ReallyHotSauceMap());
+            model.InjectMapping(new Thoughts.ThoughtMap());
 
             var colorSource = model.BuildMappings().Classes.First();
 

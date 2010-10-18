@@ -38,7 +38,11 @@ namespace FluentNHibernate.Specs.FluentInterface.ClassMapSpecs
     public class when_class_map_is_told_to_map_a_component_using_a_provider : ProviderSpec
     {
         Because of = () =>
-            mapping = map_as_class<EntityWithComponent>(m => m.Component(new ComponentMappingProviderStub()));
+            mapping = map_as_class<EntityWithComponent>(m =>
+            {
+                m.Id(x => x.Id);
+                m.Component(new ComponentMappingProviderStub());
+            });
 
         Behaves_like<ClasslikeComponentBehaviour> a_component_in_a_classlike;
 
@@ -48,7 +52,7 @@ namespace FluentNHibernate.Specs.FluentInterface.ClassMapSpecs
         {
             public IComponentMapping GetComponentMapping()
             {
-                return null;
+                return new ComponentMapping(ComponentType.Component);
             }
         }
     }

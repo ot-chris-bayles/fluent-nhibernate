@@ -22,7 +22,9 @@ namespace FluentNHibernate.Specs.Diagnostics
 
         Because of = () =>
         {
-            model.AddMappingsFromSource(new StubTypeSource(typeof(First), typeof(FirstMap), typeof(SecondMap), typeof(ChildMap), typeof(CompMap)));
+            model.Scan
+                .Collection(new[] {typeof(First), typeof(FirstMap), typeof(SecondMap), typeof(ChildMap), typeof(CompMap)})
+                .ForMappings();
             model.BuildMappings();
         };
 
@@ -42,7 +44,7 @@ namespace FluentNHibernate.Specs.Diagnostics
             results.ScannedSources
                 .Where(x => x.Phase == ScanPhase.FluentMappings)
                 .Select(x => x.Identifier)
-                .ShouldContainOnly("StubTypeSource");
+                .ShouldContainOnly("Collection[ChildMap, CompMap, First, FirstMap, SecondMap]");
 
         It should_not_register_non_fluent_mapping_types = () =>
             results.FluentMappings.ShouldNotContain(typeof(First));

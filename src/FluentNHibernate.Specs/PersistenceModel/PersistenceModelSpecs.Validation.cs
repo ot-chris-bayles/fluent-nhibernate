@@ -14,7 +14,7 @@ namespace FluentNHibernate.Specs.PersistenceModel
             var class_map = new ClassMap<Target>();
             class_map.Id(x => x.Id);
             
-            model.Add(class_map);
+            model.InjectMapping(class_map);
         };
 
         Because of = () =>
@@ -29,7 +29,7 @@ namespace FluentNHibernate.Specs.PersistenceModel
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new ClassMap<Target>());
+            model.InjectMapping(new ClassMap<Target>());
         };
 
         Because of = () =>

@@ -26,13 +26,13 @@ namespace FluentNHibernate.Testing.Visitors
             var comp_map = new ComponentMap<ComponentTarget>();
             comp_map.Map(x => x.Property);
 
-            model.Add(comp_map);
+            model.InjectMapping(comp_map);
 
             var map = new ClassMap<Target>();
             map.Id(x => x.Id);
             map.Component(x => x.Component)
                 .ColumnPrefix(column_prefix);
-            model.Add(map);
+            model.InjectMapping(map);
         }
 
         public override void because()
@@ -70,18 +70,18 @@ namespace FluentNHibernate.Testing.Visitors
             comp_map.Component(x => x.Component)
                 .ColumnPrefix(second_prefix);
 
-            model.Add(comp_map);
+            model.InjectMapping(comp_map);
 
             var comp2_map = new ComponentMap<Child>();
             comp2_map.Map(x => x.Property);
 
-            model.Add(comp2_map);
+            model.InjectMapping(comp2_map);
 
             var map = new ClassMap<Target>();
             map.Id(x => x.Id);
             map.Component(x => x.Component)
                 .ColumnPrefix(first_prefix);
-            model.Add(map);
+            model.InjectMapping(map);
         }
 
         public override void because()
@@ -155,14 +155,14 @@ namespace FluentNHibernate.Testing.Visitors
             comp_map.HasMany(x => x.Children);
             comp_map.Component(x => x.Component, c =>
                 c.Map(x => x.Property));
-            model.Add(comp_map);
+            model.InjectMapping(comp_map);
 
             var map = new ClassMap<Target>();
             map.Id(x => x.Id);
             map.Component(x => x.Component)
                 .ColumnPrefix(column_prefix);
 
-            model.Add(map);
+            model.InjectMapping(map);
         }
 
         public override void because()

@@ -18,7 +18,7 @@ namespace FluentNHibernate.Testing
         {
             var model = new PersistenceModel();
             
-            model.Add(provider);
+            model.InjectMapping(provider);
 
             return model.BuildMappings().Classes.Single();
         }
@@ -27,15 +27,17 @@ namespace FluentNHibernate.Testing
         {
             var model = new PersistenceModel();
 
-            model.Add(classMap);
-            model.Add(provider);
+            model.InjectMapping(classMap);
+            model.InjectMapping(provider);
 
             return model.BuildMappings().Classes.Single().Subclasses.Single();
         }
 
-        public static void Add(this FluentNHibernate.PersistenceModel model, Type type)
+        public static void Add(this PersistenceModel model, Type type)
         {
-            model.AddMappingsFromSource(new StubTypeSource(type));
+            model.Scan
+                .Collection(new[] {type})
+                .ForMappings();
         }
 
         public static bool ContainsMapping(this FluentNHibernate.PersistenceModel model, Type type)

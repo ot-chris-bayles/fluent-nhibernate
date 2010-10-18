@@ -20,8 +20,8 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             parent.Id(x => x.Id);
             var child = new SubclassMap<Child>();
 
-            model.Add(parent);
-            model.Add(child);
+            model.InjectMapping(parent);
+            model.InjectMapping(child);
             model.Conventions.Add<SCKeyConvention>();
 
             var subclass = model.BuildMappings()

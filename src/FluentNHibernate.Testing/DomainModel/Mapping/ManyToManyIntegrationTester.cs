@@ -12,8 +12,8 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
         {
             public void Configure(Configuration configuration)
             {
-                Add(new ChildObjectMap());
-                Add(new ManyToManyTargetMap());
+                InjectMapping(new ChildObjectMap());
+                InjectMapping(new ManyToManyTargetMap());
             }
 
             private class ChildObjectMap : ClassMap<ChildObject>

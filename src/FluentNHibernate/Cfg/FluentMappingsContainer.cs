@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using FluentNHibernate.Conventions;
-using FluentNHibernate.Mapping;
+using FluentNHibernate.Diagnostics;
 using FluentNHibernate.Visitors;
 using NHibernate.Cfg;
 using System.IO;
@@ -18,16 +17,11 @@ namespace FluentNHibernate.Cfg
         private readonly List<Type> types = new List<Type>();
         private string exportPath;
         private TextWriter exportTextWriter;
-        private readonly PersistenceModel model;
+        private readonly PersistenceModel model = null;
 
-        internal FluentMappingsContainer()
+        internal FluentMappingsContainer(IDiagnosticLogger logger)
         {
-            model = new PersistenceModel();
-        }
-
-        public PersistenceModel PersistenceModel
-        {
-            get { return model; }
+            model = new FluentMappingsContainerModel(logger);
         }
 
         public FluentMappingsContainer OverrideBiDirectionalManyToManyPairing(PairBiDirectionalManyToManySidesDelegate userControlledPairing)
@@ -124,11 +118,16 @@ namespace FluentNHibernate.Cfg
         {
             foreach (var assembly in assemblies)
             {
-                model.AddMappingsFromAssembly(assembly);
+                model.Scan
+                    .Assembly(assembly)
+                    .ForMappings();
             }
 
-            foreach (var type in types)
+            if (types.Count > 0)
             {
+                model.Scan
+                    .Source(new CollectionTypeSource(types))
+                    .ForMappings();
             }
 
             if (!string.IsNullOrEmpty(exportPath))
@@ -138,6 +137,19 @@ namespace FluentNHibernate.Cfg
                 model.WriteMappingsTo(exportTextWriter);
 
             cfg.ConfigureWith(model);
+        }
+
+        class FluentMappingsContainerModel : PersistenceModel
+        {
+            public FluentMappingsContainerModel(IDiagnosticLogger logger)
+            {
+                SetLogger(logger);
+            }
+
+            protected override string GetExportFileName()
+            {
+                return "PersistenceModel.hbm.xml";
+            }
         }
     }
 }

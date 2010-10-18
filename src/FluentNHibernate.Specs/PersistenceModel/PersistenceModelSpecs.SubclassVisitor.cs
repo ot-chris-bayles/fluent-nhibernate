@@ -11,9 +11,9 @@ namespace FluentNHibernate.Specs.PersistenceModel
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new FooMap());
-            model.Add(new StringFooMap());
-            model.Add(new StandAloneMap());
+            model.InjectMapping(new FooMap());
+            model.InjectMapping(new StringFooMap());
+            model.InjectMapping(new StandAloneMap());
         };
 
         Because of = () =>
@@ -43,10 +43,10 @@ namespace FluentNHibernate.Specs.PersistenceModel
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new FooMap());
-            model.Add(new StringFooMap());
-            model.Add(new StandAloneMap());
-            model.Add(new BaseImplMap());
+            model.InjectMapping(new FooMap());
+            model.InjectMapping(new StringFooMap());
+            model.InjectMapping(new StandAloneMap());
+            model.InjectMapping(new BaseImplMap());
         };
 
         Because of = () =>
@@ -77,8 +77,8 @@ namespace FluentNHibernate.Specs.PersistenceModel
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new ExtendsParentMap());
-            model.Add(new ExtendsChildMap());
+            model.InjectMapping(new ExtendsParentMap());
+            model.InjectMapping(new ExtendsChildMap());
         };
 
         Because of = () =>
@@ -99,9 +99,9 @@ namespace FluentNHibernate.Specs.PersistenceModel
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new StringFooMap());
-            model.Add(new BaseMap());
-            model.Add(new StandAloneMap());
+            model.InjectMapping(new StringFooMap());
+            model.InjectMapping(new BaseMap());
+            model.InjectMapping(new StandAloneMap());
         };
 
         Because of = () =>
@@ -130,9 +130,9 @@ namespace FluentNHibernate.Specs.PersistenceModel
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new BaseMap());
-            model.Add(new StandAloneMap());
-            model.Add(new BaseImplMap());
+            model.InjectMapping(new BaseMap());
+            model.InjectMapping(new StandAloneMap());
+            model.InjectMapping(new BaseImplMap());
         };
 
         Because of = () =>
@@ -162,8 +162,8 @@ namespace FluentNHibernate.Specs.PersistenceModel
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new StringFooMap());
-            model.Add(new UnionBaseMap());
+            model.InjectMapping(new StringFooMap());
+            model.InjectMapping(new UnionBaseMap());
         };
 
         Because of = () =>

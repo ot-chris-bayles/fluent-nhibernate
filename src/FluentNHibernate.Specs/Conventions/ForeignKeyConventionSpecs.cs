@@ -30,7 +30,7 @@ namespace FluentNHibernate.Specs.Conventions
     public class when_a_foreign_key_convention_is_being_applied_to_a_set_mapping : ForeignKeyConventionSpec
     {
         Establish context = () =>
-            model.Add(new SetCollectionEntityMap());
+            model.InjectMapping(new SetCollectionEntityMap());
 
         Because of = () =>
             mapping = model.BuildMappingFor<SetCollectionEntity>();
@@ -42,7 +42,7 @@ namespace FluentNHibernate.Specs.Conventions
     public class when_a_foreign_key_convention_is_being_applied_to_a_set_mapping_with_an_element : ForeignKeyConventionSpec
     {
         Establish context = () =>
-            model.Add(new SetElementCollectionEntityMap());
+            model.InjectMapping(new SetElementCollectionEntityMap());
 
         Because of = () =>
             mapping = model.BuildMappingFor<SetElementCollectionEntity>();
@@ -54,7 +54,7 @@ namespace FluentNHibernate.Specs.Conventions
     public class when_a_foreign_key_convention_is_being_applied_to_a_set_mapping_with_a_composite_element : ForeignKeyConventionSpec
     {
         Establish context = () =>
-            model.Add(new SetCompositeElementCollectionEntityMap());
+            model.InjectMapping(new SetCompositeElementCollectionEntityMap());
 
         Because of = () =>
             mapping = model.BuildMappingFor<SetCompositeElementCollectionEntity>();

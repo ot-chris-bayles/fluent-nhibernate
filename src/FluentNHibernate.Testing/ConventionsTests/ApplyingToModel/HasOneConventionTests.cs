@@ -100,7 +100,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
             classMap.Id(x => x.Id);
             var map = classMap.HasOne(x => x.Parent);
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
 
             var generatedModels = model.BuildMappings();
             var modelInstance = generatedModels

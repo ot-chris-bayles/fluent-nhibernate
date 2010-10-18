@@ -94,7 +94,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.OverridingFluentInterface
 
         private void VerifyModel(Action<ComponentMapping> modelVerification)
         {
-            model.Add(mapping);
+            model.InjectMapping(mapping);
 
             //var generatedModels = model.BuildMappings();
             //var modelInstance = (ComponentMapping)generatedModels

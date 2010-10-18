@@ -79,7 +79,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
                 m.Map(x => (string)x["Profession"]);
             });
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
 
             var generatedModels = model.BuildMappings();
             var modelInstance = (ComponentMapping)generatedModels

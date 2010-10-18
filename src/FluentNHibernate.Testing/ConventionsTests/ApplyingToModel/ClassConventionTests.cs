@@ -136,7 +136,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
             var classMap = new ClassMap<ExampleClass>();
             classMap.Id(x => x.Id);
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
 
             var generatedModels = model.BuildMappings();
             var modelInstance = generatedModels

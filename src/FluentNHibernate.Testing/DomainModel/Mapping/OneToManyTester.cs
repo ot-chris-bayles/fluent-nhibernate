@@ -173,7 +173,7 @@ namespace FluentNHibernate.Testing.DomainModel.Mapping
             classMap.Id(x => x.Id);
             classMap.HasMany(x => x.SetOfChildren).AsSet<SortComparer>();
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
             cfg.ConfigureWith(model);
         }
 

@@ -157,7 +157,12 @@ namespace FluentNHibernate.Infrastructure
         {
             // TODO: Add user-defined filtering in here
             return sources
-                .SelectMany(x => x.GetTypes())
+                .SelectMany(x =>
+                {
+                    log.LoadedFluentMappingsFromSource(x);
+
+                    return x.GetTypes();
+                })
                 .Where(x => x.HasInterface<IProvider>())
                 .Select(x =>
                 {

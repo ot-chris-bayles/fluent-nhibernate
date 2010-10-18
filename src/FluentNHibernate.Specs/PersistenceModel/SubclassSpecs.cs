@@ -16,8 +16,8 @@ namespace FluentNHibernate.Specs.PersistenceModel
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new UnionEntityMap());
-            model.Add(new UnionChildEntityMap());
+            model.InjectMapping(new UnionEntityMap());
+            model.InjectMapping(new UnionChildEntityMap());
         };
 
         Because of = () =>
@@ -35,9 +35,9 @@ namespace FluentNHibernate.Specs.PersistenceModel
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new ProductMap());
-            model.Add(new SpecialProductMap());
-            model.Add(new OptionMap());
+            model.InjectMapping(new ProductMap());
+            model.InjectMapping(new SpecialProductMap());
+            model.InjectMapping(new OptionMap());
 
             cfg = new Configuration();
             SQLiteConfiguration.Standard.InMemory()

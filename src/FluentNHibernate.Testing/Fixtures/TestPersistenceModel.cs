@@ -4,7 +4,9 @@ namespace FluentNHibernate.Testing.Fixtures
     {
         public TestPersistenceModel()
         {
-            AddMappingsFromThisAssembly();
+            Scan
+                .TheCallingAssembly()
+                .ForMappings();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             class_map.Id(x => x.Id);
             action(class_map);
 
-            model.Add(class_map);
+            model.InjectMapping(class_map);
             
             return model.BuildMappings()
                 .Classes

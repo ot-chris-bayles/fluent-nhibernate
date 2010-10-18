@@ -484,7 +484,7 @@ namespace FluentNHibernate.Specs.FluentInterface
 
             var model = new FluentNHibernate.PersistenceModel();
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
 
             mapping = model.BuildMappingFor<T>();
             map = mapping.Collections.SingleOrDefault() as MapMapping;

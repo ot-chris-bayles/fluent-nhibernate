@@ -179,7 +179,7 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
             var map = classMap.HasMany(x => x.Examples)
                 .AsArray(x => x.Id);
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
 
             var generatedModels = model.BuildMappings();
             var modelInstance = generatedModels

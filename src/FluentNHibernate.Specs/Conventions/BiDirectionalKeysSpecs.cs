@@ -11,8 +11,8 @@ namespace FluentNHibernate.Specs.Conventions
         Establish context = () =>
         {
             model = new FluentNHibernate.PersistenceModel();
-            model.Add(new ParentMap());
-            model.Add(new ChildMap());
+            model.InjectMapping(new ParentMap());
+            model.InjectMapping(new ChildMap());
         };
 
         Because of = () =>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -30,6 +31,16 @@ namespace FluentNHibernate
         private AutomappingBuilder AutoMap
         {
             get { return new AutomappingBuilder(gatherer.Automapping); }
+        }
+
+        public SourceScanner Scan
+        {
+            get { return new SourceScanner(gatherer, log); }
+        }
+
+        public void InjectMapping(IProvider provider)
+        {
+            gatherer.AddProviderInstance(provider);
         }
 
         public ImportPart Import<T>()
@@ -207,34 +218,6 @@ namespace FluentNHibernate
             get { return new ConventionContainer(gatherer.Conventions, log); }
         }
 
-        protected void AddMappingsFromThisAssembly()
-        {
-            var assembly = ReflectionHelper.FindTheCallingAssembly();
-            AddMappingsFromAssembly(assembly);
-        }
-
-        public void AddMappingsFromAssembly(Assembly assembly)
-        {
-            AddMappingsFromSource(new AssemblyTypeSource(assembly));
-        }
-
-        public void Add(IProvider provider)
-        {
-            gatherer.AddProviderInstance(provider);
-        }
-
-        public void AddMappingsFromSource(ITypeSource source)
-        {
-            gatherer.AddSource(source);
-
-            log.LoadedFluentMappingsFromSource(source);
-        }
-
-        public void AddMappings(params IProvider[] providers)
-        {
-            providers.Each(gatherer.AddProviderInstance);
-        }
-
         IPersistenceInstructions IPersistenceInstructionGatherer.GetInstructions()
         {
             return gatherer.GetInstructions();
@@ -242,12 +225,17 @@ namespace FluentNHibernate
 
         public void WriteMappingsTo(string exportPath)
         {
-            gatherer.UseExporter(new PathExporter(Path.Combine(exportPath, GetType().Name + ".hbm.xml")));
+            gatherer.UseExporter(new PathExporter(Path.Combine(exportPath, GetExportFileName())));
         }
 
         public void WriteMappingsTo(TextWriter textWriter)
         {
             gatherer.UseExporter(new TextWriterExporter(textWriter));
+        }
+
+        protected virtual string GetExportFileName()
+        {
+            return GetType().Name + ".hbm.xml";
         }
 
         class TextWriterExporter : IExporter
@@ -278,6 +266,70 @@ namespace FluentNHibernate
             {
                 File.WriteAllText(exportPath, hbm.InnerXml);
             }
+        }
+    }
+
+    public class SourceScanner
+    {
+        readonly PersistenceInstructionGatherer gatherer;
+        readonly IDiagnosticLogger log;
+        readonly List<ITypeSource> sources = new List<ITypeSource>();
+
+        public SourceScanner(PersistenceInstructionGatherer gatherer, IDiagnosticLogger log)
+        {
+            this.gatherer = gatherer;
+            this.log = log;
+        }
+
+        public SourceScanner AssemblyContaining<T>()
+        {
+            return Assembly(typeof(T).Assembly);
+        }
+
+        public SourceScanner Assembly(Assembly assembly)
+        {
+            return Source(new AssemblyTypeSource(assembly));
+        }
+
+        public SourceScanner Source(ITypeSource source)
+        {
+            sources.Add(source);
+            return this;
+        }
+
+        public SourceScanner TheCallingAssembly()
+        {
+            return Assembly(ReflectionHelper.FindTheCallingAssembly());
+        }
+
+        public SourceScanner Collection(IEnumerable<Type> collection)
+        {
+            return Source(new CollectionTypeSource(collection));
+        }
+
+        public void ForMappings()
+        {
+            sources.Each(gatherer.AddSource);
+        }
+
+        public void ForImporting()
+        {}
+
+        public void ForImporting(Action<ImportOptions> opts)
+        {}
+
+        public void ForConventions()
+        {
+            var conventions = new ConventionContainer(gatherer.Conventions, log);
+
+            sources.Each(conventions.AddSource);
+        }
+    }
+
+    public class ImportOptions
+    {
+        public void Rename<TImported>(string newName)
+        {
         }
     }
 }

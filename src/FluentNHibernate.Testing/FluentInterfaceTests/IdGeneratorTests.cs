@@ -63,7 +63,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
             map.Id(x => x.Int);
 
             model.Conventions.Add(new IdConvention());
-            model.Add(map);
+            model.InjectMapping(map);
             var @class = model.BuildMappings()
                 .Classes.First();
 

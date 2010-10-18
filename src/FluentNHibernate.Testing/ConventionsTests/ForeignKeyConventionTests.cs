@@ -29,7 +29,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
             classMap.Id(x => x.Id);
             classMap.References(x => x.Parent);
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
 
             //model.BuildMappings()
             //    .First()
@@ -46,7 +46,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
             classMap.Id(x => x.Id);
             classMap.HasMany(x => x.Children);
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
 
             //model.BuildMappings()
             //    .First()
@@ -63,7 +63,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
             classMap.Id(x => x.Id);
             classMap.HasManyToMany(x => x.Children);
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
 
             //model.BuildMappings()
             //    .First()
@@ -80,7 +80,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
             classMap.Id(x => x.Id);
             classMap.Join("two", m => { });
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
 
             //model.BuildMappings()
             //    .First()
@@ -97,7 +97,7 @@ namespace FluentNHibernate.Testing.ConventionsTests
 
             var subclassMap = new SubclassMap<ExampleInheritedClass>();
 
-            model.Add(classMap);
+            model.InjectMapping(classMap);
             //model.Add(subclassMap);
 
             //model.BuildMappings()

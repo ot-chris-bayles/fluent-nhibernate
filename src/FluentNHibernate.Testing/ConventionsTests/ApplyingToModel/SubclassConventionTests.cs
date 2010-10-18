@@ -85,8 +85,8 @@ namespace FluentNHibernate.Testing.ConventionsTests.ApplyingToModel
 
             var subclassMap = new SubclassMap<ExampleInheritedClass>();
 
-            model.Add(classMap);
-            model.Add(subclassMap);
+            model.InjectMapping(classMap);
+            model.InjectMapping(subclassMap);
 
             var generatedModels = model.BuildMappings();
             var modelInstance = generatedModels

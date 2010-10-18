@@ -126,6 +126,7 @@
     <Compile Include="Automapping\Steps\IAutomappingStep.cs" />
     <Compile Include="Cfg\Db\IDatabaseConfiguration.cs" />
     <Compile Include="Cfg\Db\PreconfiguredDatabaseConfiguration.cs" />
+    <Compile Include="CollectionTypeSource.cs" />
     <Compile Include="CombinedAssemblyTypeSource.cs" />
     <Compile Include="Conventions\ConventionContainer.cs" />
     <Compile Include="Conventions\ConventionFinder.cs" />

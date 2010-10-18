@@ -9,15 +9,13 @@ namespace FluentNHibernate.Cfg
     /// </summary>
     public class MappingConfiguration
     {
-        IDiagnosticLogger logger;
+        readonly IDiagnosticLogger logger;
 
         public MappingConfiguration(IDiagnosticLogger logger)
         {
             this.logger = logger;
 
-            FluentMappings = new FluentMappingsContainer();
-            FluentMappings.PersistenceModel.SetLogger(logger);
-
+            FluentMappings = new FluentMappingsContainer(logger);
             AutoMappings = new AutoMappingsContainer();
             HbmMappings = new HbmMappingsContainer();
         }
