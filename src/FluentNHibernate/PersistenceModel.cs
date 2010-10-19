@@ -1,15 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Xml;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions;
 using FluentNHibernate.Diagnostics;
 using FluentNHibernate.Infrastructure;
 using FluentNHibernate.Mapping;
-using FluentNHibernate.Utils;
-using FluentNHibernate.Utils.Reflection;
 using NHibernate.Cfg;
 
 namespace FluentNHibernate
@@ -266,70 +262,6 @@ namespace FluentNHibernate
             {
                 File.WriteAllText(exportPath, hbm.InnerXml);
             }
-        }
-    }
-
-    public class SourceScanner
-    {
-        readonly PersistenceInstructionGatherer gatherer;
-        readonly IDiagnosticLogger log;
-        readonly List<ITypeSource> sources = new List<ITypeSource>();
-
-        public SourceScanner(PersistenceInstructionGatherer gatherer, IDiagnosticLogger log)
-        {
-            this.gatherer = gatherer;
-            this.log = log;
-        }
-
-        public SourceScanner AssemblyContaining<T>()
-        {
-            return Assembly(typeof(T).Assembly);
-        }
-
-        public SourceScanner Assembly(Assembly assembly)
-        {
-            return Source(new AssemblyTypeSource(assembly));
-        }
-
-        public SourceScanner Source(ITypeSource source)
-        {
-            sources.Add(source);
-            return this;
-        }
-
-        public SourceScanner TheCallingAssembly()
-        {
-            return Assembly(ReflectionHelper.FindTheCallingAssembly());
-        }
-
-        public SourceScanner Collection(IEnumerable<Type> collection)
-        {
-            return Source(new CollectionTypeSource(collection));
-        }
-
-        public void ForMappings()
-        {
-            sources.Each(gatherer.AddSource);
-        }
-
-        public void ForImporting()
-        {}
-
-        public void ForImporting(Action<ImportOptions> opts)
-        {}
-
-        public void ForConventions()
-        {
-            var conventions = new ConventionContainer(gatherer.Conventions, log);
-
-            sources.Each(conventions.AddSource);
-        }
-    }
-
-    public class ImportOptions
-    {
-        public void Rename<TImported>(string newName)
-        {
         }
     }
 }

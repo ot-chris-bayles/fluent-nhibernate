@@ -157,12 +157,14 @@
     <Compile Include="Infrastructure\CfgModificationApplier.cs" />
     <Compile Include="Infrastructure\DerivedPersistenceInstructions.cs" />
     <Compile Include="Infrastructure\ExtendedPersistenceInstructions.cs" />
+    <Compile Include="Infrastructure\ImportOptions.cs" />
     <Compile Include="Infrastructure\IProvider.cs" />
     <Compile Include="Infrastructure\MappingActions.cs" />
     <Compile Include="Infrastructure\MappingCompiler.cs" />
     <Compile Include="Infrastructure\PersistenceInstructionGatherer.cs" />
     <Compile Include="Infrastructure\PersistenceInstructions.cs" />
     <Compile Include="Infrastructure\PersistenceModelInjector.cs" />
+    <Compile Include="Infrastructure\SourceScanner.cs" />
     <Compile Include="ITypeSource.cs" />
     <Compile Include="Automapping\PrivateAutoPersistenceModel.cs" />
     <Compile Include="Automapping\SubclassStrategy.cs" />

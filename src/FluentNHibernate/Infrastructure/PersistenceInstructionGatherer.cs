@@ -62,12 +62,12 @@ namespace FluentNHibernate.Infrastructure
             get { return automapping; }
         }
 
-        public void AddProviderInstance(IProvider provider)
+        public virtual void AddProviderInstance(IProvider provider)
         {
             instances.Add(provider);
         }
 
-        public void AddSource(ITypeSource source)
+        public virtual void AddSource(ITypeSource source)
         {
             sources.Add(source);
         }
