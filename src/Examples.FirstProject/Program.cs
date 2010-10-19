@@ -1,18 +1,14 @@
 ﻿using System;
-using System.IO;
 using Examples.FirstProject.Entities;
+using FluentNHibernate;
 using FluentNHibernate.Cfg;
-using FluentNHibernate.Cfg.Db;
 using NHibernate;
 using NHibernate.Cfg;
-using NHibernate.Tool.hbm2ddl;
 
 namespace Examples.FirstProject
 {
     class Program
     {
-        private const string DbFile = "firstProgram.db";
-
         static void Main()
         {
             // create our NHibernate session factory
@@ -78,25 +74,9 @@ namespace Examples.FirstProject
 
         private static ISessionFactory CreateSessionFactory()
         {
-            return Fluently.Configure()
-                .Database(SQLiteConfiguration.Standard
-                    .UsingFile(DbFile))
-                .Mappings(m =>
-                    m.FluentMappings.AddFromAssemblyOf<Program>())
-                .ExposeConfiguration(BuildSchema)
+            return new Configuration()
+                .ConfigureWith<ExampleModel>()
                 .BuildSessionFactory();
-        }
-
-        private static void BuildSchema(Configuration config)
-        {
-            // delete the existing db on each run
-            if (File.Exists(DbFile))
-                File.Delete(DbFile);
-
-            // this NHibernate tool takes a configuration (with mapping info in)
-            // and exports a database schema from it
-            new SchemaExport(config)
-                .Create(false, true);
         }
 
         private static void WriteStorePretty(Store store)

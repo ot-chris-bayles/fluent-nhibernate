@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using FluentNHibernate.Cfg;
 using FluentNHibernate.Infrastructure;
 using NHibernate.Cfg;
 
@@ -10,9 +7,11 @@ namespace FluentNHibernate
     public static class ConfigurationHelper
     {
         public static Configuration ConfigureWith<T>(this Configuration cfg)
-            where T : PersistenceModel, new()
+            where T : PersistenceModel
         {
-            return cfg.ConfigureWith(new T());
+            var instance = (T)Activator.CreateInstance(typeof(T), true);
+
+            return cfg.ConfigureWith(instance);
         }
 
         public static Configuration ConfigureWith(this Configuration cfg, PersistenceModel model)
