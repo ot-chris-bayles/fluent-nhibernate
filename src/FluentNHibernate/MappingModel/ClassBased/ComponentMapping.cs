@@ -28,11 +28,6 @@ namespace FluentNHibernate.MappingModel.ClassBased
             base.AcceptVisitor(visitor);
         }
 
-        public override void MergeAttributes(AttributeStore store)
-        {
-            attributes.Merge(new AttributeStore<ComponentMapping>(store));
-        }
-
         public bool HasColumnPrefix
         {
             get { return !string.IsNullOrEmpty(ColumnPrefix); }
@@ -43,30 +38,21 @@ namespace FluentNHibernate.MappingModel.ClassBased
         public override string Name
         {
             get { return attributes.Get(x => x.Name); }
-            set { attributes.Set(x => x.Name, value); }
         }
 
         public override Type Type
         {
             get { return attributes.Get(x => x.Type); }
-            set { attributes.Set(x => x.Type, value); }
         }
 
         public TypeReference Class
         {
             get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
         }
 
         public bool Lazy
         {
             get { return attributes.Get(x => x.Lazy); }
-            set { attributes.Set(x => x.Lazy, value); }
-        }
-
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
         }
 
         public bool HasValue<TResult>(Expression<Func<ComponentMapping, TResult>> property)
@@ -77,11 +63,6 @@ namespace FluentNHibernate.MappingModel.ClassBased
         public override bool HasValue(string property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<ComponentMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(ComponentMapping other)

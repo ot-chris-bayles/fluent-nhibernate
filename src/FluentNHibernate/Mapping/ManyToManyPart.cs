@@ -1,13 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Xml;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
-using FluentNHibernate.Utils;
-using NHibernate.Persister.Entity;
 
 namespace FluentNHibernate.Mapping
 {
@@ -37,8 +32,8 @@ namespace FluentNHibernate.Mapping
             this.entity = entity;
             childType = collectionType;
 
-            fetch = new FetchTypeExpression<ManyToManyPart<TChild>>(this, value => collectionAttributes.Set(x => x.Fetch, value));
-            notFound = new NotFoundExpression<ManyToManyPart<TChild>>(this, value => relationshipAttributes.Set(x => x.NotFound, value));
+            fetch = new FetchTypeExpression<ManyToManyPart<TChild>>(this, value => collectionAttributes.Set(x => x.Fetch, Layer.UserSupplied, value));
+            notFound = new NotFoundExpression<ManyToManyPart<TChild>>(this, value => relationshipAttributes.Set(x => x.NotFound, Layer.UserSupplied, value));
 
             childKeyColumns = new ColumnMappingCollection<ManyToManyPart<TChild>>(this);
             parentKeyColumns = new ColumnMappingCollection<ManyToManyPart<TChild>>(this);
@@ -77,13 +72,13 @@ namespace FluentNHibernate.Mapping
         public ManyToManyPart<TChild> ForeignKeyConstraintNames(string parentForeignKeyName, string childForeignKeyName)
         {
             keyMapping.ForeignKey = parentForeignKeyName;
-            relationshipAttributes.Set(x => x.ForeignKey, childForeignKeyName);
+            relationshipAttributes.Set(x => x.ForeignKey, Layer.UserSupplied, childForeignKeyName);
             return this;
         }
 
         public ManyToManyPart<TChild> ChildPropertyRef(string childPropertyRef)
         {
-            relationshipAttributes.Set(x => x.ChildPropertyRef, childPropertyRef);
+            relationshipAttributes.Set(x => x.ChildPropertyRef, Layer.UserSupplied, childPropertyRef);
             return this;
         }
 
@@ -243,7 +238,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public ManyToManyPart<TChild> OrderBy(string orderBy)
         {
-            collectionAttributes.Set(x => x.OrderBy, orderBy);
+            collectionAttributes.Set(x => x.OrderBy, Layer.UserSupplied, orderBy);
             return this;
         }
 
@@ -252,20 +247,20 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public ManyToManyPart<TChild> ChildOrderBy(string orderBy)
         {
-            relationshipAttributes.Set(x => x.OrderBy, orderBy);
+            relationshipAttributes.Set(x => x.OrderBy, Layer.UserSupplied, orderBy);
             return this;
         }
 
         public ManyToManyPart<TChild> ReadOnly()
-        {            
-            collectionAttributes.Set(x => x.Mutable, !nextBool);
+        {
+            collectionAttributes.Set(x => x.Mutable, Layer.UserSupplied, !nextBool);
             nextBool = true;
             return this;
         }
 
         public ManyToManyPart<TChild> Subselect(string subselect)
         {
-            collectionAttributes.Set(x => x.Subselect, subselect);
+            collectionAttributes.Set(x => x.Subselect, Layer.UserSupplied, subselect);
             return this;
         }
 
@@ -293,7 +288,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="name">The filter's name</param>
         public ManyToManyPart<TChild> ApplyChildFilter(string name)
         {
-            return this.ApplyChildFilter(name, null);
+            return ApplyChildFilter(name, null);
         }
 
         /// <overloads>
@@ -331,7 +326,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public ManyToManyPart<TChild> ChildWhere(string where)
         {
-            relationshipAttributes.Set(x => x.Where, where);
+            relationshipAttributes.Set(x => x.Where, Layer.UserSupplied, where);
             return this;
         }
 
@@ -341,7 +336,7 @@ namespace FluentNHibernate.Mapping
 
             // key columns
             if (parentKeyColumns.Count == 0)
-                collection.Key.AddDefaultColumn(new ColumnMapping { Name = entity.Name + "_id" });
+                collection.Key.AddDefaultColumn(new ColumnMapping(entity.Name + "_id"));
 
             foreach (var column in parentKeyColumns)
                 collection.Key.AddColumn(column);
@@ -350,7 +345,7 @@ namespace FluentNHibernate.Mapping
             {
                 // child columns
                 if (childKeyColumns.Count == 0)
-                    ((ManyToManyMapping)collection.Relationship).AddDefaultColumn(new ColumnMapping {Name = typeof(TChild).Name + "_id"});
+                    ((ManyToManyMapping)collection.Relationship).AddDefaultColumn(new ColumnMapping(typeof(TChild).Name + "_id"));
 
                 foreach (var column in childKeyColumns)
                     ((ManyToManyMapping)collection.Relationship).AddColumn(column);

@@ -34,22 +34,18 @@ namespace FluentNHibernate.Conventions.Instances
         
         public new void Formula(string formula)
         {
-            if (!mapping.IsSpecified("Formula"))
-            {
-                mapping.Formula = formula;
-                mapping.ClearColumns();
-            }
+            mapping.Formula = formula;
+            // TODO: Fix this
+            // mapping.ClearColumns();
         }
 
         public void CustomClass<T>()
         {
-            if (!mapping.IsSpecified("Class"))
                 mapping.Class = new TypeReference(typeof(T));
         }
 
         public void CustomClass(Type type)
         {
-            if (!mapping.IsSpecified("Class"))
                 mapping.Class = new TypeReference(type);
         }
 
@@ -59,7 +55,6 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new AccessInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Access"))
                         mapping.Access = value;
                 });
             }
@@ -71,7 +66,6 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new CascadeInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Cascade"))
                         mapping.Cascade = value;
                 });
             }
@@ -83,7 +77,6 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new FetchInstance(value =>
                 {
-                    if (!mapping.IsSpecified("Fetch"))
                         mapping.Fetch = value;
                 });
             }
@@ -105,7 +98,6 @@ namespace FluentNHibernate.Conventions.Instances
             {
                 return new NotFoundInstance(value =>
                 {
-                    if (!mapping.IsSpecified("NotFound"))
                         mapping.NotFound = value;
                 });
             }
@@ -113,36 +105,28 @@ namespace FluentNHibernate.Conventions.Instances
 
         public void Index(string index)
         {
-            if (mapping.Columns.First().IsSpecified("Index"))
-                return;
-
             foreach (var column in mapping.Columns)
                 column.Index = index;
         }
 
         public new void Insert()
         {
-            if (!mapping.IsSpecified("Insert"))
                 mapping.Insert = nextBool;
             nextBool = true;
         }
 
         public new void OptimisticLock()
         {
-            if (!mapping.IsSpecified("OptimisticLock"))
                 mapping.OptimisticLock = nextBool;
             nextBool = true;
         }
 
         public new void LazyLoad()
         {
-            if (!mapping.IsSpecified("Lazy"))
-            {
                 if (nextBool)
                     LazyLoad(Laziness.Proxy);
                 else
                     LazyLoad(Laziness.False);
-            }
             nextBool = true;
         }
 
@@ -154,7 +138,6 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void Nullable()
         {
-            if (!mapping.Columns.First().IsSpecified("NotNull"))
                 foreach (var column in mapping.Columns)
                     column.NotNull = !nextBool;
 
@@ -163,23 +146,18 @@ namespace FluentNHibernate.Conventions.Instances
 
         public new void PropertyRef(string property)
         {
-            if (!mapping.IsSpecified("PropertyRef"))
                 mapping.PropertyRef = property;
         }
 
         public void ReadOnly()
         {
-            if (!mapping.IsSpecified("Insert") && !mapping.IsSpecified("Update"))
-            {
                 mapping.Insert = !nextBool;
                 mapping.Update = !nextBool;
-            }
             nextBool = true;
         }
 
         public void Unique()
         {
-            if (!mapping.Columns.First().IsSpecified("Unique"))
                 foreach (var column in mapping.Columns)
                     column.Unique = nextBool;
 
@@ -188,23 +166,18 @@ namespace FluentNHibernate.Conventions.Instances
 
         public void UniqueKey(string key)
         {
-            if (mapping.Columns.First().IsSpecified("UniqueKey"))
-                return;
-
             foreach (var column in mapping.Columns)
                 column.UniqueKey = key;
         }
 
         public new void Update()
         {
-            if (!mapping.IsSpecified("Update"))
                 mapping.Update = nextBool;
             nextBool = true;
         }
 
         public new void ForeignKey(string key)
         {
-            if (!mapping.IsSpecified("ForeignKey"))
                 mapping.ForeignKey = key;
         }
 

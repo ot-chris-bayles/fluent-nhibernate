@@ -26,30 +26,18 @@ namespace FluentNHibernate.MappingModel
         public string Value
         {
             get { return attributes.Get(x => x.Value); }
-            set { attributes.Set(x => x.Value, value); }
         }
 
         public TypeReference Class
         {
             get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
         }
 
         public Type ContainingEntityType { get; set; }
 
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
-        }
-
         public bool HasValue<TResult>(Expression<Func<MetaValueMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<MetaValueMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(MetaValueMapping other)
@@ -70,6 +58,11 @@ namespace FluentNHibernate.MappingModel
                 return ((attributes != null ? attributes.GetHashCode() : 0) * 397) ^
                     (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
             }
+        }
+
+        public void Set<T>(Expression<Func<MetaValueMapping, T>> expression, int layer, T value)
+        {
+            attributes.Set(expression, layer, value);
         }
     }
 }

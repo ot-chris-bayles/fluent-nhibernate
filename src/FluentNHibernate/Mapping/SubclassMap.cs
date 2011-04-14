@@ -62,7 +62,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public void Abstract()
         {
-            attributes.Set(x => x.Abstract, nextBool);
+            attributes.Set(x => x.Abstract, Layer.UserSupplied, nextBool);
             nextBool = true;
         }
 
@@ -71,7 +71,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public void DynamicInsert()
         {
-            attributes.Set(x => x.DynamicInsert, nextBool);
+            attributes.Set(x => x.DynamicInsert, Layer.UserSupplied, nextBool);
             nextBool = true;
         }
 
@@ -80,7 +80,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public void DynamicUpdate()
         {
-            attributes.Set(x => x.DynamicUpdate, nextBool);
+            attributes.Set(x => x.DynamicUpdate, Layer.UserSupplied, nextBool);
             nextBool = true;
         }
 
@@ -89,7 +89,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public void LazyLoad()
         {
-            attributes.Set(x => x.Lazy, nextBool);
+            attributes.Set(x => x.Lazy, Layer.UserSupplied, nextBool);
             nextBool = true;
         }
 
@@ -108,7 +108,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="proxyType">Proxy type</param>
         public void Proxy(Type proxyType)
         {
-            attributes.Set(x => x.Proxy, proxyType.AssemblyQualifiedName);
+            attributes.Set(x => x.Proxy, Layer.UserSupplied, proxyType.AssemblyQualifiedName);
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public void SelectBeforeUpdate()
         {
-            attributes.Set(x => x.SelectBeforeUpdate, nextBool);
+            attributes.Set(x => x.SelectBeforeUpdate, Layer.UserSupplied, nextBool);
             nextBool = true;
         }
 
@@ -137,7 +137,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="discriminatorValue">Discriminator value</param>
         public void DiscriminatorValue(object discriminatorValue)
         {
-            attributes.Set(x => x.DiscriminatorValue, discriminatorValue);
+            attributes.Set(x => x.DiscriminatorValue, Layer.UserSupplied, discriminatorValue);
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="table">Table name</param>
         public void Table(string table)
         {
-            attributes.Set(x => x.TableName, table);
+            attributes.Set(x => x.TableName, Layer.UserSupplied, table);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="schema">Schema</param>
         public void Schema(string schema)
         {
-            attributes.Set(x => x.Schema, schema);
+            attributes.Set(x => x.Schema, Layer.UserSupplied, schema);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="constraint">Constraint name</param>
         public void Check(string constraint)
         {
-            attributes.Set(x => x.Check, constraint);
+            attributes.Set(x => x.Check, Layer.UserSupplied, constraint);
         }
 
         /// <summary>
@@ -181,9 +181,9 @@ namespace FluentNHibernate.Mapping
             else
                 key = new KeyMapping();
 
-            key.AddColumn(new ColumnMapping { Name = column });
+            key.AddColumn(new ColumnMapping(column));
 
-            attributes.Set(x => x.Key, key);
+            attributes.Set(x => x.Key, Layer.UserSupplied, key);
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="subselect">Subselect query</param>
         public void Subselect(string subselect)
         {
-            attributes.Set(x => x.Subselect, subselect);
+            attributes.Set(x => x.Subselect, Layer.UserSupplied, subselect);
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace FluentNHibernate.Mapping
         /// <typeparam name="TPersister">Persister type</typeparam>
         public void Persister<TPersister>()
         {
-            attributes.Set(x => x.Persister, new TypeReference(typeof(TPersister)));
+            attributes.Set(x => x.Persister, Layer.UserSupplied, new TypeReference(typeof(TPersister)));
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="type">Persister type</param>
         public void Persister(Type type)
         {
-            attributes.Set(x => x.Persister, new TypeReference(type));
+            attributes.Set(x => x.Persister, Layer.UserSupplied, new TypeReference(type));
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="type">Persister type</param>
         public void Persister(string type)
         {
-            attributes.Set(x => x.Persister, new TypeReference(type));
+            attributes.Set(x => x.Persister, Layer.UserSupplied, new TypeReference(type));
         }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="batchSize">Batch size</param>
         public void BatchSize(int batchSize)
         {
-            attributes.Set(x => x.BatchSize, batchSize);
+            attributes.Set(x => x.BatchSize, Layer.UserSupplied, batchSize);
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace FluentNHibernate.Mapping
         /// <remarks>See http://nhforge.org/blogs/nhibernate/archive/2008/10/21/entity-name-in-action-a-strongly-typed-entity.aspx</remarks>
         public void EntityName(string entityname)
         {
-            attributes.Set(x => x.EntityName, entityname);
+            attributes.Set(x => x.EntityName, Layer.UserSupplied, entityname);
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="type">Type of the entity to extend</param>
         public void Extends(Type type)
         {
-            attributes.Set(x => x.Extends, type);
+            attributes.Set(x => x.Extends, Layer.UserSupplied, type);
         }
 
         SubclassMapping IIndeterminateSubclassMappingProvider.GetSubclassMapping(SubclassType type)
@@ -287,16 +287,16 @@ namespace FluentNHibernate.Mapping
 
             GenerateNestedSubclasses(mapping);
 
-            attributes.SetDefault(x => x.Type, typeof(T));
-            attributes.SetDefault(x => x.Name, typeof(T).AssemblyQualifiedName);
-            attributes.SetDefault(x => x.DiscriminatorValue, typeof(T).Name);
+            attributes.Set(x => x.Type, Layer.Defaults, typeof(T));
+            attributes.Set(x => x.Name, Layer.Defaults, typeof(T).AssemblyQualifiedName);
+            attributes.Set(x => x.DiscriminatorValue, Layer.Defaults, typeof(T).Name);
 
             // TODO: un-hardcode this
             var key = new KeyMapping();
-            key.AddDefaultColumn(new ColumnMapping { Name = typeof(T).BaseType.Name + "_id" });
+            key.AddDefaultColumn(new ColumnMapping(typeof(T).BaseType.Name + "_id"));
 
-            attributes.SetDefault(x => x.TableName, GetDefaultTableName());
-            attributes.SetDefault(x => x.Key, key);
+            attributes.Set(x => x.TableName, Layer.Defaults, GetDefaultTableName());
+            attributes.Set(x => x.Key, Layer.Defaults, key);
 
             // TODO: this is nasty, we should find a better way
             mapping.OverrideAttributes(attributes.CloneInner());

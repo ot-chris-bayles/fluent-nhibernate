@@ -1,4 +1,6 @@
 using System;
+using System.Linq.Expressions;
+using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
 namespace FluentNHibernate.MappingModel.Identity
@@ -18,8 +20,7 @@ namespace FluentNHibernate.MappingModel.Identity
 
         public GeneratorMapping Generator
         {
-            get { return attributes.Get<GeneratorMapping>("Generator"); }
-            set { attributes.Set("Generator", value); }
+            get { return (GeneratorMapping)attributes.Get("Generator"); }
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
@@ -35,29 +36,30 @@ namespace FluentNHibernate.MappingModel.Identity
 
         public string Name
         {
-            get { return attributes.Get("Name"); }
-            set { attributes.Set("Name", value); }
+            get { return (string)attributes.Get("Name"); }
         }
 
         public string Access
         {
-            get { return attributes.Get("Access"); }
-            set { attributes.Set("Access", value); }
+            get { return (string)attributes.Get("Access"); }
         }
 
         public TypeReference Type
         {
-            get { return attributes.Get<TypeReference>("Type"); }
-            set { attributes.Set("Type", value); }
+            get { return (TypeReference)attributes.Get("Type"); }
         }
 
         public string UnsavedValue
         {
-            get { return attributes.Get("UnsavedValue"); }
-            set { attributes.Set("UnsavedValue", value); }
+            get { return (string)attributes.Get("UnsavedValue"); }
         }
 
         public Type ContainingEntityType { get; set; }
+
+        public void Set(Expression<Func<IdMapping, object>> expression, int layer, object value)
+        {
+            attributes.Set(expression.ToMember().Name, layer, value);
+        }
 
         public bool Equals(IdMapping other)
         {

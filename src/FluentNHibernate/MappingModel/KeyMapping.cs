@@ -31,37 +31,31 @@ namespace FluentNHibernate.MappingModel
         public string ForeignKey
         {
             get { return attributes.Get(x => x.ForeignKey); }
-            set { attributes.Set(x => x.ForeignKey, value); }
         }
 
         public string PropertyRef
         {
             get { return attributes.Get(x => x.PropertyRef); }
-            set { attributes.Set(x => x.PropertyRef, value); }
         }
 
         public string OnDelete
         {
             get { return attributes.Get(x => x.OnDelete); }
-            set { attributes.Set(x => x.OnDelete, value); }
         }
 
         public bool NotNull
         {
             get { return attributes.Get(x => x.NotNull); }
-            set { attributes.Set(x => x.NotNull, value); }
         }
 
         public bool Update
         {
             get { return attributes.Get(x => x.Update); }
-            set { attributes.Set(x => x.Update, value); }
         }
 
         public bool Unique
         {
             get { return attributes.Get(x => x.Unique); }
-            set { attributes.Set(x => x.Unique, value); }
         }
 
         public IDefaultableEnumerable<ColumnMapping> Columns
@@ -90,19 +84,9 @@ namespace FluentNHibernate.MappingModel
             columns.ClearAll();
         }
 
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
-        }
-
         public bool HasValue<TResult>(Expression<Func<KeyMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<KeyMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(KeyMapping other)

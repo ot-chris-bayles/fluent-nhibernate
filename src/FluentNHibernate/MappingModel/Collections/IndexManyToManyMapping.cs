@@ -32,7 +32,6 @@ namespace FluentNHibernate.MappingModel.Collections
         public TypeReference Class
         {
             get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
         }
 
         public IDefaultableEnumerable<ColumnMapping> Columns
@@ -58,28 +57,16 @@ namespace FluentNHibernate.MappingModel.Collections
         public string ForeignKey
         {
             get { return attributes.Get(x => x.ForeignKey); }
-            set { attributes.Set(x => x.ForeignKey, value); }
         }
 
         public string EntityName
         {
             get { return attributes.Get(x => x.EntityName); }
-            set { attributes.Set(x => x.EntityName, value); }
         }     
-
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
-        }
 
         public bool HasValue<TResult>(Expression<Func<IndexManyToManyMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<IndexManyToManyMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(IndexManyToManyMapping other)

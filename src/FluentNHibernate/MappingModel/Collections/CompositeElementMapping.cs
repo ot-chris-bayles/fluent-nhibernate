@@ -38,13 +38,11 @@ namespace FluentNHibernate.MappingModel.Collections
         public TypeReference Class
         {
             get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
         }
 
         public ParentMapping Parent
         {
             get { return attributes.Get(x => x.Parent); }
-            set { attributes.Set(x => x.Parent, value); }
         }
 
         public IEnumerable<PropertyMapping> Properties
@@ -79,19 +77,9 @@ namespace FluentNHibernate.MappingModel.Collections
             compositeElements.Add(compositeElement);
         }
 
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
-        }
-
         public bool HasValue<TResult>(Expression<Func<CompositeElementMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<CompositeElementMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(CompositeElementMapping other)

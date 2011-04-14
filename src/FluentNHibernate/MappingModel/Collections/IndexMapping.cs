@@ -30,7 +30,6 @@ namespace FluentNHibernate.MappingModel.Collections
         public TypeReference Type
         {
             get { return attributes.Get(x => x.Type); }
-            set { attributes.Set(x => x.Type, value); }
         }
 
         public Type ContainingEntityType { get; set; }
@@ -55,19 +54,9 @@ namespace FluentNHibernate.MappingModel.Collections
             columns.Clear();
         }
 
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
-        }
-
         public bool HasValue<TResult>(Expression<Func<IndexMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<IndexMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(IndexMapping other)

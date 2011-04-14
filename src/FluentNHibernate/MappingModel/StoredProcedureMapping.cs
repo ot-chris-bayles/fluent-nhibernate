@@ -48,16 +48,6 @@ namespace FluentNHibernate.MappingModel
             visitor.ProcessStoredProcedure(this);
         }
 
-        public void MergeAttributes(AttributeStore store)
-        {
-            attributes.Merge(new AttributeStore<StoredProcedureMapping>(store));
-        }
-
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
-        }
-
         public string Check
         {
             get { return attributes.Get(x => x.Check); }

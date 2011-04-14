@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using FluentNHibernate.MappingModel;
 using FluentNHibernate.MappingModel.Collections;
 using FluentNHibernate.Utils;
@@ -26,13 +25,13 @@ namespace FluentNHibernate.Mapping
 
         public IndexPart Type<TIndex>()
         {
-            attributes.Set(x => x.Type, new TypeReference(typeof(TIndex)));
+            attributes.Set(x => x.Type, Layer.UserSupplied, new TypeReference(typeof(TIndex)));
             return this;
         }
 
         public IndexPart Type(Type type)
         {
-            attributes.Set(x => x.Type, new TypeReference(type));
+            attributes.Set(x => x.Type, Layer.UserSupplied, new TypeReference(type));
             return this;
         }
 
@@ -43,7 +42,12 @@ namespace FluentNHibernate.Mapping
 
             mapping.ContainingEntityType = entity;
 
-            columns.Each(x => mapping.AddColumn(new ColumnMapping { Name = x }));
+            columns.Each(name =>
+            {
+                var columnMapping = new ColumnMapping();
+                columnMapping.Set(x => x.Name, Layer.Defaults, name);
+                mapping.AddColumn(columnMapping);
+            });
 
             return mapping;
         }

@@ -26,42 +26,28 @@ namespace FluentNHibernate.MappingModel.Collections
         public Type ChildType
         {
             get { return attributes.Get(x => x.ChildType); }
-            set { attributes.Set(x => x.ChildType, value); }
         }
 
         public TypeReference Class
         {
             get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
         }
 
         public string NotFound
         {
             get { return attributes.Get(x => x.NotFound); }
-            set { attributes.Set(x => x.NotFound, value); }
         }
 
         public string EntityName
         {
             get { return attributes.Get(x => x.EntityName); }
-            set { attributes.Set(x => x.EntityName, value); }
         }
 
         public Type ContainingEntityType { get; set; }
 
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
-        }
-
         public bool HasValue<TResult>(Expression<Func<OneToManyMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<OneToManyMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(OneToManyMapping other)

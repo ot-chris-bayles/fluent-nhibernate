@@ -22,25 +22,21 @@ namespace FluentNHibernate.MappingModel.Identity
         public string Name
         {
             get { return attributes.Get(x => x.Name); }
-            set { attributes.Set(x => x.Name, value); }
         }
 
         public string Access
         {
             get { return attributes.Get(x => x.Access); }
-            set { attributes.Set(x => x.Access, value); }
         }
 
         public TypeReference Type
         {
             get { return attributes.Get(x => x.Type); }
-            set { attributes.Set(x => x.Type, value); }
         }
 
         public int Length
         {
             get { return attributes.Get(x => x.Length); }
-            set { attributes.Set(x => x.Length, value); }
         }
 
         public IEnumerable<ColumnMapping> Columns
@@ -55,19 +51,9 @@ namespace FluentNHibernate.MappingModel.Identity
             columns.Add(mapping);
         }
 
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
-        }
-
         public bool HasValue<TResult>(Expression<Func<KeyPropertyMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<KeyPropertyMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(KeyPropertyMapping other)

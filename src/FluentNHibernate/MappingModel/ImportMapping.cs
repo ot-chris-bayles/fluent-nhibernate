@@ -26,28 +26,16 @@ namespace FluentNHibernate.MappingModel
         public string Rename
         {
             get { return attributes.Get(x => x.Rename); }
-            set { attributes.Set(x => x.Rename, value); }
         }
 
         public TypeReference Class
         {
             get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
-        }
-
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
         }
 
         public bool HasValue<TResult>(Expression<Func<ImportMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<ImportMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(ImportMapping other)

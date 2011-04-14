@@ -19,12 +19,12 @@ namespace FluentNHibernate.Mapping
 
         public CompositeIdentityPart()
         {
-            access = new AccessStrategyBuilder<CompositeIdentityPart<T>>(this, value => attributes.Set(x => x.Access, value));
+            access = new AccessStrategyBuilder<CompositeIdentityPart<T>>(this, value => attributes.Set(x => x.Access, Layer.UserSupplied, value));
         }
 
         public CompositeIdentityPart(string name) : this()
         {
-            attributes.Set(x => x.Name, name);
+            attributes.Set(x => x.Name, Layer.Defaults, name);
         }
 
         /// <summary>
@@ -84,8 +84,12 @@ namespace FluentNHibernate.Mapping
                 customMapping(part);
             }
 
-            if(!string.IsNullOrEmpty(columnName))
-                key.AddColumn(new ColumnMapping { Name = columnName });
+            if (!string.IsNullOrEmpty(columnName))
+            {
+                var columnMapping = new ColumnMapping();
+                columnMapping.Set(x => x.Name, Layer.Defaults, columnName);
+                key.AddColumn(columnMapping);
+            }
 
             keys.Add(key);
 
@@ -142,7 +146,11 @@ namespace FluentNHibernate.Mapping
             };
 
             foreach (var column in columnNames)
-                key.AddColumn(new ColumnMapping { Name = column });
+            {
+                var columnMapping = new ColumnMapping();
+                columnMapping.Set(x => x.Name, Layer.Defaults, column);
+                key.AddColumn(columnMapping);
+            }
 
             var keyPart = new KeyManyToOnePart(key);
 
@@ -181,7 +189,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public CompositeIdentityPart<T> Mapped()
         {
-            attributes.Set(x => x.Mapped, nextBool);
+            attributes.Set(x => x.Mapped, Layer.UserSupplied, nextBool);
             nextBool = true;
             return this;
         }
@@ -192,7 +200,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="value">Unsaved value</param>
         public CompositeIdentityPart<T> UnsavedValue(string value)
         {
-            attributes.Set(x => x.UnsavedValue, value);
+            attributes.Set(x => x.UnsavedValue, Layer.UserSupplied, value);
             return this;
         }
 
@@ -221,17 +229,18 @@ namespace FluentNHibernate.Mapping
         /// </remarks>
         public CompositeIdentityPart<T> ComponentCompositeIdentifier<TComponentType>(Expression<Func<T, TComponentType>> expression)
         {
-            attributes.Set(x => x.Class, new TypeReference(typeof(TComponentType)));
-            attributes.Set(x => x.Name, ReflectionHelper.GetMember(expression).Name);
+            attributes.Set(x => x.Class, Layer.Defaults, new TypeReference(typeof(TComponentType)));
+            attributes.Set(x => x.Name, Layer.Defaults, expression.ToMember().Name);
 
             return this;
         }
 
         CompositeIdMapping ICompositeIdMappingProvider.GetCompositeIdMapping()
 	    {
-            var mapping = new CompositeIdMapping(attributes.CloneInner());
-
-	        mapping.ContainingEntityType = typeof(T);
+            var mapping = new CompositeIdMapping(attributes.CloneInner())
+            {
+                ContainingEntityType = typeof(T)
+            };
 
             keys.Each(mapping.AddKey);
 

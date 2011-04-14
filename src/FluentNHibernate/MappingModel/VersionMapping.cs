@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Expressions;
 using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
@@ -24,32 +25,27 @@ namespace FluentNHibernate.MappingModel
 
         public string Name
         {
-            get { return attributes.Get("Name"); }
-            set { attributes.Set("Name", value); }
+            get { return (string)attributes.Get("Name"); }
         }
 
         public string Access
         {
-            get { return attributes.Get("Access"); }
-            set { attributes.Set("Access", value); }
+            get { return (string)attributes.Get("Access"); }
         }
 
         public TypeReference Type
         {
-            get { return attributes.Get<TypeReference>("Type"); }
-            set { attributes.Set("Type", value); }
+            get { return (TypeReference)attributes.Get("Type"); }
         }
 
         public string UnsavedValue
         {
-            get { return attributes.Get("UnsavedValue"); }
-            set { attributes.Set("UnsavedValue", value); }
+            get { return (string)attributes.Get("UnsavedValue"); }
         }
 
         public string Generated
         {
-            get { return attributes.Get("Generated"); }
-            set { attributes.Set("Generated", value); }
+            get { return (string)attributes.Get("Generated"); }
         }
 
         public Type ContainingEntityType { get; set; }
@@ -76,6 +72,11 @@ namespace FluentNHibernate.MappingModel
                     return (base.GetHashCode() * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
                 }
             }
+        }
+
+        public void Set(Expression<Func<VersionMapping, object>> expression, int layer, object value)
+        {
+            attributes.Set(expression.ToMember().Name, layer, value);
         }
     }
 }

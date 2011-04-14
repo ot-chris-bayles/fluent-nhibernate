@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Expressions;
 using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
@@ -27,56 +28,47 @@ namespace FluentNHibernate.MappingModel
 
         public string Name
         {
-            get { return attributes.Get("Name"); }
-            set { attributes.Set("Name", value); }
+            get { return (string)attributes.Get("Name"); }
         }
 
         public string Access
         {
-            get { return attributes.Get("Access"); }
-            set { attributes.Set("Access", value); }
+            get { return (string)attributes.Get("Access"); }
         }
 
         public bool Insert
         {
-            get { return attributes.Get<bool>("Insert"); }
-            set { attributes.Set("Insert", value); }
+            get { return (bool)attributes.Get("Insert"); }
         }
 
         public bool Update
         {
-            get { return attributes.Get<bool>("Update"); }
-            set { attributes.Set("Update", value); }
+            get { return (bool)attributes.Get("Update"); }
         }
 
         public string Formula
         {
-            get { return attributes.Get("Formula"); }
-            set { attributes.Set("Formula", value); }
+            get { return (string)attributes.Get("Formula"); }
         }
 
         public bool Lazy
         {
-            get { return attributes.Get<bool>("Lazy"); }
-            set { attributes.Set("Lazy", value); }
+            get { return (bool)attributes.Get("Lazy"); }
         }
 
         public bool OptimisticLock
         {
-            get { return attributes.Get<bool>("OptimisticLock"); }
-            set { attributes.Set("OptimisticLock", value); }
+            get { return (bool)attributes.Get("OptimisticLock"); }
         }
 
         public string Generated
         {
-            get { return attributes.Get("Generated"); }
-            set { attributes.Set("Generated", value); }
+            get { return (string)attributes.Get("Generated"); }
         }
 
         public TypeReference Type
         {
-            get { return attributes.Get<TypeReference>("Type"); }
-            set { attributes.Set("Type", value); }
+            get { return (TypeReference)attributes.Get("Type"); }
         }
 
         public Member Member { get; set; }
@@ -104,6 +96,11 @@ namespace FluentNHibernate.MappingModel
             {
                 return ((ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0) * 397) ^ (Member != null ? Member.GetHashCode() : 0);
             }
+        }
+
+        public void Set(Expression<Func<PropertyMapping, object>> expression, int layer, object value)
+        {
+            attributes.Set(expression.ToMember().Name, layer, value);
         }
     }
 }

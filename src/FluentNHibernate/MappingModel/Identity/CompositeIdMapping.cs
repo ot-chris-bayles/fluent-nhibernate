@@ -36,35 +36,28 @@ namespace FluentNHibernate.MappingModel.Identity
         public string Name
         {
             get { return attributes.Get(x => x.Name); }
-            set
-            {
-            	attributes.Set(x => x.Name, value);
-				Mapped = !string.IsNullOrEmpty(value);
-            }
+                // TODO: Fix this
+				//Mapped = !string.IsNullOrEmpty(value);
         }
 
         public string Access
         {
             get { return attributes.Get(x => x.Access); }
-            set { attributes.Set(x => x.Access, value); }
         }
 
         public bool Mapped
         {
             get { return attributes.Get(x => x.Mapped); }
-            set { attributes.Set(x => x.Mapped, value); }
         }
 
         public TypeReference Class
         {
             get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
         }
 
         public string UnsavedValue
         {
             get { return attributes.Get(x => x.UnsavedValue); }
-            set { attributes.Set(x => x.UnsavedValue, value); }
         }
 
         public IEnumerable<ICompositeIdKeyMapping> Keys
@@ -79,19 +72,9 @@ namespace FluentNHibernate.MappingModel.Identity
             keys.Add(mapping);
         }
 
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
-        }
-
         public bool HasValue<TResult>(Expression<Func<CompositeIdMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<CompositeIdMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(CompositeIdMapping other)

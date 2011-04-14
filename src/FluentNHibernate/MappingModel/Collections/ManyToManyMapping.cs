@@ -40,67 +40,56 @@ namespace FluentNHibernate.MappingModel.Collections
         public Type ChildType
         {
             get { return attributes.Get(x => x.ChildType); }
-            set { attributes.Set(x => x.ChildType, value); }
         }
 
         public Type ParentType
         {
             get { return attributes.Get(x => x.ParentType); }
-            set { attributes.Set(x => x.ParentType, value); }
         }
 
         public TypeReference Class
         {
             get { return attributes.Get(x => x.Class); }
-            set { attributes.Set(x => x.Class, value); }
         }
 
         public string ForeignKey
         {
             get { return attributes.Get(x => x.ForeignKey); }
-            set { attributes.Set(x => x.ForeignKey, value); }
         }
 
         public string Fetch
         {
             get { return attributes.Get(x => x.Fetch); }
-            set { attributes.Set(x => x.Fetch, value); }
         }
 
         public string NotFound
         {
             get { return attributes.Get(x => x.NotFound); }
-            set { attributes.Set(x => x.NotFound, value); }
         }
 
         public string Where
         {
             get { return attributes.Get(x => x.Where); }
-            set { attributes.Set(x => x.Where, value); }
         }
 
         public bool Lazy
         {
             get { return attributes.Get(x => x.Lazy); }
-            set { attributes.Set(x => x.Lazy, value); }
         }
 
         public string EntityName
         {
             get { return attributes.Get(x => x.EntityName); }
-            set { attributes.Set(x => x.EntityName, value); }
         }
 
         public string OrderBy
         {
             get { return attributes.Get(x => x.OrderBy); }
-            set { attributes.Set(x => x.OrderBy, value); }
         }        
 
         public string ChildPropertyRef
         {
             get { return attributes.Get(x => x.ChildPropertyRef); }
-            set { attributes.Set(x => x.ChildPropertyRef, value); }
         }
 
         public IDefaultableEnumerable<ColumnMapping> Columns
@@ -125,24 +114,9 @@ namespace FluentNHibernate.MappingModel.Collections
             columns.Clear();
         }
 
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
-        }
-
-        public bool IsSpecified<TResult>(Expression<Func<ManyToManyMapping, TResult>> property)
-        {
-            return attributes.IsSpecified(property);
-        }
-
         public bool HasValue<TResult>(Expression<Func<ManyToManyMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<ManyToManyMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(ManyToManyMapping other)

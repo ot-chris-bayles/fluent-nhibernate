@@ -64,9 +64,11 @@ namespace FluentNHibernate.Automapping
                     var discriminator = new DiscriminatorMapping
                     {
                         ContainingEntityType = classType,
-                        Type = new TypeReference(typeof(string))
                     };
-                    discriminator.AddDefaultColumn(new ColumnMapping { Name = discriminatorColumn });
+                    discriminator.Set(x => x.Type, Layer.Defaults, new TypeReference(typeof(string)));
+                    var columnMapping = new ColumnMapping();
+                    columnMapping.Set(x => x.Name, Layer.Defaults, discriminatorColumn);
+                    discriminator.AddDefaultColumn(columnMapping);
 
                     ((ClassMapping)mapping).Discriminator = discriminator;
                     discriminatorSet = true;
@@ -78,10 +80,12 @@ namespace FluentNHibernate.Automapping
                 {
                     subclassMapping = new SubclassMapping(SubclassType.JoinedSubclass)
                     {
-                        Type = inheritedClass.Type
+                        Type = inheritedClass.Type,
+                        Key = new KeyMapping()
                     };
-                    subclassMapping.Key = new KeyMapping();
-                    subclassMapping.Key.AddDefaultColumn(new ColumnMapping { Name = mapping.Type.Name + "_id" });
+                    var columnMapping = new ColumnMapping();
+                    columnMapping.Set(x => x.Name, Layer.Defaults, mapping.Type.Name + "_id");
+                    subclassMapping.Key.AddDefaultColumn(columnMapping);
                 }
                 else
                     subclassMapping = new SubclassMapping(SubclassType.Subclass)
@@ -99,7 +103,7 @@ namespace FluentNHibernate.Automapping
             }
         }
 
-        bool HasDiscriminator(ClassMappingBase mapping)
+        static bool HasDiscriminator(ClassMappingBase mapping)
         {
             if (mapping is ClassMapping && ((ClassMapping)mapping).Discriminator != null)
                 return true;

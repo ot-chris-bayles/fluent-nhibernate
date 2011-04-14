@@ -32,19 +32,16 @@ namespace FluentNHibernate.MappingModel.Collections
         public TypeReference Type
         {
             get { return attributes.Get(x => x.Type); }
-            set { attributes.Set(x => x.Type, value); }
         }
 
         public string Formula
         {
             get { return attributes.Get(x => x.Formula); }
-            set { attributes.Set(x => x.Formula, value); }
         }
 
         public int Length
         {
             get { return attributes.Get(x => x.Length); }
-            set { attributes.Set(x => x.Length, value); }
         }
 
         public void AddColumn(ColumnMapping mapping)
@@ -69,19 +66,9 @@ namespace FluentNHibernate.MappingModel.Collections
 
         public Type ContainingEntityType { get; set; }
 
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
-        }
-
         public bool HasValue<TResult>(Expression<Func<ElementMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<ElementMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(ElementMapping other)
@@ -110,6 +97,11 @@ namespace FluentNHibernate.MappingModel.Collections
                 result = (result * 397) ^ (ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0);
                 return result;
             }
+        }
+
+        public void Set<T>(Expression<Func<ElementMapping, T>> expression, int layer, T value)
+        {
+            attributes.Set(expression, layer, value);
         }
     }
 }

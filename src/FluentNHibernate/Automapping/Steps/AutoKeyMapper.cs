@@ -14,13 +14,15 @@ namespace FluentNHibernate.Automapping.Steps
             this.cfg = cfg;
         }
 
-        public void SetKey(Member property, ClassMappingBase classMap, MappingModel.Collections.CollectionMapping mapping)
+        public void SetKey(Member property, ClassMappingBase classMap, CollectionMapping mapping)
         {
             var columnName = property.DeclaringType.Name + "_id";
             var key = new KeyMapping();
 
             key.ContainingEntityType = classMap.Type;
-            key.AddDefaultColumn(new ColumnMapping { Name = columnName });
+            var columnMapping = new ColumnMapping();
+            columnMapping.Set(x => x.Name, Layer.Defaults, columnName);
+            key.AddDefaultColumn(columnMapping);
 
             mapping.SetDefaultValue(x => x.Key, key);
         }

@@ -1,6 +1,7 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using FluentNHibernate.MappingModel.Collections;
 using FluentNHibernate.Utils;
 
 namespace FluentNHibernate.MappingModel
@@ -8,76 +9,43 @@ namespace FluentNHibernate.MappingModel
     [Serializable]
     public class AttributeStore
     {
-        private readonly IDictionary<string, object> attributes;
-        private readonly IDictionary<string, object> defaults;
+        readonly AttributeLayeredValues layeredValues;
 
         public AttributeStore()
         {
-            attributes = new Dictionary<string, object>();
-            defaults = new Dictionary<string, object>();
+            layeredValues = new AttributeLayeredValues();
         }
 
-        public object this[string key]
+        public object Get(string property)
         {
-            get
-            {
-                if (attributes.ContainsKey(key))
-                    return attributes[key];
-                
-                if (defaults.ContainsKey(key))
-                    return defaults[key];
+            var values = layeredValues[property];
 
+            if (!values.Any())
                 return null;
-            }
-            set { attributes[key] = value; }
+
+            var topLayer = values.Max(x => x.Key);
+
+            return values[topLayer];
         }
 
-        public string Get(string property)
+        public void Set(string attribute, int layer, object value)
         {
-            return Get<string>(property);
+            layeredValues[attribute][layer] = value;
         }
 
-        public TResult Get<TResult>(string property)
+        public bool IsSpecified(string attribute)
         {
-            return (TResult)(this[property] ?? default(TResult));
+            return layeredValues.ContainsKey(attribute);
         }
 
-        public void Set<TResult>(string property, TResult value)
+        public bool HasValue(string attribute)
         {
-            this[property] = value;
+            return layeredValues.ContainsKey(attribute) && layeredValues[attribute].Any();
         }
 
-        public bool IsSpecified(string key)
+        public void CopyTo(AttributeStore theirStore)
         {
-            return attributes.ContainsKey(key);
-        }
-
-        public bool HasValue(string key)
-        {
-            return attributes.ContainsKey(key) || defaults.ContainsKey(key);
-        }
-
-        public void CopyTo(AttributeStore store)
-        {
-            foreach (var pair in attributes)
-                store.attributes[pair.Key] = pair.Value;
-
-            foreach (var pair in defaults)
-                store.defaults[pair.Key] = pair.Value;
-        }
-
-        public void SetDefault(string key, object value)
-        {
-            defaults[key] = value;
-        }
-
-        public void Merge(AttributeStore otherStore)
-        {
-            foreach (var key in otherStore.defaults.Keys)
-                defaults[key] = otherStore.defaults[key];
-
-            foreach (var key in otherStore.attributes.Keys)
-                attributes[key] = otherStore.attributes[key];
+            layeredValues.CopyTo(theirStore.layeredValues);
         }
 
         public AttributeStore Clone()
@@ -91,7 +59,9 @@ namespace FluentNHibernate.MappingModel
 
         public bool Equals(AttributeStore other)
         {
-            return other.attributes.ContentEquals(attributes) && other.defaults.ContentEquals(defaults);
+            if (other == null) return false;
+
+            return other.layeredValues.ContentEquals(layeredValues);
         }
 
         public override bool Equals(object obj)
@@ -104,8 +74,7 @@ namespace FluentNHibernate.MappingModel
         {
             unchecked
             {
-                return ((attributes != null ? attributes.GetHashCode() : 0) * 397) ^
-                    (defaults != null ? defaults.GetHashCode() : 0);
+                return ((layeredValues != null ? layeredValues.GetHashCode() : 0) * 397);
             }
         }
     }
@@ -128,17 +97,17 @@ namespace FluentNHibernate.MappingModel
 
         public TResult Get<TResult>(Expression<Func<T, TResult>> exp)
         {
-            return (TResult)(store[GetKey(exp)] ?? default(TResult));
+            var value = store.Get(GetAttribute(exp));
+
+            if (value == null)
+                return default(TResult);
+
+            return (TResult)value;
         }
 
-        public void Set<TResult>(Expression<Func<T, TResult>> exp, TResult value)
+        public void Set<TResult>(Expression<Func<T, TResult>> exp, int layer, TResult value)
         {
-            store[GetKey(exp)] = value;
-        }
-
-        public void SetDefault<TResult>(Expression<Func<T, TResult>> exp, TResult value)
-        {
-            store.SetDefault(GetKey(exp), value);
+            store.Set(GetAttribute(exp), layer, value);
         }
 
         /// <summary>
@@ -146,7 +115,7 @@ namespace FluentNHibernate.MappingModel
         /// </summary>
         public bool IsSpecified<TResult>(Expression<Func<T, TResult>> exp)
         {
-            return store.IsSpecified(GetKey(exp));
+            return store.IsSpecified(GetAttribute(exp));
         }
 
         /// <summary>
@@ -165,7 +134,7 @@ namespace FluentNHibernate.MappingModel
         /// <returns></returns>
         public bool HasValue<TResult>(Expression<Func<T, TResult>> exp)
         {
-            return store.HasValue(GetKey(exp));
+            return store.HasValue(GetAttribute(exp));
         }
 
         public bool HasValue(string property)
@@ -178,7 +147,7 @@ namespace FluentNHibernate.MappingModel
             store.CopyTo(target.store);
         }
 
-        private static string GetKey<TResult>(Expression<Func<T, TResult>> expression)
+        private static string GetAttribute<TResult>(Expression<Func<T, TResult>> expression)
         {
             var member = expression.ToMember();
             return member.Name;
@@ -202,11 +171,6 @@ namespace FluentNHibernate.MappingModel
             return clonedStore;
         }
 
-        public void Merge(AttributeStore<T> otherStore)
-        {
-            store.Merge(otherStore.store);
-        }
-
         public bool Equals(AttributeStore<T> other)
         {
             return Equals(other.store, store);
@@ -214,6 +178,7 @@ namespace FluentNHibernate.MappingModel
 
         public override bool Equals(object obj)
         {
+            if (obj == null) return false;
             if (obj.GetType() != typeof(AttributeStore<T>)) return false;
             return Equals((AttributeStore<T>)obj);
         }

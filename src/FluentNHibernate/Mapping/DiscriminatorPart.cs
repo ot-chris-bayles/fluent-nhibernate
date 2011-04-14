@@ -62,7 +62,7 @@ namespace FluentNHibernate.Mapping
         /// <remarks>Sets the "force" attribute.</remarks>
         public DiscriminatorPart AlwaysSelectWithValue()
         {
-            attributes.Set(x => x.Force, nextBool);
+            attributes.Set(x => x.Force, Layer.UserSupplied, nextBool);
             nextBool = true;
             return this;
         }
@@ -73,7 +73,7 @@ namespace FluentNHibernate.Mapping
         /// <returns>Sets the "insert" attribute.</returns>
         public DiscriminatorPart ReadOnly()
         {
-            attributes.Set(x => x.Insert, !nextBool);
+            attributes.Set(x => x.Insert, Layer.UserSupplied, !nextBool);
             nextBool = true;
             return this;
         }
@@ -84,7 +84,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="sql">SQL expression</param>
         public DiscriminatorPart Formula(string sql)
         {
-            attributes.Set(x => x.Formula, sql);
+            attributes.Set(x => x.Formula, Layer.UserSupplied, sql);
             return this;
         }
 
@@ -94,7 +94,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="precision">Decimal precision</param>
         public DiscriminatorPart Precision(int precision)
         {
-            columnAttributes.Set(x => x.Precision, precision);
+            columnAttributes.Set(x => x.Precision, Layer.UserSupplied, precision);
             return this;
         }
 
@@ -104,7 +104,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="scale">Decimal scale</param>
         public DiscriminatorPart Scale(int scale)
         {
-            columnAttributes.Set(x => x.Scale, scale);
+            columnAttributes.Set(x => x.Scale, Layer.UserSupplied, scale);
             return this;
         }
 
@@ -114,7 +114,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="length">Column length</param>
         public DiscriminatorPart Length(int length)
         {
-            columnAttributes.Set(x => x.Length, length);
+            columnAttributes.Set(x => x.Length, Layer.UserSupplied, length);
             return this;
         }
 
@@ -123,7 +123,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public DiscriminatorPart Nullable()
         {
-            columnAttributes.Set(x => x.NotNull, !nextBool);
+            columnAttributes.Set(x => x.NotNull, Layer.UserSupplied, !nextBool);
             nextBool = true;
             return this;
         }
@@ -133,7 +133,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public DiscriminatorPart Unique()
         {
-            columnAttributes.Set(x => x.Unique, nextBool);
+            columnAttributes.Set(x => x.Unique, Layer.UserSupplied, nextBool);
             nextBool = true;
             return this;
         }
@@ -144,7 +144,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="keyColumns">Constraint columns</param>
         public DiscriminatorPart UniqueKey(string keyColumns)
         {
-            columnAttributes.Set(x => x.UniqueKey, keyColumns);
+            columnAttributes.Set(x => x.UniqueKey, Layer.UserSupplied, keyColumns);
             return this;
         }
 
@@ -154,7 +154,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="index">Index name</param>
         public DiscriminatorPart Index(string index)
         {
-            columnAttributes.Set(x => x.Index, index);
+            columnAttributes.Set(x => x.Index, Layer.UserSupplied, index);
             return this;
         }
 
@@ -164,7 +164,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="constraint">Constraint name</param>
         public DiscriminatorPart Check(string constraint)
         {
-            columnAttributes.Set(x => x.Check, constraint);
+            columnAttributes.Set(x => x.Check, Layer.UserSupplied, constraint);
             return this;
         }
 
@@ -174,7 +174,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="value">Default value</param>
         public DiscriminatorPart Default(object value)
         {
-            columnAttributes.Set(x => x.Default, value.ToString());
+            columnAttributes.Set(x => x.Default, Layer.UserSupplied, value.ToString());
             return this;
         }
 
@@ -187,7 +187,7 @@ namespace FluentNHibernate.Mapping
         /// <typeparam name="T">Custom type</typeparam>
         public DiscriminatorPart CustomType<T>()
         {
-            attributes.Set(x => x.Type, new TypeReference(typeof(T)));
+            attributes.Set(x => x.Type, Layer.UserSupplied, new TypeReference(typeof(T)));
             return this;
         }
 
@@ -200,7 +200,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="type">Custom type</param>
         public DiscriminatorPart CustomType(Type type)
         {
-            attributes.Set(x => x.Type, new TypeReference(type));
+            attributes.Set(x => x.Type, Layer.UserSupplied, new TypeReference(type));
             return this;
         }
 
@@ -213,7 +213,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="type">Custom type</param>
         public DiscriminatorPart CustomType(string type)
         {
-            attributes.Set(x => x.Type, new TypeReference(type));
+            attributes.Set(x => x.Type, Layer.UserSupplied, new TypeReference(type));
             return this;
         }
 
@@ -222,7 +222,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         /// <param name="type">Custom SQL type.</param>
         public DiscriminatorPart SqlType(string type) {
-            columnAttributes.Set(x => x.SqlType, type);
+            columnAttributes.Set(x => x.SqlType, Layer.UserSupplied, type);
             return this;
         }
 
@@ -233,9 +233,11 @@ namespace FluentNHibernate.Mapping
                 ContainingEntityType = entity,
             };
 
-            mapping.SetDefaultValue("Type", discriminatorValueType);
+            mapping.Set(x => x.Type, Layer.Defaults, discriminatorValueType);
 
-            mapping.AddColumn(new ColumnMapping(columnAttributes.CloneInner()) { Name = columnName });
+            var columnMapping = new ColumnMapping(columnAttributes.CloneInner());
+            columnMapping.Set(x => x.Name, Layer.Defaults, columnName);
+            mapping.AddColumn(columnMapping);
 
             return mapping;
         }

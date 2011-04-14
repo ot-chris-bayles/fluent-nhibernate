@@ -18,13 +18,11 @@ namespace FluentNHibernate.MappingModel
         public NaturalIdMapping(AttributeStore underlyingStore)
         {
             attributes = new AttributeStore<NaturalIdMapping>(underlyingStore);
-            attributes.SetDefault(x => x.Mutable, false);
         }
 
         public bool Mutable
         {
             get { return attributes.Get(x => x.Mutable); }
-            set { attributes.Set(x => x.Mutable, value); }
         }
 
         public IEnumerable<PropertyMapping> Properties
@@ -58,19 +56,9 @@ namespace FluentNHibernate.MappingModel
                 visitor.Visit(key);
         }
 
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
-        }
-
         public bool HasValue<TResult>(Expression<Func<NaturalIdMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<NaturalIdMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
     }
 }

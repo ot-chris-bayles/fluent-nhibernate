@@ -15,7 +15,10 @@ namespace FluentNHibernate.Mapping
 
         public KeyPropertyPart ColumnName(string columnName)
         {
-            mapping.AddColumn(new ColumnMapping { Name = columnName });
+            var column = new ColumnMapping();
+            column.Set(x => x.Name, Layer.UserSupplied, columnName);
+
+            mapping.AddColumn(column);
             return this;
         }
 

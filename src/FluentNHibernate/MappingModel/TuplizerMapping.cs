@@ -41,11 +41,6 @@ namespace FluentNHibernate.MappingModel
             set { attributes.Set(x => x.Type, value); }
         }
 
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);            
-        }
-
         public bool HasValue<TResult>(Expression<Func<TuplizerMapping, TResult>> property)
         {
             return attributes.HasValue(property);

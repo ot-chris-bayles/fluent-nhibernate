@@ -29,10 +29,10 @@ namespace FluentNHibernate.Mapping
             childType = collectionType;
 
             keyColumns = new ColumnMappingCollection<OneToManyPart<TChild>>(this);
-            cascade = new CollectionCascadeExpression<OneToManyPart<TChild>>(this, value => collectionAttributes.Set(x => x.Cascade, value));
-            notFound = new NotFoundExpression<OneToManyPart<TChild>>(this, value => relationshipAttributes.Set(x => x.NotFound, value));
+            cascade = new CollectionCascadeExpression<OneToManyPart<TChild>>(this, value => collectionAttributes.Set(x => x.Cascade, Layer.UserSupplied, value));
+            notFound = new NotFoundExpression<OneToManyPart<TChild>>(this, value => relationshipAttributes.Set(x => x.NotFound, Layer.UserSupplied, value));
 
-            collectionAttributes.SetDefault(x => x.Name, member.Name);
+            collectionAttributes.Set(x => x.Name, Layer.Defaults, member.Name);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public OneToManyPart<TChild> OrderBy(string orderBy)
         {
-            collectionAttributes.Set(x => x.OrderBy, orderBy);
+            collectionAttributes.Set(x => x.OrderBy, Layer.UserSupplied, orderBy);
             return this;
         }
 
@@ -143,7 +143,7 @@ namespace FluentNHibernate.Mapping
         /// </summary>
         public OneToManyPart<TChild> ReadOnly()
         {
-            collectionAttributes.Set(x => x.Mutable, !nextBool);
+            collectionAttributes.Set(x => x.Mutable, Layer.UserSupplied, !nextBool);
             nextBool = true;
             return this;
         }
@@ -154,7 +154,7 @@ namespace FluentNHibernate.Mapping
         /// <param name="subselect">Query</param>
         public OneToManyPart<TChild> Subselect(string subselect)
         {
-            collectionAttributes.Set(x => x.Subselect, subselect);
+            collectionAttributes.Set(x => x.Subselect, Layer.UserSupplied, subselect);
             return this;
         }
 
@@ -183,7 +183,7 @@ namespace FluentNHibernate.Mapping
             var collection = base.GetCollectionMapping();
 
             if (keyColumns.Count() == 0)
-                collection.Key.AddDefaultColumn(new ColumnMapping { Name = entity.Name + "_id" });
+                collection.Key.AddDefaultColumn(new ColumnMapping(entity.Name + "_id"));
 
             foreach (var column in keyColumns)
             {

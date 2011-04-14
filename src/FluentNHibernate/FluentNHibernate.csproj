@@ -423,10 +423,13 @@
     <Compile Include="Conventions\ManyToManyTableNameConvention.cs" />
     <Compile Include="Conventions\ObjectExtensionsForConventions.cs" />
     <Compile Include="Conventions\ProxyConvention.cs" />
+    <Compile Include="MappingModel\Layer.cs" />
     <Compile Include="MappingModel\ClassBased\ComponentType.cs" />
     <Compile Include="MappingModel\ClassBased\ExternalComponentMapping.cs" />
     <Compile Include="MappingModel\ClassBased\SubclassType.cs" />
+    <Compile Include="MappingModel\Collections\AttributeLayeredValues.cs" />
     <Compile Include="MappingModel\Collections\Collection.cs" />
+    <Compile Include="MappingModel\Collections\LayeredValues.cs" />
     <Compile Include="MappingModel\Collections\Lazy.cs" />
     <Compile Include="MappingModel\Collections\NestedCompositeElementMapping.cs" />
     <Compile Include="MappingModel\EqualityExtensions.cs" />

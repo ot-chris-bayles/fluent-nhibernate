@@ -73,64 +73,46 @@ namespace FluentNHibernate.MappingModel
         public string Catalog
         {
             get { return attributes.Get(x => x.Catalog); }
-            set { attributes.Set(x => x.Catalog, value); }
         }
 
         public string DefaultAccess
         {
             get { return attributes.Get(x => x.DefaultAccess); }
-            set { attributes.Set(x => x.DefaultAccess, value); }
         }
 
         public string DefaultCascade
         {
             get { return attributes.Get(x => x.DefaultCascade); }
-            set { attributes.Set(x => x.DefaultCascade, value); }
         }
 
         public bool AutoImport
         {
             get { return attributes.Get(x => x.AutoImport); }
-            set { attributes.Set(x => x.AutoImport, value); }
         }
 
         public string Schema
         {
             get { return attributes.Get(x => x.Schema); }
-            set { attributes.Set(x => x.Schema, value); }
         }
 
         public bool DefaultLazy
         {
             get { return attributes.Get(x => x.DefaultLazy); }
-            set { attributes.Set(x => x.DefaultLazy, value); }
         }
 
         public string Namespace
         {
             get { return attributes.Get(x => x.Namespace); }
-            set { attributes.Set(x => x.Namespace, value); }
         }
 
         public string Assembly
         {
             get { return attributes.Get(x => x.Assembly); }
-            set { attributes.Set(x => x.Assembly, value); }
-        }
-
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
         }
 
         public bool HasValue<TResult>(Expression<Func<HibernateMapping, TResult>> property)
         {
             return attributes.HasValue(property);
-        }
-
-        public void SetDefaultValue<TResult>(Expression<Func<HibernateMapping, TResult>> property, TResult value)
-        {
-            attributes.SetDefault(property, value);
         }
 
         public bool Equals(HibernateMapping other)

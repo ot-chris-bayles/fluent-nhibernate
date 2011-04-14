@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using FluentNHibernate.Utils;
 using FluentNHibernate.Visitors;
 
@@ -24,26 +25,22 @@ namespace FluentNHibernate.MappingModel
 
         public bool Force
         {
-            get { return attributes.Get<bool>("Force"); }
-            set { attributes.Set("Force", value); }
+            get { return (bool)attributes.Get("Force"); }
         }
 
         public bool Insert
         {
-            get { return attributes.Get<bool>("Insert"); }
-            set { attributes.Set("Insert", value); }
+            get { return (bool)attributes.Get("Insert"); }
         }
 
         public string Formula
         {
-            get { return attributes.Get("Formula"); }
-            set { attributes.Set("Formula", value); }
+            get { return (string)attributes.Get("Formula"); }
         }
 
         public TypeReference Type
         {
-            get { return attributes.Get<TypeReference>("Type"); }
-            set { attributes.Set("Type", value); }
+            get { return (TypeReference)attributes.Get("Type"); }
         }
 
         public Type ContainingEntityType { get; set; }
@@ -71,6 +68,11 @@ namespace FluentNHibernate.MappingModel
             {
                 return ((ContainingEntityType != null ? ContainingEntityType.GetHashCode() : 0) * 397) ^ ((Columns != null ? Columns.GetHashCode() : 0) * 397) ^ (attributes != null ? attributes.GetHashCode() : 0);
             }
+        }
+
+        public void Set(Expression<Func<DiscriminatorMapping, object>> expression, int layer, object value)
+        {
+            attributes.Set(expression.ToMember().Name, layer, value);
         }
     }
 }

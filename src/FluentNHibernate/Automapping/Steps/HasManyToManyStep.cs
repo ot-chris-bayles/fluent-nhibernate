@@ -83,7 +83,7 @@ namespace FluentNHibernate.Automapping.Steps
                 mapping.SetDefaultValue(x => x.Access, cfg.GetAccessStrategyForReadOnlyProperty(member).ToString());
         }
 
-        private ICollectionRelationshipMapping CreateManyToMany(Member property, Type child, Type parent)
+        static ICollectionRelationshipMapping CreateManyToMany(Member property, Type child, Type parent)
         {
             var mapping = new ManyToManyMapping
             {
@@ -91,18 +91,24 @@ namespace FluentNHibernate.Automapping.Steps
                 ContainingEntityType = parent
             };
 
-            mapping.AddDefaultColumn(new ColumnMapping { Name = child.Name + "_id" });
+            var columnMapping = new ColumnMapping();
+            columnMapping.Set(x => x.Name, Layer.Defaults, child.Name + "_id");
+            mapping.AddDefaultColumn(columnMapping);
 
             return mapping;
         }
 
-        private void SetKey(Member property, ClassMappingBase classMap, CollectionMapping mapping)
+        static void SetKey(Member property, ClassMappingBase classMap, CollectionMapping mapping)
         {
             var columnName = property.DeclaringType.Name + "_id";
-            var key = new KeyMapping();
+            var key = new KeyMapping
+            {
+                ContainingEntityType = classMap.Type
+            };
 
-            key.ContainingEntityType = classMap.Type;
-            key.AddDefaultColumn(new ColumnMapping { Name = columnName });
+            var columnMapping = new ColumnMapping();
+            columnMapping.Set(x => x.Name, Layer.Defaults, columnName);
+            key.AddDefaultColumn(columnMapping);
 
             mapping.SetDefaultValue(x => x.Key, key);
         }

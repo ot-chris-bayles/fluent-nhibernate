@@ -29,23 +29,16 @@ namespace FluentNHibernate.MappingModel
         public string Name
         {
             get { return attributes.Get(x => x.Name); }
-            set { attributes.Set(x => x.Name, value); }
         }
 
         public string Condition
         {
             get { return attributes.Get(x => x.Condition); }
-            set { attributes.Set(x => x.Condition, value); }
         }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
         {
             visitor.ProcessFilterDefinition(this);
-        }
-
-        public override bool IsSpecified(string property)
-        {
-            return attributes.IsSpecified(property);
         }
 
         public bool Equals(FilterDefinitionMapping other)

@@ -17,8 +17,8 @@ namespace FluentNHibernate.MappingModel.ClassBased
             subclasses = new List<SubclassMapping>();
         }
 
-        public abstract string Name { get; set; }
-        public abstract Type Type { get; set;}
+        public abstract string Name { get; }
+        public abstract Type Type { get; }
 
         public override void AcceptVisitor(IMappingModelVisitor visitor)
         {
@@ -170,8 +170,6 @@ namespace FluentNHibernate.MappingModel.ClassBased
         {
             return string.Format("ClassMapping({0})", Type.Name);
         }
-
-        public abstract void MergeAttributes(AttributeStore store);
 
         public bool Equals(ClassMappingBase other)
         {
